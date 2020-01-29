@@ -24,7 +24,6 @@ def fill_num(df, var, method='median', top_var_NA=True):
     ------
     df_local : DataFrame
         modified dataset
-    
     """
     df_local = df.copy()
 
@@ -85,7 +84,6 @@ def fill_all_num(df, var_list=None, method='median', top_var_NA=True, verbose=1)
     ------
     df_local : DataFrame
         modified dataset
-    
     """
     # if var_list = None, get all numerical features
     # else, exclude features from var_list whose type is not numerical

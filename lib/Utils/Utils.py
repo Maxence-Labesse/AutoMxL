@@ -158,6 +158,8 @@ def get_type_features(df, features_type, var_list=None):
         type_list = df.select_dtypes(include=object).columns
     elif features_type == 'date':
         type_list = df.dtypes[df.dtypes == 'datetime64[ns]'].index.tolist()
+    elif features_type == 'all':
+        type_list = df.columns.tolist()
     else:
         type_list = None
 

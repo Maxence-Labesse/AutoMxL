@@ -1,6 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from lib.Utils.Display import *
+from lib.Utils.Utils import get_type_features
 
 
 def audit_dataset(df, verbose=1):
@@ -149,14 +150,26 @@ def get_all_dates(df):
 
 def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=1):
     """
+    identify  features with low variance (<= threshold)
+
+    input
+    -----
+     > df : DataFrame
+     > var_list : list (default : None)
+          features to check variance
+     > threshold : float (default : 0
+          variance threshold
+     > rescale : bool (default : true)
+          if yes : use MinMaxScaler on data before computing variance
+
+    return
+    ------
+     list of the variable with low variance
 
     """
-    # if var_list = None, get all num features
-    if var_list is None:
-        var_list = df._get_numeric_data().columns
+    # if var_list = None, get all numerical features
     # else, exclude features from var_list whose type is not numerical
-    else:
-        var_list = [i for i in var_list if i in df._get_numeric_data().columns]
+    var_list = get_type_features(df, 'num', var_list)
 
     df_bis = df.copy()
 
@@ -168,7 +181,7 @@ def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=
 
     if verbose > 0:
         # print('features : ',list(var_list))
-        if rescale: print('  ** Utilisation de MinMaxScaler [0,1]')
-        print('  ', str(len(selected_var)) + ' variables dont la variance < au seuil (' + str(threshold) + ')')
+        if rescale: print('  **MinMaxScaler [0,1]')
+        print('  ', str(len(selected_var)) + ' feature(s) with  variance <= threshold (' + str(threshold) + ')')
 
     return selected_var.sort_values(ascending=True)

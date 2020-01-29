@@ -126,7 +126,7 @@ class AutoML(pd.DataFrame):
         self.cat_outliers_columns = [
             *get_cat_outliers(self, var_list=self.cat_columns, threshold=0.05, verbose=verbose)]
         # num outliers
-        self.num_outliers_columns = [*get_num_outliers(self, var_list=self.num_columns, xstd=3, verbose=verbose)]
+        self.num_outliers_columns = [*get_num_outliers(self, var_list=self.num_columns, xstd=4, verbose=verbose)]
 
         # created attributes display
         if verbose > 0:
@@ -203,13 +203,14 @@ class AutoML(pd.DataFrame):
         ##################
         # num features
         if verbose > 0:
-            color_print('Complétion des NA pour les variables numériques')
+            color_print('Fill NA')
+            color_print('  num:')
         df_local = fill_all_num(df_local, var_list=self.num_columns, method='median', top_var_NA=True,
                                 verbose=verbose)
 
         # cat features
         if verbose > 0:
-            color_print('Complétion des NA pour les variables catégorielles')
+            color_print('  cat:')
         df_local = fill_all_cat(df_local, var_list=self.cat_columns, method='NR', top_var_NA=True, verbose=verbose)
 
         ####################
@@ -218,23 +219,23 @@ class AutoML(pd.DataFrame):
         if process_outliers:
             # cat features
             if verbose > 0:
-                color_print('categorical outliers processing')
-            df_local = process_cat_outliers(df_local, self.cat_outliers_columns, threshold=0.05, method="percent",
-                                            verbose=verbose)
-
-            # num features
-            if verbose > 0:
-                color_print('numerical outliers processing (exept target)')
+                color_print('Outliers processing')
+                color_print('  num:')
             if self.target in self.num_outliers_columns:
                 self.num_outliers_columns = self.num_outliers_columns.remove(self.target)
             df_local = process_num_outliers(df_local, self.num_outliers_columns, xstd=4, verbose=verbose)
 
+            # num features
+            if verbose > 0:
+                color_print('  cat:')
+            df_local = process_cat_outliers(df_local, self.cat_outliers_columns, threshold=0.05, method="percent",
+                                        verbose=verbose)
 
         ####################
         # one hot encoding
         ####################
         if verbose > 0:
-            color_print('categorical features processing')
+            color_print('Categorical features processing')
 
         df_local = dummy_all_var(df_local, var_list=self.cat_columns, prefix_list=None, keep=False, verbose=verbose)
 

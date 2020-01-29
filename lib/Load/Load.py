@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def detectdelimiter(csvfile):
+def get_delimiter(csvfile):
     """
     identify delimiter of a file
     
@@ -34,7 +34,7 @@ def detectdelimiter(csvfile):
 """
 
 
-def load_data(file, index_col=None):
+def load_data(file, index_col=None, verbose=1):
     """
     import a file as a DataFrame, no matter what his format is (csv, xlsx, Json)
     
@@ -57,7 +57,7 @@ def load_data(file, index_col=None):
     # CSV
     if file.endswith('.csv'):
         # Find separator
-        file_sep = detectdelimiter(file)
+        file_sep = get_delimiter(file)
         # import 
         df = pd.read_csv(file, encoding="iso-8859-1", sep=file_sep, index_col=index_col)
     
@@ -72,10 +72,11 @@ def load_data(file, index_col=None):
     else:
         df = None
 
-    if df is not None:
-        print('-> Fichier '+file+' importé avec succès')
-        print('-> Taille du dataframe créé : ', df.shape)
-    else:
-        print("Le Fichier n'a pas pu être importé (dommage)")
-        
+    if verbose==1:
+        if df is not None:
+            print('-> Fichier '+file+' importé avec succès')
+            print('-> Taille du dataframe créé : ', df.shape)
+        else:
+            print("Le Fichier n'a pas pu être importé (dommage)")
+
     return df

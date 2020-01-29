@@ -15,8 +15,7 @@ trgt = 'y'
 ############################
 # instantiate AutoML object
 ############################
-print(df_raw.columns)
-
+#print(df_raw.columns)
 
 df = AutoML(df_raw.copy(),target = 'y_yes')
 
@@ -26,6 +25,4 @@ df.get_outliers(verbose=1)
 
 df.preprocess(process_outliers=True, verbose=1)
 
-print(df.columns)
-
-df.train_predict(verbose=1)
+#df.train_predict(verbose=1)

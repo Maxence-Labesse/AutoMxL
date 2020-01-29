@@ -6,7 +6,7 @@ Default bagging parameters
 """
 default_bagging_param = {'niter': 5,
                          'pos_sample_size': 1.0,
-                         'remise': False}
+                         'replace': False}
 
 
 class Bagging(object):
@@ -27,7 +27,7 @@ class Bagging(object):
           number of target=1 observations in each sample (target=0 observations :  3x"number of target=1" )
               - if int : pos_sample_size
               - if float : pos_sample_size*len(X)
-     > remise : Boolean (Defualt : False)
+     > replace : Boolean (Defualt : False)
           If True, sampling with replacement
         
     Attributes
@@ -60,7 +60,7 @@ class Bagging(object):
         return {'classifier': self.classifier,
                 'niter': self.niter,
                 'pos_sample_size': self.pos_sample_size,
-                'remise': self.replace,
+                'replace': self.replace,
                 'list_model': self.list_model}
 
     """
@@ -116,7 +116,7 @@ class Bagging(object):
         # loop over the number of samples
         for i in range(self.niter):
             # Creation of the sample
-            df_train_bag = Bagging_sample(df_train, target, N, remise=self.replace)
+            df_train_bag = Bagging_sample(df_train, target, N, replace=self.replace)
 
             # X_train / y_train
             X_train_bag = df_train_bag.copy()
@@ -218,7 +218,7 @@ class Bagging(object):
 """
 
 
-def Bagging_sample(df, target, N, remise=False):
+def Bagging_sample(df, target, N, replace=False):
     """
     Sample creation with N target=1 and 3*N target=0 observations
         
@@ -233,7 +233,7 @@ def Bagging_sample(df, target, N, remise=False):
     N : int
         number of target=1 observations
         
-    remise : Boolean (défaut : False)
+    replace : Boolean (défaut : False)
         if True, create samples with replacement
             
     return
@@ -247,6 +247,6 @@ def Bagging_sample(df, target, N, remise=False):
     df_neg = df.loc[(df[target] == 0)]
 
     # sample creation
-    df_bag = pd.concat((df_pos.sample(n=N, replace=remise), df_neg.sample(n=3 * N, replace=remise)), axis=0)
+    df_bag = pd.concat((df_pos.sample(n=N, replace=replace), df_neg.sample(n=3 * N, replace=replace)), axis=0)
 
     return df_bag

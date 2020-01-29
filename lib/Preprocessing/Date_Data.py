@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from datetime import datetime
 from lib.Utils.Utils import get_type_features
 
@@ -23,8 +24,7 @@ def all_to_date(df, var_list=None, verbose=1):
     """
     # if var_list = None, get all categorical features
     # else, exclude features from var_list whose type is not categorical
-    var_list = get_type_features(df, 'cat', var_list)
-
+    var_list = get_type_features(df, 'all', var_list)
     df_local = df.copy()
 
     if verbose > 0:
@@ -33,12 +33,12 @@ def all_to_date(df, var_list=None, verbose=1):
 
     # for each feature in var_list, try to convert to datetime
     for col in var_list:
-        # A simplifier !!!!!!
         try:
             if df_local[col].dtype == 'object':
                 df_local[col] = pd.to_datetime(df_local[col])
             else:
                 df_local[col] = pd.to_datetime(df_local[col].astype('Int32').astype(str))
+                print(np.dtype(df_local[col]))
         except:
             pass
     return df_local
@@ -88,7 +88,7 @@ def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
     df_local = df.copy()
 
     if verbose > 0:
-        print('  ** Reference data for timelapse computing : ', date_ref)
+        print('  ** Reference date for timelapse computing : ', date_ref)
 
     # initialisation
     new_var_list = []
