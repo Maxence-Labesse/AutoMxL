@@ -204,13 +204,13 @@ class AutoML(pd.DataFrame):
         # num features
         if verbose > 0:
             color_print('Fill NA')
-            color_print('  num:')
+            color_print('  Num:')
         df_local = fill_all_num(df_local, var_list=self.num_columns, method='median', top_var_NA=True,
                                 verbose=verbose)
 
         # cat features
         if verbose > 0:
-            color_print('  cat:')
+            color_print('  Cat:')
         df_local = fill_all_cat(df_local, var_list=self.cat_columns, method='NR', top_var_NA=True, verbose=verbose)
 
         ####################
@@ -220,14 +220,14 @@ class AutoML(pd.DataFrame):
             # cat features
             if verbose > 0:
                 color_print('Outliers processing')
-                color_print('  num:')
+                color_print('  Num:')
             if self.target in self.num_outliers_columns:
                 self.num_outliers_columns = self.num_outliers_columns.remove(self.target)
             df_local = process_num_outliers(df_local, self.num_outliers_columns, xstd=4, verbose=verbose)
 
             # num features
             if verbose > 0:
-                color_print('  cat:')
+                color_print('  Cat:')
             df_local = process_cat_outliers(df_local, self.cat_outliers_columns, threshold=0.05, method="percent",
                                         verbose=verbose)
 

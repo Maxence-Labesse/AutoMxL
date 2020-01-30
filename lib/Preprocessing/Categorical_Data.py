@@ -32,7 +32,7 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
     df_local = df.copy()
 
     if verbose > 0:
-        print('  ** one hot encoding')
+        print('  ** method : one hot encoding')
 
     for col in var_list:
         # if prefix_list == None, add column name as prefix, else add prefix_list
