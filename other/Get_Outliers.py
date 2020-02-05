@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from lib.Utils.Display import *
+from MLKit.Utils.Display import *
 
 
 def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=1) :

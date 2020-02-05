@@ -1,19 +1,19 @@
-from lib.Load.Load import load_data
-from lib.autoML import AutoML
-from lib.Utils.Utils import parse_target
+from MLKit.Load.Load import load_data
+from MLKit.autoML import AutoML
+from MLKit.Utils.Utils import parse_target
 
 #########################
 # Load and process target
 #########################
 # data/bank-additional-full.csv
-# lib/tests/df_test.csv
-df_raw = load_data('lib/tests/df_test.csv')
+# MLKit/tests/df_test.csv
+df_raw = load_data('data/bank-additional-full.csv')
 trgt = 'y'
 
-#df_raw, target = parse_target(df_raw,trgt,modalite='yes')
+df_raw, target = parse_target(df_raw,trgt,modalite='yes')
 
 ############################
-# instantiate AutoML object
+# instantiate MLKit object
 ############################
 #print(df_raw.columns)
 
@@ -25,4 +25,4 @@ df.get_outliers(verbose=1)
 
 df.preprocess(process_outliers=True, verbose=1)
 
-#df.train_predict(verbose=1)
+df.train_predict(verbose=1)
