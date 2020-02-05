@@ -1,3 +1,4 @@
+# files to ignore
 __pycache__
 data/
 other/
