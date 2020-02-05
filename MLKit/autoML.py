@@ -1,7 +1,7 @@
 """
 https://trello.com/b/mBU1kFpZ/auto-ml
 """
-from MLKit.Utils.Display import color_print, print_title1
+from MLKit.Utils.Display import print_title1
 from MLKit.Utils.Decorators import timer
 from MLKit.Audit.Audit_Dataset import audit_dataset
 from MLKit.Audit.Get_Outliers import get_cat_outliers, get_num_outliers
