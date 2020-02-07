@@ -1,4 +1,4 @@
-from MLKit.autoML import AutoML
+from MLKit.MLKit import AutoML
 import unittest
 import pandas as pd
 import numpy as np

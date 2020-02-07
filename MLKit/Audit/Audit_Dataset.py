@@ -86,34 +86,32 @@ def audit_dataset(df, verbose=1):
 def is_date(df, col):
     """
     Test if a DataFrame feature is recognized as a date (using to_datetime)
-    
+
     input
     -----
      > df : DataFrame
      > col : string
           feature name
-    
+
     return
     -----
       > res : boolean
           True if the col is recognized as a date
     """
-    res = False
-
     # if col is datetime type, res = True
-    if df[col].dtype == 'datetime64[ns]': res = True
+    if df[col].dtype == 'datetime64[ns]':
+        return True
 
     # if col is object type, try apply to_datetime
     elif df[col].dtype == 'object':
         try:
             df_smpl = df.sample(100).copy()
             pd.to_datetime(df_smpl[col])
-        except:
-            pass
-        else:
-            res = True
-
-    return res
+            return True
+        except ValueError:
+            return False
+        except OverflowError:
+            return False
 
 
 """

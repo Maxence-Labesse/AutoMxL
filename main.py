@@ -1,5 +1,5 @@
 from MLKit.Load.Load import load_data
-from MLKit.autoML import AutoML
+from MLKit.MLKit import AutoML
 from MLKit.Utils.Utils import parse_target
 
 #########################
