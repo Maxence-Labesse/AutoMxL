@@ -1,4 +1,4 @@
-from MLKit.Utils.Utils import get_type_features
+from MLBG59.Utils.Utils import get_type_features
 
 
 def fill_num(df, var, method='median', top_var_NA=True):

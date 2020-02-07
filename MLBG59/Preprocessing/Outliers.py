@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from MLKit.Utils.Utils import get_type_features
+from MLBG59.Utils.Utils import get_type_features
 
 
 def remove_bind(df, col, method='percent', threshold=0.05):

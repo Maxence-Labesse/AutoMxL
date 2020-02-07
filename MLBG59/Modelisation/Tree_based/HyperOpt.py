@@ -2,9 +2,9 @@ import xgboost
 import random
 import itertools as it
 # import datetime
-from MLKit.Modelisation.Techniques.Bagging import *
-from MLKit.Utils.Utils import *
-from MLKit.Utils.Display import color_print
+from MLBG59.Modelisation.Techniques.Bagging import *
+from MLBG59.Utils.Utils import *
+from MLBG59.Utils.Display import color_print
 from datetime import datetime
 
 """

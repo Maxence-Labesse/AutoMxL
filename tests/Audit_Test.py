@@ -1,9 +1,9 @@
-from MLKit.Audit.Audit_Dataset import *
-from MLKit.Audit.Get_Outliers import *
+from MLBG59.Audit.Audit_Dataset import *
+from MLBG59.Audit.Get_Outliers import *
 import unittest
 import pandas as pd
 
-df_test = pd.read_csv('MLKit/tests/df_test.csv')
+df_test = pd.read_csv('MLBG59/tests/df_test.csv')
 
 
 class Test_Audit(unittest.TestCase):

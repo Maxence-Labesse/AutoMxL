@@ -1,5 +1,5 @@
 import pandas as pd
-from MLKit.Utils.Utils import get_type_features
+from MLBG59.Utils.Utils import get_type_features
 
 
 def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):

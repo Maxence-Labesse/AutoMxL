@@ -1,16 +1,17 @@
 from setuptools import setup
-"""
-setup.py :
-1. file where various aspects of your project directory are configured.
-   contains a global setup() function
-2. command line interface for running various commands that relate to packaging tasks
-"""
+import pathlib
 
+# The directory containing this file
+HERE = pathlib.Path(__file__).parent
+
+# The text of the README file
+README = (HERE/ "README.md").read_text()
 
 setup(
-    name='MLKit',
-    version='1.0',
-    url='',
+    name='MLBG59',
+    version='1.0.0',
+    url='https://github.com/Maxence-Labesse/MLBG59',
+
     license='',
     author='Maxence LABESSE',
     author_email='maxence.labesse@yahoo.fr',

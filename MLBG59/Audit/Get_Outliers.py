@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
-from MLKit.Utils.Display import *
-from MLKit.Utils.Utils import get_type_features
+from MLBG59.Utils.Display import *
+from MLBG59.Utils.Utils import get_type_features
 
 
 def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=1):

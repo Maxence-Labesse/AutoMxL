@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from MLKit.Utils.Display import *
-from MLKit.Utils.Utils import get_type_features
+from MLBG59.Utils.Display import *
+from MLBG59.Utils.Utils import get_type_features
 
 
 def audit_dataset(df, verbose=1):

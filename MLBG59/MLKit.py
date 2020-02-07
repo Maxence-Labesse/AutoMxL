@@ -1,15 +1,15 @@
 """
 https://trello.com/b/mBU1kFpZ/auto-ml
 """
-from MLKit.Utils.Display import print_title1
-from MLKit.Utils.Decorators import timer
-from MLKit.Audit.Audit_Dataset import audit_dataset
-from MLKit.Audit.Get_Outliers import get_cat_outliers, get_num_outliers
-from MLKit.Preprocessing.Date_Data import all_to_date, date_to_anc
-from MLKit.Preprocessing.Missing_Values import fill_all_num, fill_all_cat
-from MLKit.Preprocessing.Outliers import process_cat_outliers, process_num_outliers
-from MLKit.Preprocessing.Categorical_Data import dummy_all_var
-from MLKit.Modelisation.Tree_based.HyperOpt import *
+from MLBG59.Utils.Display import print_title1
+from MLBG59.Utils.Decorators import timer
+from MLBG59.Audit.Audit_Dataset import audit_dataset
+from MLBG59.Audit.Get_Outliers import get_cat_outliers, get_num_outliers
+from MLBG59.Preprocessing.Date_Data import all_to_date, date_to_anc
+from MLBG59.Preprocessing.Missing_Values import fill_all_num, fill_all_cat
+from MLBG59.Preprocessing.Outliers import process_cat_outliers, process_num_outliers
+from MLBG59.Preprocessing.Categorical_Data import dummy_all_var
+from MLBG59.Modelisation.Tree_based.HyperOpt import *
 
 
 class AutoML(pd.DataFrame):
@@ -54,7 +54,7 @@ class AutoML(pd.DataFrame):
         self.cat_outliers_columns = None
 
     def __repr__(self):
-        return 'MLKit instance'
+        return 'MLBG59 instance'
 
     """
     --------------------------------------------------------------------------------------------------------------------

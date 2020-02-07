@@ -1,5 +1,5 @@
 from time import time
-from MLKit.Utils.Display import print_title1
+from MLBG59.Utils.Display import print_title1
 
 # Timer
 def timer(func):

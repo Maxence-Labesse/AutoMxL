@@ -1,5 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
-from MLKit.Utils.Utils import *
+from MLBG59.Utils.Utils import *
 
 """
 Default bagging parameters

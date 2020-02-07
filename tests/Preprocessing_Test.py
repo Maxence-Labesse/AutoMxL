@@ -1,7 +1,7 @@
-from MLKit.Preprocessing.Categorical_Data import *
-from MLKit.Preprocessing.Date_Data import *
-from MLKit.Preprocessing.Outliers import *
-from MLKit.Preprocessing.Missing_Values import *
+from MLBG59.Preprocessing.Categorical_Data import *
+from MLBG59.Preprocessing.Date_Data import *
+from MLBG59.Preprocessing.Outliers import *
+from MLBG59.Preprocessing.Missing_Values import *
 
 import unittest
 import pandas as pd

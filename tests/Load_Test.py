@@ -1,8 +1,8 @@
-from MLKit.Load.Load import *
+from MLBG59.Load.Load import *
 import unittest
 import pandas as pd
 
-file='MLKit/tests/df_test.csv'
+file='MLBG59/tests/df_test.csv'
 
 class Test_Load(unittest.TestCase):
     

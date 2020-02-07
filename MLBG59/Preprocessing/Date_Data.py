@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime
-from MLKit.Utils.Utils import get_type_features
+from MLBG59.Utils.Utils import get_type_features
 
 
 def all_to_date(df, var_list=None, verbose=1):

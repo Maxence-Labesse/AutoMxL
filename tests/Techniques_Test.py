@@ -1,5 +1,5 @@
-from MLKit.Modelisation.Techniques.Bagging import *
-from MLKit.Utils.Utils import *
+from MLBG59.Modelisation.Techniques.Bagging import *
+from MLBG59.Utils.Utils import *
 
 import unittest
 import pandas as pd

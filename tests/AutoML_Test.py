@@ -1,9 +1,9 @@
-from MLKit.MLKit import AutoML
+from MLBG59.MLKit import AutoML
 import unittest
 import pandas as pd
 import numpy as np
 
-df_test = pd.read_csv('MLKit/tests/df_test.csv')
+df_test = pd.read_csv('MLBG59/tests/df_test.csv')
 
 
 
@@ -140,7 +140,7 @@ class TestTrain_Predict(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # instantiate autoML object
-        cls.df = MLKit(df_test.copy(), target='y_yes')
+        cls.df = MLBG59(df_test.copy(), target='y_yes')
         # audit
         cls.df.audit(verbose=0)
         # get outliers
