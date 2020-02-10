@@ -20,3 +20,5 @@ AutoML is built as a class inherited from pandas dataframe one, allowing user to
    :maxdepth: 3
    :caption: Features
    :hidden:
+
+   features
