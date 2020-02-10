@@ -2,7 +2,7 @@ import xgboost
 import random
 import itertools as it
 # import datetime
-from MLBG59.Modelisation.Techniques.Bagging import *
+from MLBG59.Modelisation.Bagging import *
 from MLBG59.Utils.Utils import *
 from MLBG59.Utils.Display import color_print
 from datetime import datetime

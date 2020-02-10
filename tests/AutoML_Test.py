@@ -1,9 +1,9 @@
-from MLBG59.MLKit import AutoML
+from MLBG59.MLBG59 import AutoML
 import unittest
 import pandas as pd
 import numpy as np
 
-df_test = pd.read_csv('MLBG59/tests/df_test.csv')
+df_test = pd.read_csv('tests/df_test.csv')
 
 
 

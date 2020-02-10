@@ -1,6 +1,6 @@
 # AutoML
 
-The ambition of this project is to provide a Python library that automate the differents steps of a Machine Learning classification usecase
+The purpose of this project is to provide a Python library that automate the differents steps of a Machine Learning classification usecase
 - Load 
 - Audit
 - Clean and process

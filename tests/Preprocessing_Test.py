@@ -63,7 +63,7 @@ class Test_Date_preprocessing(unittest.TestCase):
                                      verbose=0)
 
     def test_all_to_date(self):
-        #self.assertEqual(np.dtype(self.df_to_date['American_date_nai']), 'datetime64[ns]')
+        # self.assertEqual(np.dtype(self.df_to_date['American_date_nai']), 'datetime64[ns]')
         self.assertEqual(np.dtype(self.df_to_date['Date_nai']), 'datetime64[ns]')
 
     def date_to_anc(self):

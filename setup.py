@@ -10,10 +10,19 @@ README = (HERE/ "README.md").read_text()
 setup(
     name='MLBG59',
     version='1.0.0',
+    description = "Classification Automated Machine Learning (AutoML)",
+    long_description=README,
+    long_description_content_type="text/markdown",
     url='https://github.com/Maxence-Labesse/MLBG59',
-
-    license='',
     author='Maxence LABESSE',
-    author_email='maxence.labesse@yahoo.fr',
-    description='Classification Automated Machine Learning'
+    author_email="maxence.labesse@yahoo.fr",
+    license='MIT',
+    classifiers=[
+        "License :: OSI Approved :: MIT Licence",
+        "Programming Language :: Python 3",
+        "Programming Language :: Python 3.7"
+    ],
+    packages=["MLBG59"],
+    include_package_data=True
+    #install_requires=["XGBOOST"],
 )

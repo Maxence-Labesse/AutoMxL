@@ -2,7 +2,7 @@ from MLBG59.Load.Load import *
 import unittest
 import pandas as pd
 
-file='MLBG59/tests/df_test.csv'
+file='tests/df_test.csv'
 
 class Test_Load(unittest.TestCase):
     

@@ -9,7 +9,7 @@ from MLBG59.Preprocessing.Date_Data import all_to_date, date_to_anc
 from MLBG59.Preprocessing.Missing_Values import fill_all_num, fill_all_cat
 from MLBG59.Preprocessing.Outliers import process_cat_outliers, process_num_outliers
 from MLBG59.Preprocessing.Categorical_Data import dummy_all_var
-from MLBG59.Modelisation.Tree_based.HyperOpt import *
+from MLBG59.Modelisation.HyperOpt import *
 
 
 class AutoML(pd.DataFrame):
