@@ -15,3 +15,8 @@ The purpose of this project is to provide a Python library that automate the dif
 It can be used aswell as a catalog of functions to ease and speed up repetitive Data Scientists tasks
 
 AutoML is built as a class inherited from pandas dataframe one, allowing user to get some more attributes that describes the datas.
+
+.. toctree::
+   :maxdepth: 3
+   :caption: Features
+   :hidden:

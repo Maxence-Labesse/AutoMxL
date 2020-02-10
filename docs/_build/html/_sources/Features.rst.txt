@@ -11,4 +11,4 @@ Get_Outliers
 ------------
 
 .. autoclass:: MLBG59.Audit.Get_Outliers
-     :members:
+    :members:
