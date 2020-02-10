@@ -1,19 +1,24 @@
+""" contains objets related to data importation :
+- get_delimiter : identify csv file delimiter
+- load data
+
+"""
 import pandas as pd
 
 
 def get_delimiter(csvfile):
     """
-    identify delimiter of a file
-    
-    input
-    -----
-     > csvfile : string
-          path+name of the file
-    
-    return
-    ------
-      > delimiter : char
+    Identify the delimiter of a .csv file
 
+    Parameters
+    ----------
+    csvfile : string
+        path and name of the file (Ex : "data/file.csv")
+
+    Returns
+    -------
+    string
+        identified delimiter
     """
     # csv file reading
     with open(csvfile, 'r') as myCsvfile:
@@ -22,11 +27,11 @@ def get_delimiter(csvfile):
         
         # Returns the lowest index of the substring if it is found in given string. (-1 = not found)
         if header.find(";") != -1:
-            return ";"
-        if header.find(",") != -1:
-            return ","
+            delimiter = ";"
+        elif header.find(",") != -1:
+            delimiter = ","
 
-    return ";"
+    return delimiter
 
 
 """
@@ -36,23 +41,24 @@ def get_delimiter(csvfile):
 
 def load_data(file, index_col=None, verbose=1):
     """
-    import a file as a DataFrame, no matter what his format is (csv, xlsx, Json)
-    
-    input
-    -----
-     > path : string
-          path of the file
-     > file : string
-          name of the file
-     > index_col : int, str, sequence of int / str, or False, default None
-          Column(s) to use as the row labels of the DataFrame, either given as string name or column index.
-          If a sequence of int / str is given, a MultiIndex is used.
-        
-    return
-    ------
-     > df : DataFrame
-          imported dataset
-        
+    Import dataset as a DataFrame
+    accept .csv, .xlsx, .xls files
+
+    Parameters
+    ----------
+    file : string
+        path and name of the file (Ex : "data/file.csv")
+        if file is .csv, automatically identify delimiter
+    index_col : int, str, sequence of int / str, or False, default None
+        Column(s) to use as the row labels of the DataFrame, either given as string name or column index.
+        If a sequence of int / str is given, a MultiIndex is used.
+    verbose : int (0/1) (Default : 1)
+        get more operations information
+
+    Returns
+    -------
+    DataFrame :
+        dataset imported as dataset
     """
     # CSV
     if file.endswith('.csv'):
