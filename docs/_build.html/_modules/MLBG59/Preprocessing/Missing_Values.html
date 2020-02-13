@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MLBG59.Preprocessing.Missing_Values &mdash; MLBG59 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MLBG59
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html">Load</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#audit">Audit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#modelisation">Modelisation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MLBG59</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MLBG59.Preprocessing.Missing_Values</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MLBG59.Preprocessing.Missing_Values</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Missing values handling:</span>
+
+<span class="sd"> - fill_num/fill_all_num: Replace missing values for numerical features</span>
+<span class="sd"> - fill_cat/fill_all_cat: Replace missing values for categorical features</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="n">get_type_features</span>
+
+
+<div class="viewcode-block" id="fill_num"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Missing_Values.fill_num">[docs]</a><span class="k">def</span> <span class="nf">fill_num</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="n">top_var_NA</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fill missing values of a num feature</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : DataFrame</span>
+<span class="sd">        Input dataset</span>
+<span class="sd">    var : string</span>
+<span class="sd">        name of the feature to fill</span>
+<span class="sd">    method : string (Default : &#39;median&#39;)</span>
+<span class="sd">        Method used to fill the NA values :</span>
+
+<span class="sd">        - zero : replace NA with zero</span>
+<span class="sd">        - median : replace with median</span>
+<span class="sd">        - mean : replace with mean</span>
+<span class="sd">        - regression : To-do</span>
+
+<span class="sd">     top_var_NA : boolean (Defaut : True)</span>
+<span class="sd">        If True, create a boolean column to identify replaced observations</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        Modified dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="s1">&#39;reg&#39;</span><span class="p">]:</span>
+        <span class="c1"># keep track of NA values in Top_var_NA</span>
+        <span class="k">if</span> <span class="n">top_var_NA</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">var_na</span> <span class="o">=</span> <span class="s1">&#39;top_NA_&#39;</span> <span class="o">+</span> <span class="n">var</span>
+            <span class="n">df_local</span><span class="p">[</span><span class="n">var_na</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">df_local</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span> <span class="n">var_na</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># &#39;zero&#39; method</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;zero&#39;</span><span class="p">:</span>
+            <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># &#39;median&#39; method</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;median&#39;</span><span class="p">:</span>
+            <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">median</span><span class="p">())</span>
+        <span class="c1"># &#39;mean&#39; method</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
+            <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+        <span class="c1"># &#39;regression&#39; method</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;regression&#39;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;coming soon&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">method</span> <span class="o">+</span> <span class="s1">&#39; méthode invalide : choisir entre zero/mean/median/reg &#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_local</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">-------------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="fill_all_num"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Missing_Values.fill_all_num">[docs]</a><span class="k">def</span> <span class="nf">fill_all_num</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="n">top_var_NA</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fill missing values for numerical features from a list</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : DataFrame</span>
+<span class="sd">        Input dataset</span>
+<span class="sd">    var_list : list (Default : None)</span>
+<span class="sd">        List of the features to fill</span>
+<span class="sd">        If None, contains all the num features</span>
+<span class="sd">     method : string (Default : &#39;median&#39;)</span>
+<span class="sd">        Method used to fill the NA values :</span>
+
+<span class="sd">        - zero : replace NA with zero</span>
+<span class="sd">        - median : replace with median</span>
+<span class="sd">        - mean : replace with mean</span>
+<span class="sd">        - regression : replace with regression predictions</span>
+<span class="sd">     top_var_NA : boolean (Defaut : True)</span>
+<span class="sd">        If True, create a boolean column to identify replaced observations</span>
+<span class="sd">     verbose : int (0/1) (Default : 1)</span>
+<span class="sd">        Get more operations information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        Modified dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if var_list = None, get all numerical features</span>
+    <span class="c1"># else, exclude features from var_list whose type is not numerical</span>
+    <span class="n">var_list</span> <span class="o">=</span> <span class="n">get_type_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;num&#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">)</span>
+
+    <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; method: &#39;</span> <span class="o">+</span> <span class="n">method</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; filled features:&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="n">var_list</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">var_list</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+    <span class="c1"># fill Na values for each feature in var_list</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">:</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">fill_num</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">top_var_NA</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_local</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">-------------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="fill_cat"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Missing_Values.fill_cat">[docs]</a><span class="k">def</span> <span class="nf">fill_cat</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;NR&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fill missing values of a categorical feature</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : Dataframe</span>
+<span class="sd">        Input dataset</span>
+<span class="sd">    var : string</span>
+<span class="sd">        Feature to fill</span>
+<span class="sd">    method : string (Default : &#39;NR&#39;)</span>
+<span class="sd">        Method used to fill the NA values :</span>
+
+<span class="sd">        - NR : replace NA with &#39;NR&#39;</span>
+<span class="sd">        - regression : replace with regression predictions</span>
+<span class="sd">    top_var_NA : boolean (Defaut : True)</span>
+<span class="sd">        If True, create a boolean column to identify replaced observations</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    df_local : DataFrame</span>
+<span class="sd">        Modified dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;NR&#39;</span><span class="p">,</span> <span class="s1">&#39;reg&#39;</span><span class="p">]:</span>
+
+        <span class="c1"># &#39;NR&#39; method</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;NR&#39;</span><span class="p">:</span>
+            <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">&#39;NR&#39;</span><span class="p">)</span>
+        <span class="c1"># &#39;regression&#39; method</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;regression&#39;</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">method</span> <span class="o">+</span> <span class="s1">&#39; méthode invalide : choisir entre NR/reg &#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_local</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">-------------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="fill_all_cat"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Missing_Values.fill_all_cat">[docs]</a><span class="k">def</span> <span class="nf">fill_all_cat</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;NR&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Fill missing values for categorical features from a list</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : DataFrame</span>
+<span class="sd">        Input dataset</span>
+<span class="sd">    var_list : list (Default : None)</span>
+<span class="sd">        list of the features to fill</span>
+<span class="sd">        If None, contains all the cat features</span>
+<span class="sd">    method : string (Default : &#39;NR&#39;)</span>
+<span class="sd">        Method used to fill the NA values :</span>
+
+<span class="sd">        - NR : replace NA with &#39;NR&#39;</span>
+<span class="sd">        - regression : replace with regression predictions (coming soon)</span>
+<span class="sd">    verbose : int (0/1) (Default : 1)</span>
+<span class="sd">        Get more operations information</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">        Modified dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if var_list = None, get all categorical features</span>
+    <span class="c1"># else, exclude features from var_list whose type is not categorical</span>
+    <span class="n">var_list</span> <span class="o">=</span> <span class="n">get_type_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">)</span>
+
+    <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; method: &#39;</span> <span class="o">+</span> <span class="n">method</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; filled features:&#39;</span><span class="p">,</span> <span class="n">df</span><span class="p">[</span><span class="n">var_list</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">var_list</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="c1"># fill Na values for each feature in var_list</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">:</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">fill_cat</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">df_local</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Maxence LABESSE
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

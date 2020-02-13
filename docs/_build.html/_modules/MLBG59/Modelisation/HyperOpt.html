@@ -1,0 +1,572 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MLBG59.Modelisation.HyperOpt &mdash; MLBG59 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MLBG59
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html">Load</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#audit">Audit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#modelisation">Modelisation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MLBG59</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MLBG59.Modelisation.HyperOpt</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MLBG59.Modelisation.HyperOpt</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Hyperoptimisation class :</span>
+<span class="sd">Create random HPs combinations, train and predict models</span>
+
+<span class="sd">Available algorithms : Random Forest, XGBOOST</span>
+
+<span class="sd">Hyperopt class methods :</span>
+
+<span class="sd">- get_params</span>
+<span class="sd">- train</span>
+<span class="sd">- predict</span>
+<span class="sd">- get_best_model</span>
+<span class="sd">- model_res_to_df</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">xgboost</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
+<span class="c1"># import datetime</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Modelisation.Bagging</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Utils.Display</span> <span class="k">import</span> <span class="n">color_print</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Defaults HP grid for RF and XGBOOST</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">default_RF_grid_param</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+    <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="s1">&#39;log2&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+    <span class="s1">&#39;min_samples_split&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+    <span class="c1"># &#39;min_samples_leaf&#39;: [1, 2, 4]</span>
+<span class="p">}</span>
+
+<span class="n">default_XGB_grid_param</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;n_estimators&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+    <span class="s1">&#39;max_features&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="s1">&#39;log2&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span>
+    <span class="s1">&#39;min_samples_split&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">],</span>
+    <span class="s1">&#39;min_samples_leaf&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+    <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.003</span><span class="p">,</span> <span class="mf">0.006</span><span class="p">,</span> <span class="mf">0.009</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.06</span><span class="p">,</span> <span class="mf">0.09</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">],</span>
+    <span class="s1">&#39;scale_pos_weight&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">-------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Hyperopt"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt">[docs]</a><span class="k">class</span> <span class="nc">Hyperopt</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;For a selected algorithm and a hyper-parameters grid.</span>
+<span class="sd">    Pick N random HPs combinations and train/predict the models</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    classifier : string (Default : &#39;RF&#39;)</span>
+<span class="sd">        classifier</span>
+<span class="sd">    grid_param : dict (Default : default_RF_grid_param)</span>
+<span class="sd">        HPs grid</span>
+<span class="sd">    n_param_comb : int (Default : 10)</span>
+<span class="sd">        number of HPS combinations</span>
+<span class="sd">    top_bagging : Boolean (Default = False)</span>
+<span class="sd">        use bagging method</span>
+<span class="sd">    bagging_param : n-uple</span>
+<span class="sd">        bagging parameters (default : default_bagging_param (Bagging module))</span>
+<span class="sd">    train_model_dict : dict</span>
+<span class="sd">        {model_index : {&#39;HP&#39;, &#39;probas&#39;, &#39;model&#39;, &#39;features_importance&#39;, &#39;evaluation&#39;}}</span>
+<span class="sd">    bagging_object : Bagging</span>
+<span class="sd">        bagging object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">classifier</span><span class="o">=</span><span class="s1">&#39;RF&#39;</span><span class="p">,</span>
+                 <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">n_param_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                 <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">bagging_param</span><span class="o">=</span><span class="n">default_bagging_param</span><span class="p">,</span>
+                 <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="c1"># parameters</span>
+        <span class="k">if</span> <span class="n">grid_param</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">grid_param</span> <span class="o">=</span> <span class="n">default_RF_grid_param</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">classifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid_param</span> <span class="o">=</span> <span class="n">grid_param</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_param_comb</span> <span class="o">=</span> <span class="n">n_param_comb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_bagging</span> <span class="o">=</span> <span class="n">top_bagging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bagging_param</span> <span class="o">=</span> <span class="n">bagging_param</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">comb_seed</span> <span class="o">=</span> <span class="n">comb_seed</span>
+        <span class="c1"># attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bagging_object</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Hyperopt.get_params"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return object parameters</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict containing parameters</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;classifier&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">,</span>
+                <span class="s1">&#39;grid_param&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid_param</span><span class="p">,</span>
+                <span class="s1">&#39;n_param_comb&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_param_comb</span><span class="p">,</span>
+                <span class="s1">&#39;top_bagging&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_bagging</span><span class="p">,</span>
+                <span class="s1">&#39;bagging_param&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bagging_param</span><span class="p">,</span>
+                <span class="s1">&#39;comb_seed&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_seed</span><span class="p">}</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Hyperopt.train"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Train the models</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df_train : DataFrame</span>
+<span class="sd">            Training set</span>
+<span class="sd">        target : string</span>
+<span class="sd">            Target name</span>
+<span class="sd">        verbose : int (0/1) (Default : 1)</span>
+<span class="sd">            Get more operations information</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Sort HPs grid dict by param name (a-&gt;z)</span>
+        <span class="n">grid_names</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_param</span><span class="p">)</span>
+        <span class="c1"># random sampling : &#39;n_param_comb&#39; HPS combinations</span>
+        <span class="c1"># list(it.product(*(self.grid_param[Name] for Name in grid_names))) create all the possible combinations</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">comb_seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">comb_seed</span><span class="p">)</span>
+
+        <span class="n">sample_combinations</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">it</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_param</span><span class="p">[</span><span class="n">Name</span><span class="p">]</span> <span class="k">for</span> <span class="n">Name</span> <span class="ow">in</span> <span class="n">grid_names</span><span class="p">))),</span>
+                                            <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_param_comb</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[34m&#39;</span> <span class="o">+</span> <span class="s1">&#39;Random among grid search:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_param_comb</span><span class="p">,</span> <span class="s1">&#39;HP combs&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[34m&#39;</span> <span class="o">+</span> <span class="s1">&#39;Model : &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="p">)</span>
+
+        <span class="c1"># init train_model_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bagging_object</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># for each HP combination :</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_combinations</span><span class="p">)):</span>
+
+            <span class="n">t_ini_model</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+            <span class="c1"># Model params</span>
+            <span class="n">HP_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">grid_names</span><span class="p">,</span> <span class="n">sample_combinations</span><span class="p">[</span><span class="n">l</span><span class="p">]))</span>
+
+            <span class="c1"># Model creation</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">==</span> <span class="s1">&#39;RF&#39;</span><span class="p">:</span>  <span class="c1"># Classifier Random Forest</span>
+                <span class="n">clf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="o">**</span><span class="n">HP_dict</span><span class="p">)</span>
+            <span class="c1"># elif self.classifier == &#39;XGBOOST&#39;:</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">clf</span> <span class="o">=</span> <span class="n">xgboost</span><span class="o">.</span><span class="n">XGBClassifier</span><span class="p">(</span><span class="o">**</span><span class="n">HP_dict</span><span class="p">)</span>
+
+            <span class="c1"># X / ycx</span>
+            <span class="n">y_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+            <span class="n">X_train</span> <span class="o">=</span> <span class="n">df_train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Without bagging</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_bagging</span><span class="p">:</span>
+
+                <span class="c1"># model training</span>
+                <span class="n">clf_fit</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+                <span class="c1"># features importance</span>
+                <span class="n">features_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">clf</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">))</span>
+                <span class="c1"># classification probas</span>
+                <span class="n">y_proba</span> <span class="o">=</span> <span class="n">clf_fit</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_train</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">y_pred</span> <span class="o">=</span> <span class="n">clf_fit</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+
+            <span class="c1"># With bagging</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># init bagging object with default params</span>
+                <span class="n">bag</span> <span class="o">=</span> <span class="n">Bagging</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">bagging_param</span><span class="p">)</span>
+                <span class="c1"># model training</span>
+                <span class="n">bag</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+                <span class="n">clf_fit</span> <span class="o">=</span> <span class="n">bag</span><span class="o">.</span><span class="n">list_model</span>
+                <span class="c1"># features importance</span>
+                <span class="n">features_dict</span> <span class="o">=</span> <span class="n">bag</span><span class="o">.</span><span class="n">feat_importance_BAG_RF</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+                <span class="c1"># classification probas</span>
+                <span class="n">y_proba</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="n">bag</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">bagging_object</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">bag</span>
+
+            <span class="c1"># Model evaluation</span>
+            <span class="n">eval_dict</span> <span class="o">=</span> <span class="n">classifier_evaluate</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">y_proba</span><span class="p">,</span> <span class="n">print_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="c1"># store</span>
+            <span class="n">train_model</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;HP&#39;</span><span class="p">:</span> <span class="n">HP_dict</span><span class="p">,</span>
+                           <span class="s1">&#39;probas&#39;</span><span class="p">:</span> <span class="n">y_proba</span><span class="p">,</span>
+                           <span class="s1">&#39;model&#39;</span><span class="p">:</span> <span class="n">clf_fit</span><span class="p">,</span>
+                           <span class="s1">&#39;features_importance&#39;</span><span class="p">:</span> <span class="n">features_dict</span><span class="p">,</span>
+                           <span class="s1">&#39;evaluation&#39;</span><span class="p">:</span> <span class="n">eval_dict</span><span class="p">}</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="n">train_model</span>
+
+            <span class="n">t_fin_model</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_combinations</span><span class="p">))</span> <span class="o">+</span>
+                      <span class="s1">&#39; &gt;&gt; </span><span class="si">{}</span><span class="s1"> Sec.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">t_fin_model</span> <span class="o">-</span> <span class="n">t_ini_model</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Hyperopt.predict"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply the models</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : DataFrame</span>
+<span class="sd">            Set to apply the models</span>
+<span class="sd">        target : string</span>
+<span class="sd">            Target name</span>
+<span class="sd">        delta_auc_th : float</span>
+<span class="sd">            value available for abs(auc(train) - auc(test))</span>
+<span class="sd">        verbose : int (0/1) (Default : 1)</span>
+<span class="sd">            Get more operations information</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">             {model index: {&#39;predictions&#39;, &#39;evaluation&#39;}}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res_model_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># X / y</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># For each HPs combination</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">model</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="s1">&#39;model&#39;</span><span class="p">]</span>
+
+            <span class="n">t_ini_model</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+
+            <span class="c1"># Without bagging</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_bagging</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+
+                <span class="c1"># classification probas</span>
+                <span class="n">y_proba</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="c1"># classification votes</span>
+                <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+            <span class="c1"># With bagging</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_bagging</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+
+                <span class="c1"># classification probs and votes</span>
+                <span class="n">y_proba</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_bagging</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+                <span class="c1"># store</span>
+            <span class="n">dict_model</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;y_proba&#39;</span><span class="p">:</span> <span class="n">y_proba</span><span class="p">,</span>
+                          <span class="s1">&#39;y_pred&#39;</span><span class="p">:</span> <span class="n">y_pred</span><span class="p">}</span>
+
+            <span class="c1"># compute model metrics</span>
+            <span class="n">eval_dict</span> <span class="o">=</span> <span class="n">classifier_evaluate</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">,</span> <span class="n">y_proba</span><span class="p">,</span> <span class="n">print_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">fpr_train</span><span class="p">,</span> <span class="n">tpr_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;evaluation&#39;</span><span class="p">][</span><span class="s1">&#39;fpr tpr&#39;</span><span class="p">]</span>
+            <span class="n">eval_dict</span><span class="p">[</span><span class="s1">&#39;delta_auc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">auc</span><span class="p">(</span><span class="n">fpr_train</span><span class="p">,</span> <span class="n">tpr_train</span><span class="p">)</span> <span class="o">-</span> <span class="n">eval_dict</span><span class="p">[</span><span class="s2">&quot;Roc_auc&quot;</span><span class="p">])</span>
+
+            <span class="c1"># store </span>
+            <span class="n">res_model_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;predictions&#39;</span><span class="p">:</span> <span class="n">dict_model</span><span class="p">,</span>
+                                   <span class="s1">&#39;evaluation&#39;</span><span class="p">:</span> <span class="n">eval_dict</span><span class="p">}</span>
+
+            <span class="c1"># print metrics</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;HP&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">eval_dict</span><span class="p">[</span><span class="s1">&#39;delta_auc&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">delta_auc</span><span class="p">:</span>
+                    <span class="n">c_code</span> <span class="o">=</span> <span class="mi">32</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">c_code</span> <span class="o">=</span> <span class="mi">31</span>
+
+                <span class="n">roc_auc_train</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr_train</span><span class="p">,</span> <span class="n">tpr_train</span><span class="p">)</span>
+                <span class="n">color_print</span><span class="p">(</span>
+                    <span class="s1">&#39; &gt; AUC train: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">[</span><span class="s2">&quot;Roc_auc&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; test: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">roc_auc_train</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span>
+                    <span class="s1">&#39; / F1: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">[</span><span class="s1">&#39;F1&#39;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span>
+                    <span class="s1">&#39; / prec: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">[</span><span class="s1">&#39;Precision&#39;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span>
+                    <span class="s1">&#39; / recall: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">[</span><span class="s1">&#39;Recall&#39;</span><span class="p">],</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">color_code</span><span class="o">=</span><span class="n">c_code</span><span class="p">)</span>
+
+            <span class="n">t_fin_model</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> Sec.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">t_fin_model</span> <span class="o">-</span> <span class="n">t_ini_model</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span>
+
+        <span class="k">return</span> <span class="n">res_model_dict</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Hyperopt.get_best_model"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_best_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_model_dict</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">delta_auc_th</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the best model according to a selected metric among valid model (abs(auc(train)-auc(test)))</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        test_model_dict : dict</span>
+<span class="sd">            {model index : model outputs and metrics}</span>
+<span class="sd">        metric : string (default = F1-score)</span>
+<span class="sd">            Metric used to get the best model</span>
+<span class="sd">        delta_auc_th : float</span>
+<span class="sd">            value available for abs(auc(train) - auc(test))</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Best model index</span>
+<span class="sd">        list</span>
+<span class="sd">            List containing valid model indexes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># select valid models (abs(auc_train - auc_test)&lt;0.03)</span>
+        <span class="n">valid_model</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">test_model_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">param</span><span class="p">[</span><span class="s1">&#39;evaluation&#39;</span><span class="p">][</span><span class="s1">&#39;delta_auc&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">delta_auc_th</span><span class="p">:</span>
+                <span class="n">valid_model</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
+
+        <span class="c1"># Best model according to selected metric</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_model</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">best_model_idx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">valid_model</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">valid_model</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;evaluation&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &gt;&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_model</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">&#39; valid models |auc(train)-auc(test)|&lt;=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">delta_auc_th</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &gt; best model : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">best_model_idx</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">best_model_idx</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;0 valid model&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">best_model_idx</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">valid_model</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ---------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Hyperopt.model_res_to_df"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.model_res_to_df">[docs]</a>    <span class="k">def</span> <span class="nf">model_res_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_model_dict</span><span class="p">,</span> <span class="n">sort_metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Store models summary in DataFrame</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        test_model_dict : dict</span>
+<span class="sd">            dict containing models informations</span>
+<span class="sd">        sort_metric : string (default = &#39;F1&#39;)</span>
+<span class="sd">            metric to sort models in DataFrame</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataFrame</span>
+<span class="sd">            DataFrame containing model results</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># dataFrame columns names</span>
+        <span class="n">model_col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;model_index&#39;</span><span class="p">]</span>
+        <span class="n">HP_col</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;HP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">bagging_col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bagging&#39;</span><span class="p">]</span>
+        <span class="n">metrics_col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Accuracy&#39;</span><span class="p">,</span> <span class="s1">&#39;Roc_auc&#39;</span><span class="p">,</span> <span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="s1">&#39;Logloss&#39;</span><span class="p">,</span> <span class="s1">&#39;Precision&#39;</span><span class="p">,</span> <span class="s1">&#39;Recall&#39;</span><span class="p">,</span> <span class="s1">&#39;delta_auc&#39;</span><span class="p">]</span>
+        <span class="n">feat_imp_col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;TOP_feat1&#39;</span><span class="p">,</span> <span class="s1">&#39;TOP_feat2&#39;</span><span class="p">,</span> <span class="s1">&#39;TOP_feat3&#39;</span><span class="p">,</span> <span class="s1">&#39;TOP_feat4&#39;</span><span class="p">,</span> <span class="s1">&#39;TOP_feat5&#39;</span><span class="p">]</span>
+
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">model_col</span> <span class="o">+</span> <span class="n">HP_col</span> <span class="o">+</span> <span class="n">bagging_col</span> <span class="o">+</span> <span class="n">metrics_col</span> <span class="o">+</span> <span class="n">feat_imp_col</span><span class="p">)</span>
+
+        <span class="c1"># store informations in df</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dict_tmp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;model_index&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">}</span>
+            <span class="n">dict_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;HP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+            <span class="n">dict_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">x</span><span class="p">:</span> <span class="n">test_model_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;evaluation&#39;</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">metrics_col</span><span class="p">})</span>
+            <span class="n">dict_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;bagging&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_bagging</span><span class="p">})</span>
+            <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;features_importance&#39;</span><span class="p">],</span>
+                                            <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;index&#39;</span><span class="p">:</span> <span class="s1">&#39;feat&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;importance&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;importance&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">serie_tmp</span> <span class="o">=</span> <span class="n">df_tmp</span><span class="p">[</span><span class="s1">&#39;feat&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nb">round</span><span class="p">(</span><span class="n">df_tmp</span><span class="p">[</span><span class="s1">&#39;importance&#39;</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+            <span class="n">dict_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">feat_imp_col</span><span class="p">,</span> <span class="n">serie_tmp</span><span class="o">.</span><span class="n">tolist</span><span class="p">())))</span>
+
+            <span class="n">df_local</span> <span class="o">=</span> <span class="n">df_local</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dict_tmp</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df_local</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_local</span><span class="p">[</span><span class="s1">&#39;delta_auc&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.03</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">sort_metric</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Maxence LABESSE
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

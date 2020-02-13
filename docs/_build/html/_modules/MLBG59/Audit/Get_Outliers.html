@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MLBG59.Audit.Get_Outliers &mdash; MLBG59 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MLBG59
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html">Load</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#audit">Audit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#modelisation">Modelisation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MLBG59</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MLBG59.Audit.Get_Outliers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MLBG59.Audit.Get_Outliers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Outliers detection :</span>
+
+<span class="sd"> - get_cat_outliers : identify categorical features containing outliers and store their names in a list</span>
+<span class="sd"> - get_num_outliers : identify numerical features containing outliers and store their names in a list data</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Utils.Display</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="n">get_type_features</span>
+
+
+<div class="viewcode-block" id="get_cat_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Audit.Get_Outliers.get_cat_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_cat_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;outliers detection for categorical features</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">     df : DataFrame</span>
+<span class="sd">        Input dataset</span>
+<span class="sd">     var_list : list (Default : None)</span>
+<span class="sd">        list of the features to analyze.</span>
+<span class="sd">        If None, contains all the categorical features</span>
+<span class="sd">     threshold : float (Default : 0.05)</span>
+<span class="sd">        Minimum modality frequency</span>
+<span class="sd">     verbose : int (0/1) (Default : 1)</span>
+<span class="sd">        Get more operations information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">     outlier_dict : dict</span>
+<span class="sd">          {feature : list of modalities considered as outliers}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if var_list = None, get all categorical features</span>
+    <span class="c1"># else, exclude features from var_list whose type is not categorical</span>
+    <span class="n">var_list</span> <span class="o">=</span> <span class="n">get_type_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;cat&#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">)</span>
+
+    <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var_list</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;cat features outliers identification (frequency&lt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; features : &#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">,)</span>
+
+    <span class="c1"># initialize output dict</span>
+    <span class="n">outlier_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># value count (frequency as number and percent for each modality) for features in var_list</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_local</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="c1"># percent</span>
+        <span class="n">freq_perc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+
+        <span class="c1"># if feature contain modalities with frequency &lt; trehshold, store in outlier_dict</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">freq_perc</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">freq_perc</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">outlier_dict</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq_perc</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">freq_perc</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt; containing outliers&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">outlier_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+    <span class="k">return</span> <span class="n">outlier_dict</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">-------------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="get_num_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Audit.Get_Outliers.get_num_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_num_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xstd</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;outliers detection for num features</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">     df : DataFrame</span>
+<span class="sd">        Input dataset</span>
+<span class="sd">     var_list : list (Default : None)</span>
+<span class="sd">        List of the features to analyze.</span>
+<span class="sd">        If None, contains all the num features</span>
+<span class="sd">     xstd : int (Default : 3)</span>
+<span class="sd">        coefficient (TODO)</span>
+<span class="sd">     verbose : int (0/1) (Default : 1)</span>
+<span class="sd">        Get more operations information</span>
+<span class="sd">            </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">     outlier_dict : dict</span>
+<span class="sd">         {feature : index of outliers}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if var_list = None, get all num features</span>
+    <span class="c1"># else, exclude features from var_list whose type is not num</span>
+    <span class="n">var_list</span> <span class="o">=</span> <span class="n">get_type_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;num&#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">)</span>
+
+    <span class="n">df_bis</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var_list</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;num features outliers identification ( x: |x - mean| &gt; &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">xstd</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; * var)&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; features : &#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">,</span> <span class="p">)</span>
+
+    <span class="c1"># initialize output dict</span>
+    <span class="n">outlier_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># compute features upper and lower limit (deviation from the mean &gt; x*std dev (x=3 by default))</span>
+    <span class="n">data_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">df_bis</span><span class="p">)</span>
+    <span class="n">data_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">df_bis</span><span class="p">)</span>
+    <span class="n">anomaly_cut_off</span> <span class="o">=</span> <span class="n">data_std</span> <span class="o">*</span> <span class="n">xstd</span>
+    <span class="n">lower_limit</span> <span class="o">=</span> <span class="n">data_mean</span> <span class="o">-</span> <span class="n">anomaly_cut_off</span>
+    <span class="n">upper_limit</span> <span class="o">=</span> <span class="n">data_mean</span> <span class="o">+</span> <span class="n">anomaly_cut_off</span>
+
+    <span class="n">df_outliers</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+    <span class="c1"># mask (1 if outlier, else 0)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_bis</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df_outliers</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">df_bis</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">lower_limit</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">df_bis</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">upper_limit</span><span class="p">[</span><span class="n">col</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># for features containing outliers</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_outliers</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_outliers</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
+        <span class="c1"># store features and outliers index in outlierèdict</span>
+        <span class="n">outlier_dict</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">lower_limit</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">upper_limit</span><span class="p">[</span><span class="n">col</span><span class="p">]]</span>
+
+    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt; containing outliers&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">outlier_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+    <span class="k">return</span> <span class="n">outlier_dict</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Maxence LABESSE
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
