@@ -1,20 +1,23 @@
+""" Classifiers utils functions :
 
+- features_importance_select : select top features according to model importance
+"""
 
 def features_importance_select(eval_dict, treshold):
-    """
-    get most important features according to a threshold
+    """Get most important features according to a threshold
 
-    input
-    -----
-     > eval_dict : dict
-        model evaluation dict
-     > threshold : int/float
+    Parameters
+    ----------
+    eval_dict : dict
+        Model evaluation dict
+    threshold : int/float
+
         - if int : number of top important features to get
         - if float : cumulative importance rate of top features
 
-    return
-    ------
-     > n_feat_list : list
+    Returns
+    -------
+     list
         most important features
     """
     rf_top_feat = eval_dict['feature_importances']

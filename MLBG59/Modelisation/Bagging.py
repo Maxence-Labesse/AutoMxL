@@ -1,3 +1,17 @@
+""" Bagging algorithm class
+
+Bagging class methods :
+
+- get_params
+- train
+- predict
+- feat_importance_BAG_RF
+
+Functions :
+
+- Bagging sample
+
+"""
 from sklearn.ensemble import RandomForestClassifier
 from MLBG59.Utils.Utils import *
 
@@ -10,32 +24,29 @@ default_bagging_param = {'niter': 5,
 
 
 class Bagging(object):
-    """ 
-    Meta-algo designed to improve the stability and accuracy of ML classif/regression algos
+    """Meta-algo designed to improve the stability and accuracy of ML classif/regression algos
     or to face an "imbalanced target distribution" problem
     
     Bagging generates m new training sets more balanced. Then, m models are fitted using the m
     samples and combined by averaging the output (for regression) or voting (for classification).
     
     Parameters
-    ---------
-     > classifier : Model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)
-          Model fitted on the samples
-     > niter : int (Default : 5)
-          # samples
-     > pos_sample_size : int/float (Default : 1.0)
-          number of target=1 observations in each sample (filled with 3*target=0 obs )
-              - if int : pos_sample_size
-              - if float : pos_sample_size*df.loc[df[target] == 1]
-     > replace : Boolean (Default : False)
-          If True, sampling with replacement
-        
-    Attributes
-    ---------
-     > liste_model : list (Default : None)
-         Fitted models list
-    """
+    ----------
+    classifier : Model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)
+        Model fitted on the samples
+    niter : int (Default : 5)
+        # samples
+    pos_sample_size : int/float (Default : 1.0)
+        Number of target=1 observations in each sample (filled with 3*target=0 obs )
 
+        - if int : pos_sample_size
+        - if float : pos_sample_size*df.loc[df[target] == 1]
+    replace : Boolean (Default : False)
+        If True, sampling with replacement
+
+    list_model : list (Default : None)
+        Fitted models list
+    """
     def __init__(self,
                  classifier=RandomForestClassifier(n_estimators=100, max_leaf_nodes=100),
                  niter=5,
@@ -53,8 +64,11 @@ class Bagging(object):
     """
 
     def get_params(self):
-        """
-        get object parameters
+        """Get object parameters
+
+        Parameters
+        ----------
+        self
         """
         return {'classifier': self.classifier,
                 'niter': self.niter,
@@ -67,21 +81,21 @@ class Bagging(object):
     """
 
     def train(self, df_train, target):
-        """
-        Create bagging samples from a DataFrame
-        fit the model on each sample
+        """Create bagging samples from a DataFrame.
+        Fit the model on each sample
         
-        input
-        -----
-         > df_train : DataFrame
-              train dataset
-         > target : String
-              target
+        Parameters
+        ----------
+        self
+        df_train : DataFrame
+            Training dataset
+        target : String
+            Target
 
-        return
-        ------
-         > list_model : list
-              fitted models lisdt
+        Returns
+        -------
+         self.list_model : list
+            Fitted models lisdt
         """
         # list_model init
         self.list_model = [None] * self.niter
@@ -114,23 +128,21 @@ class Bagging(object):
     """
 
     def predict(self, X):
-        """
-        Apply bagging models on a test set
+        """Apply bagging models on a test set.
         combine by averaging the output (for regression) or voting (for classification)
 
-        input
-        -----
-         > X : DataFrame
-              test set
-         > list_model : list
-              fitted models list
+        Parameters
+        ----------
+        self
+        X : DataFrame
+            Testing dataset
 
-        return
-        ------
-         > list_proba_pred : numpy.ndarray
-              averaged classification probabilities
-         > list_pred : numpy.ndarray
-              predictions for each obs
+        Returns
+        -------
+        numpy.ndarray
+            Averaged classification probabilities
+        numpy.ndarray
+            Predictions for each obs
         """
         # Init probs storage matrix
         mat_prob = np.zeros((self.niter, X.shape[0]))
@@ -154,19 +166,18 @@ class Bagging(object):
     """
 
     def feat_importance_BAG_RF(self, X):
-        """
-        Get features importance of the model
+        """Get features importance of the model
         
-        input
-        -----
-         > X : DataFrame
-            input dataset
-         > list_model : list
-             fitted models list
+        Parameters
+        ----------
+        self
+        X : DataFrame
+            Input Dataset
             
-        return
-        ------
-         > features_dict : dict (feature : importance)
+        Returns
+        -------
+        dict
+            {feature : importance}
             
         """
         # Init importance storage matrix
@@ -191,24 +202,23 @@ class Bagging(object):
 
 
 def Bagging_sample(df, target, N, replace=False):
-    """
-    Sample creation with N target=1 and 3*N target=0 observations
+    """Sample creation with N target=1 and 3*N target=0 observations
         
-    input
-    -----
-     > df : DataFrame
-         source dataset
-     > target : String
-         target
-     > N : int
-         number of target=1 observations
-     > replace : Boolean (défaut : False)
-         if True, create samples with replacement
+    Parameters
+    ----------
+    df : DataFrame
+        Input dataset
+    target : String
+        target
+    N : int
+        Number of target=1 observations
+    replace : Boolean (défaut : False)
+        If True, create samples with replacement
             
-    return
-    ------
-     > df_bag : DataFrame
-         created sample
+    Returns
+    -------
+    df_bag : DataFrame
+        sample dataset
     """
     # split target = 1 / 0
     df_pos = df.loc[(df[target] == 1)]

@@ -222,7 +222,7 @@ class AutoML(pd.DataFrame):
                 color_print('Outliers processing')
                 color_print('  Num:')
             if self.target in self.num_outliers_columns:
-                self.num_outliers_columns = self.num_outliers_columns.remove(self.target)
+                self.num_outliers_columns.remove(self.target)
             df_local = process_num_outliers(df_local, self.num_outliers_columns, xstd=4, verbose=verbose)
 
             # num features

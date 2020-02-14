@@ -1,27 +1,32 @@
+""" Outliers handling :
+
+ - remove_bind :
+ - process_cat_outliers :
+ - process_num_outliers
+"""
 import pandas as pd
 import numpy as np
 from MLBG59.Utils.Utils import get_type_features
 
 
 def remove_bind(df, col, method='percent', threshold=0.05):
-    """
-    replace least represented values with 'other' for a list of categorical features
+    """Replace least represented values with 'other' for a list of categorical features
     
-    input
-    -----
-     > df : DataFrame
-         dataset
-     > col : string
-         name of the feature
-     > method : string (Default : 'percent')
-         methode for values selection
-     > threshold : float (Default : 0.05)
-         threshold used for method
+    Parameters
+    ----------
+    df : DataFrame
+        Input dataset
+    col : string
+        Name of the feature
+    method : string (Default : 'percent')
+        Method for values selection
+    threshold : float (Default : 0.05)
+        Threshold used for method
 
-    return
-    ------
-     > df_local : DataFrame
-         dataset modifié
+    Returns
+    -------
+    DataFrame
+        Modified dataset
     """
     df_local = df.copy()
 
@@ -51,27 +56,26 @@ def remove_bind(df, col, method='percent', threshold=0.05):
 
 
 def process_cat_outliers(df, var_list, method="percent", threshold=0.05, verbose=1):
-    """
-    replace outliers for a list of categorical features
+    """Replace outliers for a list of categorical features
     
-    input
-    -----
-     > df : DataFrame
-         dataset
-     > var_list : list (Default : None)
-         list of the features to process
-         if None, contains all the cat features
-     > method : string (Default : 'percent')
-         methode for values selection
-     > threshold : float (Default : 0.05)
-         threshold used for method
-     > verbose : int (0/1) (Default : 1)
-          get more operations information
+    Parameters
+    ----------
+    df : DataFrame
+        Input dataset
+    Var_list : list (Default : None)
+        List of the features to process
+        If None, contains all the cat features
+    method : string (Default : 'percent')
+        Method for values selection
+    threshold : float (Default : 0.05)
+        threshold used for method
+    verbose : int (0/1) (Default : 1)
+        Get more operations information
         
-    return
-    ------
-    df_local : DataFrame
-        dataset modifié
+    Returns
+    -------
+    DataFrame
+        Modified dataset
     """
     # if var_list = None, get all categorical features
     # else, exclude features from var_list whose type is not categorical
@@ -96,26 +100,24 @@ def process_cat_outliers(df, var_list, method="percent", threshold=0.05, verbose
 
 
 def process_num_outliers(df, var_list, xstd=3, verbose=1):
-    """
-    replace outliers for a list of num features
+    """Replace outliers for a list of num features
     
-    input
-    -----
-     > df : DataFrame
-          dataset
-     > var_list : list (Default : None)
-          list of the features to process
-          if None, contains all the numeric features
-     > xstd : int (Default : 3)
-          coefficient ... ?
-     > verbose : int (0/1) (Default : 1)
-          get more operations information
+    Parameters
+    ----------
+    df : DataFrame
+        Modified dataset
+    var_list : list (Default : None)
+        List of the features to process
+        If None, contains all the numeric features
+    xstd : int (Default : 3)
+        Coefficient ... ?
+    verbose : int (0/1) (Default : 1)
+        Fet more operations information
         
-    return
-    ------
-     > df_local : DataFrame
-          dataset modifié
-        
+    Returns
+    -------
+    DataFrame
+        Modified dataset
     """
     # if var_list = None, get all num features
     # else, exclude features from var_list whose type is not categorical

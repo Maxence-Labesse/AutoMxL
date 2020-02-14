@@ -1,3 +1,10 @@
+""" Dataset Features analysis :
+
+ - audit dataset  : get informations on the data (NA, features type, low variance features, ...)
+ - is_date : detect if an object/num feature is a date
+ - get_all_dates : identify all dates features in a DataFrame and store their names in a list
+ - low variance features : identify all features with a low variance (<threshold) and sotre their name in a list
+"""
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from MLBG59.Utils.Display import *
@@ -5,28 +12,27 @@ from MLBG59.Utils.Utils import get_type_features
 
 
 def audit_dataset(df, verbose=1):
-    """
-    * Achieve a short audit of the dataset
-    * Identify features of each type (num, cat, date), features containing NA and features whose variance is null
+    """Achieve a short audit of the dataset
+
+    Identify features of each type (num, cat, date), features containing NA and features whose variance is null
         
-    input
-    -----
-    > df : DataFrame
-        dataset
-    > target : string (Default : None)
+    Parameters
+    ----------
+    df : DataFrame
+        input dataset
+    target : string (Default : None)
         target name
-    > verbose : int (0/1) (Default : 1)
+    verbose : int (0/1) (Default : 1)
         get more operations information
             
-    return
-    ------
-    x_columns : list
-        list of the x features names
-        x = num : numerical features
-        x = cat : categorical features
-        x = date : date features
-        x = NA : features which contains NA values
-        x = low_var : list of the features with low variance
+    Returns
+    -------
+    list of the x features names
+        - x = num : numerical features
+        - x = cat : categorical features
+        - x = date : date features
+        - x = NA : features which contains NA values
+        - x = low_var : list of the features with low variance
     """
 
     # dataset dimensions
@@ -84,19 +90,19 @@ def audit_dataset(df, verbose=1):
 
 
 def is_date(df, col):
-    """
-    Test if a DataFrame feature is recognized as a date (using to_datetime)
+    """Test if a DataFrame feature is recognized as a date (using to_datetime)
 
-    input
-    -----
-     > df : DataFrame
-     > col : string
-          feature name
+    Parameters
+    ----------
+     df : DataFrame
+        input dataset
+     col : string
+        feature name
 
-    return
-    -----
-      > res : boolean
-          True if the col is recognized as a date
+    Returns
+    -------
+    res : boolean
+        True if the col is recognized as a date
     """
     # if col is datetime type, res = True
     if df[col].dtype == 'datetime64[ns]':
@@ -120,17 +126,17 @@ def is_date(df, col):
 
 
 def get_all_dates(df):
-    """
-    Identify all date features of a DataFrame
+    """Identify all date features of a DataFrame
     
-    input
-    -----
-     > df : DataFrame
-        
-    return
-    -----
-     > date_list : list
-          list of features recognized as date
+    Parameters
+    ----------
+     df : DataFrame
+        input DataFrame
+
+    Returns
+    -------
+     list
+        list of features recognized as date
     """
     date_list = list()
 
@@ -147,23 +153,23 @@ def get_all_dates(df):
 
 
 def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=1):
-    """
-    identify  features with low variance (<= threshold)
+    """identify  features with low variance (<= threshold)
 
-    input
-    -----
-     > df : DataFrame
-     > var_list : list (default : None)
-          features to check variance
-     > threshold : float (default : 0
-          variance threshold
-     > rescale : bool (default : true)
-          if yes : use MinMaxScaler on data before computing variance
+    Parameters
+    ----------
+     df : DataFrame
+        input DataFrame
+     var_list : list (default : None)
+        features to check variance
+     threshold : float (default : 0
+        variance threshold
+     rescale : bool (default : true)
+        if yes : use MinMaxScaler on data before computing variance
 
-    return
-    ------
-     list of the variable with low variance
-
+    Returns
+    -------
+    list
+        list of the variable with low variance
     """
     # if var_list = None, get all numerical features
     # else, exclude features from var_list whose type is not numerical

@@ -1,3 +1,16 @@
+""" Hyperoptimisation class :
+Create random HPs combinations, train and predict models
+
+Available algorithms : Random Forest, XGBOOST
+
+Hyperopt class methods :
+
+- get_params
+- train
+- predict
+- get_best_model
+- model_res_to_df
+"""
 import xgboost
 import random
 import itertools as it
@@ -34,26 +47,25 @@ default_XGB_grid_param = {
 
 
 class Hyperopt(object):
-    """ 
-    For a selected algorithm and a hyper-parameters grid.
+    """For a selected algorithm and a hyper-parameters grid.
     Pick N random HPs combinations and train/predict the models
     
     Parameters
-    ---------
-     > classifier : string (Default : 'RF')
-          classifier
-     > grid_param : dict (Default : default_RF_grid_param)
-          HPs grid
-     > n_param_comb : int (Default : 10)
-          number of HPS combinations
-       
-    Attributes
-    ---------
-     > dict_roc_train : dict
-     > dict_models : dict
-     > dict_features_imp : dict
-     > dict_bagging : dict
-     > df_models_summ : DataFrame
+    ----------
+    classifier : string (Default : 'RF')
+        classifier
+    grid_param : dict (Default : default_RF_grid_param)
+        HPs grid
+    n_param_comb : int (Default : 10)
+        number of HPS combinations
+    top_bagging : Boolean (Default = False)
+        use bagging method
+    bagging_param : n-uple
+        bagging parameters (default : default_bagging_param (Bagging module))
+    train_model_dict : dict
+        {model_index : {'HP', 'probas', 'model', 'features_importance', 'evaluation'}}
+    bagging_object : Bagging
+        bagging object
     """
 
     def __init__(self,
@@ -82,11 +94,10 @@ class Hyperopt(object):
     """
 
     def get_params(self):
-        """"
-        return object parameters
+        """Return object parameters
 
-        return
-        -----
+        Returns
+        -------
         dict containing parameters
         
         """
@@ -102,21 +113,20 @@ class Hyperopt(object):
     """
 
     def train(self, df_train, target, verbose=1):
-        """
-        Train the models
+        """Train the models
         
-        input
-        -----
-         > df_train : DataFrame
-             training set
-         > target : string
-             target name
-         > verbose : int (0/1) (Default : 1)
-             get more operations information
+        Parameters
+        ----------
+        df_train : DataFrame
+            Training set
+        target : string
+            Target name
+        verbose : int (0/1) (Default : 1)
+            Get more operations information
             
-        return
-        ------
-        ...
+        Returns
+        -------
+        self
         """
         # Sort HPs grid dict by param name (a->z)
         grid_names = sorted(self.grid_param)
@@ -148,7 +158,8 @@ class Hyperopt(object):
             # Model creation
             if self.classifier == 'RF':  # Classifier Random Forest
                 clf = RandomForestClassifier(**HP_dict)
-            elif self.classifier == 'XGBOOST':
+            # elif self.classifier == 'XGBOOST':
+            else:
                 clf = xgboost.XGBClassifier(**HP_dict)
 
             # X / ycx
@@ -167,8 +178,7 @@ class Hyperopt(object):
                 y_pred = clf_fit.predict(X_train)
 
             # With bagging
-            elif self.top_bagging:
-
+            else:
                 # init bagging object with default params
                 bag = Bagging(clf, **self.bagging_param)
                 # model training
@@ -206,22 +216,23 @@ class Hyperopt(object):
     """
 
     def predict(self, df, target, delta_auc, verbose=1):
-        """
-        Apply the models
+        """Apply the models
         
-        input
-        -----
-         > df : DataFrame
-             set to apply the models
-         > target : string
-             target name
-         > verbose : int (0/1) (Default : 1)
-             get more operations information
+        Parameters
+        ----------
+        df : DataFrame
+            Set to apply the models
+        target : string
+            Target name
+        delta_auc_th : float
+            value available for abs(auc(train) - auc(test))
+        verbose : int (0/1) (Default : 1)
+            Get more operations information
         
-        return
-        ------
-        ...
-        
+        Returns
+        -------
+        dict
+             {model index: {'predictions', 'evaluation'}}
         """
         res_model_dict = {}
 
@@ -280,7 +291,7 @@ class Hyperopt(object):
                     ' / recall: ' + str(round(eval_dict['Recall'], 3)), color_code=c_code)
 
             t_fin_model = datetime.now()
-            if verbose > 0:
+            if verbose == 1:
                 print('{} Sec.'.format((t_fin_model - t_ini_model).total_seconds()))
 
         return res_model_dict
@@ -290,23 +301,23 @@ class Hyperopt(object):
     """
 
     def get_best_model(self, test_model_dict, metric='F1', delta_auc_th=0.03, verbose=1):
-        """
-        get the best model according to a selected metric among valid model (|auc(train)-auc(test)|)
+        """Get the best model according to a selected metric among valid model (abs(auc(train)-auc(test)))
 
-        input
-        -----
-         > test_model_dict : dict
-              key : model index , value : model outputs and metrics
-         > metric : string (default = F1-score
-              metric used to get the best model
-         > delta_auc_th : float
-              ...
+        Parameters
+        ----------
+        test_model_dict : dict
+            {model index : model outputs and metrics}
+        metric : string (default = F1-score)
+            Metric used to get the best model
+        delta_auc_th : float
+            value available for abs(auc(train) - auc(test))
 
-         return
-         ------
-          > best model index
-          > list containing valid model indexes
-
+        Returns
+        -------
+        int
+            Best model index
+        list
+            List containing valid model indexes
         """
         # select valid models (abs(auc_train - auc_test)<0.03)
         valid_model = {}
@@ -317,9 +328,9 @@ class Hyperopt(object):
         # Best model according to selected metric
         if len(valid_model.keys()) > 0:
             best_model_idx = max(valid_model, key=lambda x: valid_model[x].get('evaluation').get(metric))
-            if verbose==1:
-                print(' >',len(valid_model.keys()),' valid models |auc(train)-auc(test)|<='+str(delta_auc_th))
-                print(' > best model : '+str(best_model_idx))
+            if verbose == 1:
+                print(' >', len(valid_model.keys()), ' valid models |auc(train)-auc(test)|<=' + str(delta_auc_th))
+                print(' > best model : ' + str(best_model_idx))
         else:
             best_model_idx = None
             print('0 valid model')
@@ -331,18 +342,19 @@ class Hyperopt(object):
     """
 
     def model_res_to_df(self, test_model_dict, sort_metric='F1'):
-        """
-        store models summary in DataFrame
+        """Store models summary in DataFrame
 
-        input
-        -----
-         > test_model_dict : dict
-              dict containing models informations
-         > sort_metric : string (default = 'F1')
-              metric to sort models in DataFrame
-        return
-        ------
-        > DataFrame
+        Parameters
+        ----------
+        test_model_dict : dict
+            dict containing models informations
+        sort_metric : string (default = 'F1')
+            metric to sort models in DataFrame
+
+        Returns
+        -------
+        DataFrame
+            DataFrame containing model results
         """
         # dataFrame columns names
         model_col = ['model_index']

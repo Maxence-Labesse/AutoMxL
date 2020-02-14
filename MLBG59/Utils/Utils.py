@@ -91,49 +91,6 @@ def train_test(df, test_size):
 
 
 """
--------------------------------------------------------------------------------------------------------------
-"""
-
-
-def parse_target(df, target, modalite):
-    """
-    Transforme la variable cible en variable binaire, en choisissant la modalité de référence
-    
-    input
-    -----
-     > df : dataframe
-     > target : string
-         variable cible
-     > modalite : string
-         nom de la modalité de référence
-            
-    return
-    ------
-     > df_bis : dataframe
-          le dataframe modifié
-     > target : string
-          nom de la nouvelle variable
-        
-    """
-    # Si la variable cible est numérique, transformation en string (nécessaire pour dichotomiser)
-    if target in df._get_numeric_data().columns:
-        df[target] = df[target].apply(str)
-    
-    # Dichotomisation
-    target_dummies = pd.get_dummies(df[target])
-    # Choix de la nouvelle variable cible et renommage
-    target_dummies[target+'_'+modalite] = target_dummies[modalite]
-    
-    # Intégration de la nouvelle variable cible dans le dataset
-    df_bis = pd.concat((df, target_dummies[target+'_'+modalite]), axis=1)
-    
-    # suppresion de l'ancienne variable cible
-    del df_bis[target]
-        
-    return df_bis, target+'_'+modalite
-
-
-"""
 ----------------------------------------------------------------------------------------------------------------------
 """
 

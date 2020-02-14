@@ -1,29 +1,35 @@
+""" Missing values handling:
+
+ - fill_num/fill_all_num: Replace missing values for numerical features
+ - fill_cat/fill_all_cat: Replace missing values for categorical features
+"""
 from MLBG59.Utils.Utils import get_type_features
 
 
 def fill_num(df, var, method='median', top_var_NA=True):
-    """
-    fill missing values of a num feature
+    """Fill missing values of a num feature
     
-    input
-    -----
-     > df : DataFrame
-          dataset
-     > var : string
-          feature to fill
-     > method : string (Default : 'median')
-          method used to fill the NA values :
-            - zero : replace NA with zero
-            - median : replace with median
-            - mean : replace with mean
-            - regression : replace with regression predictions
-     > top_var_NA : boolean (Defaut : True)
-          if True, create a boolean column to identify replaced observations
+    Parameters
+    ----------
+    df : DataFrame
+        Input dataset
+    var : string
+        name of the feature to fill
+    method : string (Default : 'median')
+        Method used to fill the NA values :
 
-    return
-    ------
-    df_local : DataFrame
-        modified dataset
+        - zero : replace NA with zero
+        - median : replace with median
+        - mean : replace with mean
+        - regression : To-do
+
+     top_var_NA : boolean (Defaut : True)
+        If True, create a boolean column to identify replaced observations
+
+    Returns
+    -------
+    DataFrame
+        Modified dataset
     """
     df_local = df.copy()
 
@@ -59,31 +65,31 @@ def fill_num(df, var, method='median', top_var_NA=True):
 
 
 def fill_all_num(df, var_list=None, method='median', top_var_NA=True, verbose=1):
-    """
-    fill missing values for numerical features from a list
+    """Fill missing values for numerical features from a list
     
-    input
-    -----
-     > df : DataFrame
-          dataset
-     > var_list : list (Default : None)
-          list of the features to fill
-          if None, contains all the num features
-     > method : string (Default : 'median')
-          method used to fill the NA values :
-              - zero : replace NA with zero
-              - median : replace with median
-              - mean : replace with mean
-              - regression : replace with regression predictions
-     > top_var_NA : boolean (Defaut : True)
-          if True, create a boolean column to identify replaced observations
-     > verbose : int (0/1) (Default : 1)
-          get more operations information
+    Parameters
+    ----------
+    df : DataFrame
+        Input dataset
+    var_list : list (Default : None)
+        List of the features to fill
+        If None, contains all the num features
+     method : string (Default : 'median')
+        Method used to fill the NA values :
 
-    return
-    ------
-    df_local : DataFrame
-        modified dataset
+        - zero : replace NA with zero
+        - median : replace with median
+        - mean : replace with mean
+        - regression : replace with regression predictions
+     top_var_NA : boolean (Defaut : True)
+        If True, create a boolean column to identify replaced observations
+     verbose : int (0/1) (Default : 1)
+        Get more operations information
+
+    Returns
+    -------
+    DataFrame
+        Modified dataset
     """
     # if var_list = None, get all numerical features
     # else, exclude features from var_list whose type is not numerical
@@ -93,7 +99,7 @@ def fill_all_num(df, var_list=None, method='median', top_var_NA=True, verbose=1)
 
     if verbose > 0:
         print('  > method: ' + method)
-        print('  > filled features:',df[var_list].isna().sum().loc[df[var_list].isna().sum()>0].index.tolist())
+        print('  > filled features:', df[var_list].isna().sum().loc[df[var_list].isna().sum() > 0].index.tolist())
 
     # fill Na values for each feature in var_list
     for j in var_list:
@@ -108,27 +114,26 @@ def fill_all_num(df, var_list=None, method='median', top_var_NA=True, verbose=1)
 
 
 def fill_cat(df, var, method='NR'):
-    """
-    fill missing values of a categorical feature
-    
-    input
-    -----
-     > df : Dataframe
-         dataset
-     > var : string
-         feature to fill
-     > method : string (Default : 'NR')
-         method used to fill the NA values :
-             - NR : replace NA with 'NR'
-             - regression : replace with regression predictions
-     > top_var_NA : boolean (Defaut : True)
-         if True, create a boolean column to identify replaced observations
+    """Fill missing values of a categorical feature
 
-    return
-    ------
-     > df_local : DataFrame
-         modified dataset
-    
+    Parameters
+    ----------
+    df : Dataframe
+        Input dataset
+    var : string
+        Feature to fill
+    method : string (Default : 'NR')
+        Method used to fill the NA values :
+
+        - NR : replace NA with 'NR'
+        - regression : replace with regression predictions
+    top_var_NA : boolean (Defaut : True)
+        If True, create a boolean column to identify replaced observations
+
+    Returns
+    -------
+    df_local : DataFrame
+        Modified dataset
     """
     df_local = df.copy()
 
@@ -153,28 +158,27 @@ def fill_cat(df, var, method='NR'):
 
 
 def fill_all_cat(df, var_list=None, method='NR', verbose=1):
-    """
-    fill missing values for categorical features from a list
+    """Fill missing values for categorical features from a list
     
-    input
-    -----
-    > df : DataFrame
-        dataset
-    > var_list : list (Default : None)
-         list of the features to fill
-         if None, contains all the cat features
-    > method : string (Default : 'NR')
-         method used to fill the NA values :
-            - NR : replace NA with 'NR'
-            - regression : replace with regression predictions (coming soon)
-    > verbose : int (0/1) (Default : 1)
-        get more operations information
+    Parameters
+    ----------
+    df : DataFrame
+        Input dataset
+    var_list : list (Default : None)
+        list of the features to fill
+        If None, contains all the cat features
+    method : string (Default : 'NR')
+        Method used to fill the NA values :
+
+        - NR : replace NA with 'NR'
+        - regression : replace with regression predictions (coming soon)
+    verbose : int (0/1) (Default : 1)
+        Get more operations information
     
-    return
-    ------
-    > df_local : DataFrame
-        modified dataset
-    
+    Returns
+    -------
+    DataFrame
+        Modified dataset
     """
     # if var_list = None, get all categorical features
     # else, exclude features from var_list whose type is not categorical
@@ -184,7 +188,7 @@ def fill_all_cat(df, var_list=None, method='NR', verbose=1):
 
     if verbose > 0:
         print('  > method: ' + method)
-        print('  > filled features:',df[var_list].isna().sum().loc[df[var_list].isna().sum()>0].index.tolist())
+        print('  > filled features:', df[var_list].isna().sum().loc[df[var_list].isna().sum() > 0].index.tolist())
     # fill Na values for each feature in var_list
     for j in var_list:
         df_local = fill_cat(df_local, j, method)

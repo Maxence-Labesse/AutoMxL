@@ -1,3 +1,8 @@
+""" Date Features processing
+
+ - all_to_date : detect dates from num/cat features and transform them to datetime format.
+ - date_to_anc : Compute timelapse (num features) from date features
+"""
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -5,22 +10,22 @@ from MLBG59.Utils.Utils import get_type_features
 
 
 def all_to_date(df, var_list=None, verbose=1):
-    """
-    convert string date features to datetime
+    """Convert num/cat date features to datetime
     
-    input
-    -----
-     > df : DataFrame
-     > var_list : list (Default : None)
-          list of the features to analyze
-          if None, contains all the num features
-     > verbose : int (0/1) (Default : 1)
-          get more operations information
+    Parameters
+    ----------
+    df : DataFrame
+        Input dataset
+    var_list : list (Default : None)
+        List of the features to analyze
+        If None, contains all the num features
+    verbose : int (0/1) (Default : 1)
+        Get more operations information
         
-    return
-    ------
-    > df_local : DataFrame
-         modified dataset
+    Returns
+    -------
+    DataFrame
+        Modified dataset
     """
     # if var_list = None, get all df features
     # else, exclude features if not in df
@@ -50,30 +55,28 @@ def all_to_date(df, var_list=None, verbose=1):
 
 
 def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
-    """
-    convert string date features to timelapse according to a ref date
+    """Convert string date features to timelapse according to a ref date
     
-    input
-    -----
-     > df : DataFrame
-          dataset
-     > var_list : list (Default : None)
-          list of the features to analyze
-          if None, contains all the num features
-     > date_ref : string '%d/%m/%y' (Default : None)
-          date to compute timelapse
-          if None, today date
-     > verbose : int (0/1) (Default : 1)
-          get more operations information
+    Parameters
+    ----------
+    df : DataFrame
+        Input dataset
+    var_list : list (Default : None)
+        List of the features to analyze
+        If None, contains all the num features
+    date_ref : string '%d/%m/%y' (Default : None)
+        Date to compute timelapse
+        If None, today date
+    verbose : int (0/1) (Default : 1)
+        Get more operations information
 
-    return
-    ------
-    > df_local : DataFrame
-         modified dataset
+    Returns
+    -------
+    DataFrame
+        Modified dataset
         
-    new_var_list : list
-        contains new features name
-        
+    list
+        List containing new features names
     """
     # if date_ref is None, use today date
     if date_ref is None:

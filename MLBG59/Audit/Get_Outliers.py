@@ -1,3 +1,8 @@
+""" Outliers detection :
+
+ - get_cat_outliers : identify categorical features containing outliers and store their names in a list
+ - get_num_outliers : identify numerical features containing outliers and store their names in a list data
+"""
 import pandas as pd
 import numpy as np
 from MLBG59.Utils.Display import *
@@ -5,26 +10,24 @@ from MLBG59.Utils.Utils import get_type_features
 
 
 def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=1):
-    """
-    outliers detection for categorical features
+    """outliers detection for categorical features
 
-    input
-    -----
-     > df : DataFrame
-          dataset
-     > var_list : list (Default : None)
-          list of the features to analyze
-          if None, contains all the categorical features
-     > threshold : float (Default : 0.05)
-          minimum modality frequency
-     > verbose : int (0/1) (Default : 1)
-          get more operations information
+    Parameters
+    ----------
+     df : DataFrame
+        Input dataset
+     var_list : list (Default : None)
+        list of the features to analyze.
+        If None, contains all the categorical features
+     threshold : float (Default : 0.05)
+        Minimum modality frequency
+     verbose : int (0/1) (Default : 1)
+        Get more operations information
 
-    return
-    ------
-     > outlier_dict : dict
-          key : feature
-          value : list of modalities considered as outliers
+    Returns
+    -------
+     outlier_dict : dict
+          {feature : list of modalities considered as outliers}
     """
     # if var_list = None, get all categorical features
     # else, exclude features from var_list whose type is not categorical
@@ -60,26 +63,24 @@ def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=1):
 
 
 def get_num_outliers(df, var_list=None, xstd=3, verbose=0):
-    """
-    outliers detection for num features
+    """outliers detection for num features
     
-    input
-    -----
-     > df : DataFrame
-         dataset
-     > var_list : list (Default : None)
-         list of the features to analyze
-         if None, contains all the num features
-     > xstd : int (Default : 3)
-         coefficient ... ?
-     > verbose : int (0/1) (Default : 1)
-          get more operations information
+    Parameters
+    ----------
+     df : DataFrame
+        Input dataset
+     var_list : list (Default : None)
+        List of the features to analyze.
+        If None, contains all the num features
+     xstd : int (Default : 3)
+        coefficient (TODO)
+     verbose : int (0/1) (Default : 1)
+        Get more operations information
             
-    return
-    ------
-     > outlier_dict : dict
-         key : feature
-         value : index of outliers
+    Returns
+    -------
+     outlier_dict : dict
+         {feature : index of outliers}
     """
     # if var_list = None, get all num features
     # else, exclude features from var_list whose type is not num

@@ -1,29 +1,32 @@
+""" Categorical Features processing
+
+ - dummy_all_var : get one hot encoded vector for each modality of each categorical features
+"""
 import pandas as pd
 from MLBG59.Utils.Utils import get_type_features
 
 
 def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
-    """
-    replace categorical features from a list with dummified ones 
+    """Replace categorical features from a list with dummified ones
     
-    input
-    -----
-     > df : datraframe
-     > var_list : list (Default : None)
-          list of the features to dummify
-          if None, contains all the num features
-     > prefix_list : list (default : None)
-          prefix to add before new features name
-     > keep : boolean (Default = False)
-          if True, delete the original feature
-     > verbose : int (0/1) (Default : 1)
-          get more operations information
+    Parameters
+    ----------
+     df : DatraFrame
+        Input dataset
+     var_list : list (Default : None)
+        List of the features to dummify
+        If None, contains all the num features
+     prefix_list : list (default : None)
+        Prefix to add before new features name
+     Keep : boolean (Default = False)
+        If True, delete the original feature
+     verbose : int (0/1) (Default : 1)
+        Get more operations information
         
-    return
-    ------
-     > df_local : dataframe
-          le dataframe modifié
-    
+    Returns
+    -------
+     df_local : DataFrame
+          Modified dataset
     """
     # if var_list = None, get all categorical features
     # else, exclude features from var_list whose type is not categorical

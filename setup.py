@@ -23,6 +23,6 @@ setup(
         "Programming Language :: Python 3.7"
     ],
     packages=["MLBG59"],
-    include_package_data=True
+    include_package_data=True, install_requires=['pandas', 'scikit-learn', 'xgboost']
     #install_requires=["XGBOOST"],
 )
