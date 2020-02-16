@@ -221,6 +221,32 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="MLBG59.Load.Load.parse_target">
+<code class="descclassname">MLBG59.Load.Load.</code><code class="descname">parse_target</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>modalite</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Load/Load.html#parse_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Load.Load.parse_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform target to boolean (1/0), choosing the reference modality</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>dataframe</em>) – input dataset</li>
+<li><strong>target</strong> (<em>string</em>) – target feature</li>
+<li><strong>modalite</strong> (<em>string</em>) – modality name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>dataframe</em> – modified dataframe</li>
+<li><em>string</em> – new target name</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="audit">
@@ -1089,11 +1115,6 @@ Pick N random HPs combinations and train/predict the models</p>
 </dd></dl>
 
 </dd></dl>
-
-<dl class="data">
-<dt id="MLBG59.Modelisation.HyperOpt.default_XGB_grid_param">
-<code class="descclassname">MLBG59.Modelisation.HyperOpt.</code><code class="descname">default_XGB_grid_param</code><em class="property"> = {'learning_rate': [0.001, 0.003, 0.006, 0.009, 0.01, 0.03, 0.06, 0.09, 0.1, 0.3, 0.6], 'max_depth': array([4, 5, 6, 9, 6, 8, 4, 5, 5, 5, 4, 9, 8, 5, 3, 4, 3, 9, 5, 8]), 'max_features': ['auto', 'log2'], 'min_samples_leaf': [1, 2, 4, 8], 'min_samples_split': [5, 10, 15], 'n_estimators': array([114, 392, 126, 183, 153, 174, 336, 303, 259, 371, 337, 392, 125,        323, 367, 276, 197, 101, 322, 288]), 'scale_pos_weight': [3, 4, 5, 6, 7, 8, 9]}</em><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.default_XGB_grid_param" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </div>
 </div>
