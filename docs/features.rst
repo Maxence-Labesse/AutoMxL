@@ -2,7 +2,7 @@ Load
 =====
 Load
 -------------
-.. automodule:: MLBG59.Load.Load
+.. automodule:: Load.Load
     :members:
 
 
