@@ -20,9 +20,8 @@ from . import Audit
 from . import Preprocessing
 from . import Modelisation
 from . import Utils
-from . import MLBG59
-from .MLBG59 import AutoML
-from .Load.Load import load_data
-from .Utils.Utils import parse_target
+from . import __main__
+from .__main__ import AutoML
+from .Load.Load import *
 
 

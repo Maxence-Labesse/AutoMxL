@@ -1,4 +1,4 @@
-from MLBG59.MLBG59 import AutoML
+from MLBG59.__main__ import AutoML
 import unittest
 import pandas as pd
 import numpy as np
