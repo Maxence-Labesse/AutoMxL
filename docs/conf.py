@@ -10,7 +10,7 @@
 
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory is
-autodoc_mock_imports = ['pandas', 'sklearn', 'xgboost']
+autodoc_mock_imports = ['pandas', 'sklearn', 'xgboost', 'numpy']
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 import sys
