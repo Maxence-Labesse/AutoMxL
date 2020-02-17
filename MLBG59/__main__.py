@@ -4,7 +4,7 @@ from MLBG59.Utils.Decorators import timer
 from MLBG59.Explore.Get_Infos import recap
 from MLBG59.Explore.Get_Outliers import get_cat_outliers, get_num_outliers
 from MLBG59.Preprocessing.Date_Data import all_to_date, date_to_anc
-from MLBG59.Preprocessing.Missing_Values import fill_all_num, fill_all_cat
+from MLBG59.Preprocessing.Missing_Values import fill_numerical, fill_categorical
 from MLBG59.Preprocessing.Outliers import process_cat_outliers, process_num_outliers
 from MLBG59.Preprocessing.Categorical_Data import dummy_all_var
 from MLBG59.Modelisation.HyperOpt import *
@@ -202,13 +202,13 @@ class AutoML(pd.DataFrame):
         if verbose > 0:
             color_print('Fill NA')
             color_print('  Num:')
-        df_local = fill_all_num(df_local, var_list=self.num_columns, method='median', top_var_NA=True,
-                                verbose=verbose)
+        df_local = fill_numerical(df_local, var_list=self.num_columns, method='median', top_var_NA=True,
+                                  verbose=verbose)
 
         # cat features
         if verbose > 0:
             color_print('  Cat:')
-        df_local = fill_all_cat(df_local, var_list=self.cat_columns, method='NR', verbose=verbose)
+        df_local = fill_categorical(df_local, var_list=self.cat_columns, method='NR', verbose=verbose)
 
         ####################
         # replace outliers

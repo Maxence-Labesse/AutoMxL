@@ -333,7 +333,7 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 
 <dl class="function">
 <dt id="MLBG59.Explore.Get_Infos.recap">
-<code class="descclassname">MLBG59.Explore.Get_Infos.</code><code class="descname">recap</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Infos.html#recap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Infos.recap" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">MLBG59.Explore.Get_Infos.</code><code class="descname">recap</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Infos.html#recap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Infos.recap" title="Permalink to this definition">¶</a></dt>
 <dd><p>get and store global informations about the dataset :</p>
 <ul class="simple">
 <li>Variables type (num, cat, date)</li>
@@ -374,31 +374,38 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 <span id="get-outliers"></span><h2>Get Outliers<a class="headerlink" href="#module-MLBG59.Explore.Get_Outliers" title="Permalink to this headline">¶</a></h2>
 <p>Outliers detection :</p>
 <ul class="simple">
-<li>get_cat_outliers : identify categorical features containing outliers and store their names in a list</li>
-<li>get_num_outliers : identify numerical features containing outliers and store their names in a list data</li>
+<li>get_cat_outliers : identify categorical features containing outliers</li>
+<li>get_num_outliers : identify numerical features containing outliers</li>
 </ul>
 <dl class="function">
 <dt id="MLBG59.Explore.Get_Outliers.get_cat_outliers">
-<code class="descclassname">MLBG59.Explore.Get_Outliers.</code><code class="descname">get_cat_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>threshold=0.05</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Outliers.html#get_cat_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Outliers.get_cat_outliers" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">MLBG59.Explore.Get_Outliers.</code><code class="descname">get_cat_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>threshold=0.05</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Outliers.html#get_cat_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Outliers.get_cat_outliers" title="Permalink to this definition">¶</a></dt>
 <dd><p>outliers detection for categorical features</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
 <li><strong>var_list</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – list of the features to analyze.
 If None, contains all the categorical features</li>
 <li><strong>threshold</strong> (<em>float</em><em> (</em><em>Default : 0.05</em><em>)</em>) – Minimum modality frequency</li>
-<li><strong>verbose</strong> (<em>int</em><em> (</em><em>0/1</em><em>) </em><em>(</em><em>Default : 1</em><em>)</em>) – Get more operations information</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>outlier_dict</strong> – {feature : list of modalities considered as outliers}</p>
-</td>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>verbose <span class="classifier-delimiter">:</span> <span class="classifier">boolean (Default False)</span></dt>
+<dd>Get logging information</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">{feature : list of categories considered as outliers}</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
 </tr>
 </tbody>
 </table>
@@ -406,26 +413,33 @@ If None, contains all the categorical features</li>
 
 <dl class="function">
 <dt id="MLBG59.Explore.Get_Outliers.get_num_outliers">
-<code class="descclassname">MLBG59.Explore.Get_Outliers.</code><code class="descname">get_num_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>xstd=3</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Outliers.html#get_num_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Outliers.get_num_outliers" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">MLBG59.Explore.Get_Outliers.</code><code class="descname">get_num_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>xstd=3</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Outliers.html#get_num_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Outliers.get_num_outliers" title="Permalink to this definition">¶</a></dt>
 <dd><p>outliers detection for num features</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
 <li><strong>var_list</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – List of the features to analyze.
 If None, contains all the num features</li>
 <li><strong>xstd</strong> (<em>int</em><em> (</em><em>Default : 3</em><em>)</em>) – coefficient (TODO)</li>
-<li><strong>verbose</strong> (<em>int</em><em> (</em><em>0/1</em><em>) </em><em>(</em><em>Default : 1</em><em>)</em>) – Get more operations information</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>outlier_dict</strong> – {feature : index of outliers}</p>
-</td>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>verbose <span class="classifier-delimiter">:</span> <span class="classifier">boolean (Default False)</span></dt>
+<dd>Get logging information</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>outlier_dict</strong> – {feature : index of outliers}</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
 </tr>
 </tbody>
 </table>
@@ -439,12 +453,12 @@ If None, contains all the num features</li>
 <span id="missing-values"></span><h2>Missing Values<a class="headerlink" href="#module-MLBG59.Preprocessing.Missing_Values" title="Permalink to this headline">¶</a></h2>
 <p>Missing values handling:</p>
 <ul class="simple">
-<li>fill_num/fill_all_num: Replace missing values for numerical features</li>
-<li>fill_cat/fill_all_cat: Replace missing values for categorical features</li>
+<li>fill_num/fill_numerical: Replace missing values for numerical features</li>
+<li>fill_cat/fill_categorical: Replace missing values for categorical features</li>
 </ul>
 <dl class="function">
-<dt id="MLBG59.Preprocessing.Missing_Values.fill_all_cat">
-<code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">fill_all_cat</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>method='NR'</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#fill_all_cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.fill_all_cat" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Preprocessing.Missing_Values.fill_categorical">
+<code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">fill_categorical</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>method='NR'</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#fill_categorical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.fill_categorical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill missing values for categorical features from a list</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -475,8 +489,8 @@ If None, contains all the cat features</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Preprocessing.Missing_Values.fill_all_num">
-<code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">fill_all_num</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>method='median'</em>, <em>top_var_NA=True</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#fill_all_num"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.fill_all_num" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Preprocessing.Missing_Values.fill_numerical">
+<code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">fill_numerical</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>method='median'</em>, <em>top_var_NA=True</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#fill_numerical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.fill_numerical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill missing values for numerical features from a list</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

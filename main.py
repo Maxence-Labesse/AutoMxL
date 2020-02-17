@@ -8,7 +8,7 @@ from MLBG59 import *
 df_raw = import_data('data/bank-additional-full.csv', verbose=0)
 trgt = 'y'
 
-df_raw, target = parse_target(df_raw,trgt,modalite='yes')
+df_raw, target = category_to_target(df_raw,trgt,cat='yes')
 
 #help(load_data)
 print(import_data.__doc__)

@@ -163,15 +163,16 @@ def get_all_dates(df):
 
 
 def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=1):
-    """Identify  features with low variance (<= threshold). Possible to rescale feature before computing.
+    """Identify  features with low variance (<= threshold).
+    Possible to rescale feature before computing.
 
     Parameters
     ----------
      df : DataFrame
         input DataFrame
      var_list : list (default : None)
-        features names
-     threshold : float (default : 0
+        names of the variables to test variance
+     threshold : float (default : 0)
         variance threshold
      rescale : bool (default : true)
         enable  MinMaxScaler before computing variance
@@ -179,7 +180,7 @@ def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=
     Returns
     -------
     list
-        list of the variable with low variance
+       Names of the variables with low variance
     """
     # if var_list = None, get all numerical features
     # else, exclude features from var_list whose type is not numerical

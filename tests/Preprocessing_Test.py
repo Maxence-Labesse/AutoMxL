@@ -34,7 +34,7 @@ class Test_Missing_values(unittest.TestCase):
         self.assertEqual(df_fill_mean.iloc[0]['Height'], 180)
 
     def test_fill_all_num(self):
-        df_fill_all_num = fill_all_num(self.df, ['Age', 'Height'], method='zero', top_var_NA=True, verbose=0)
+        df_fill_all_num = fill_numerical(self.df, ['Age', 'Height'], method='zero', top_var_NA=True, verbose=0)
         self.assertIn('top_NA_Height', df_fill_all_num.columns.tolist())
         self.assertIn('top_NA_Age', df_fill_all_num.columns.tolist())
         self.assertEqual(df_fill_all_num.iloc[0]['Height'], 0)
@@ -47,7 +47,7 @@ class Test_Missing_values(unittest.TestCase):
         self.assertEqual(df_fill_nr.loc[3]['top_NA_Name'], 1)
 
     def test_fill_all_cat(self):
-        df_fill_all_cat = fill_all_cat(self.df, var_list=['Name', 'Sexe'], method='NR', top_var_NA=True, verbose=0)
+        df_fill_all_cat = fill_categorical(self.df, var_list=['Name', 'Sexe'], method='NR', top_var_NA=True, verbose=0)
         self.assertIn('top_NA_Name', df_fill_all_cat.columns.tolist())
         self.assertIn('top_NA_Sexe', df_fill_all_cat.columns.tolist())
         self.assertEqual(df_fill_all_cat.iloc[3]['Name'], 'NR')
