@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Load &mdash; MLBG59 1.0.0 documentation</title>
+  <title>Start &mdash; MLBG59 1.0.0 documentation</title>
   
 
   
@@ -80,13 +80,14 @@
             
               <p class="caption"><span class="caption-text">Features</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Load</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id1">Load</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Start</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Start.Load">Load</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Start.Encode_Target">Encode_Target</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#audit">Audit</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Audit.Audit_Dataset">Audit Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Audit.Get_Outliers">Get Outliers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#explore">Explore</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Explore.Get_Infos">Features summarize</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Explore.Get_Outliers">Get Outliers</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#preprocessing">Preprocessing</a><ul>
@@ -147,7 +148,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Load</li>
+      <li>Start</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -166,26 +167,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="load">
-<h1>Load<a class="headerlink" href="#load" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="id1">
-<h2>Load<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-MLBG59.Load.Load"></span><p>Data importation :</p>
+  <div class="section" id="start">
+<h1>Start<a class="headerlink" href="#start" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-MLBG59.Start.Load">
+<span id="load"></span><h2>Load<a class="headerlink" href="#module-MLBG59.Start.Load" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>get_delimiter : identify csv file delimiter</li>
-<li>load data</li>
+<li>get_delimiter : identify delimiter for a csv/txt file</li>
+<li>load_data : import dataset into dataframe</li>
 </ul>
 <dl class="function">
-<dt id="MLBG59.Load.Load.get_delimiter">
-<code class="descclassname">MLBG59.Load.Load.</code><code class="descname">get_delimiter</code><span class="sig-paren">(</span><em>csvfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Load/Load.html#get_delimiter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Load.Load.get_delimiter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identify the delimiter of a .csv file</p>
+<dt id="MLBG59.Start.Load.get_delimiter">
+<code class="descclassname">MLBG59.Start.Load.</code><code class="descname">get_delimiter</code><span class="sig-paren">(</span><em>file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Start/Load.html#get_delimiter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Start.Load.get_delimiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify the delimiter for a csv/txt file</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>csvfile</strong> (<em>string</em>) – Path and name of the file (Ex : “data/file.csv”)</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>file</strong> (<em>string</em>) – Path and name of the file (Ex : “data/file.csv”)</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Identified delimiter</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">identified delimiter</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">string</td>
 </tr>
@@ -194,10 +194,10 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Load.Load.import_data">
-<code class="descclassname">MLBG59.Load.Load.</code><code class="descname">import_data</code><span class="sig-paren">(</span><em>file</em>, <em>index_col=None</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Load/Load.html#import_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Load.Load.import_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Import dataset as a DataFrame
-accept .csv, .xlsx, .xls files</p>
+<dt id="MLBG59.Start.Load.import_data">
+<code class="descclassname">MLBG59.Start.Load.</code><code class="descname">import_data</code><span class="sig-paren">(</span><em>file</em>, <em>index_col=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Start/Load.html#import_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Start.Load.import_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import dataset as a DataFrame, identify delimiter for txt and csv files.</p>
+<p>Available files : .txt, .csv, .xlsx, .xls files</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -205,13 +205,13 @@ accept .csv, .xlsx, .xls files</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>file</strong> (<em>string</em>) – Path and name of the file (Ex : “data/file.csv”)
 If file is .csv, automatically identify delimiter</li>
-<li><strong>index_col</strong> (<em>int</em><em>, </em><em>str</em><em>, </em><em>sequence of int / str</em><em>, or </em><em>False</em><em>, </em><em>default None</em>) – Column(s) to use as the row labels of the DataFrame, either given as string name or column index.
+<li><strong>index_col</strong> (<em>int</em><em>, </em><em>str</em><em>, </em><em>sequence of int / str</em><em>, or </em><em>False</em><em> (</em><em>Default None</em><em>)</em>) – Column(s) to use as the row labels of the DataFrame, either given as string name or column index.
 If a sequence of int / str is given, a MultiIndex is used.</li>
-<li><strong>verbose</strong> (<em>int</em><em> (</em><em>0/1</em><em>) </em><em>(</em><em>Default : 1</em><em>)</em>) – Get more operations information</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dataset imported as DataFrame</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">dataset imported into DataFrame</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
@@ -221,24 +221,27 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 </table>
 </dd></dl>
 
+</div>
+<div class="section" id="module-MLBG59.Start.Encode_Target">
+<span id="encode-target"></span><h2>Encode_Target<a class="headerlink" href="#module-MLBG59.Start.Encode_Target" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="MLBG59.Load.Load.category_to_target">
-<code class="descclassname">MLBG59.Load.Load.</code><code class="descname">category_to_target</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>modalite</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Load/Load.html#category_to_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Load.Load.category_to_target" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Start.Encode_Target.category_to_target">
+<code class="descclassname">MLBG59.Start.Encode_Target.</code><code class="descname">category_to_target</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>cat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Start/Encode_Target.html#category_to_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Start.Encode_Target.category_to_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform target to boolean (1/0), choosing the reference modality</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<em>dataframe</em>) – input dataset</li>
-<li><strong>target</strong> (<em>string</em>) – target feature</li>
-<li><strong>modalite</strong> (<em>string</em>) – modality name</li>
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>var</strong> (<em>string</em>) – variable containing the target category</li>
+<li><strong>cat</strong> (<em>string</em>) – target category</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>dataframe</em> – modified dataframe</li>
-<li><em>string</em> – new target name</li>
+<li><strong>DataFrame</strong> (<em>modified dataset</em>)</li>
+<li><strong>string</strong> (<em>new target name (var_cat)</em>)</li>
 </ul>
 </p>
 </td>
@@ -249,53 +252,20 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 
 </div>
 </div>
-<div class="section" id="audit">
-<h1>Audit<a class="headerlink" href="#audit" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-MLBG59.Audit.Audit_Dataset">
-<span id="audit-data"></span><h2>Audit Data<a class="headerlink" href="#module-MLBG59.Audit.Audit_Dataset" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="explore">
+<h1>Explore<a class="headerlink" href="#explore" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-MLBG59.Explore.Get_Infos">
+<span id="features-summarize"></span><h2>Features summarize<a class="headerlink" href="#module-MLBG59.Explore.Get_Infos" title="Permalink to this headline">¶</a></h2>
 <p>Dataset Features analysis :</p>
 <ul class="simple">
-<li>audit dataset  : get informations on the data (NA, features type, low variance features, …)</li>
-<li>is_date : detect if an object/num feature is a date</li>
-<li>get_all_dates : identify all dates features in a DataFrame and store their names in a list</li>
-<li>low variance features : identify all features with a low variance (&lt;threshold) and sotre their name in a list</li>
+<li>recap : get and store informations related to the dataset (NA, features type, low variance features, …)</li>
+<li>is_date : Test if a variable can be considered as date</li>
+<li>get_all_dates : identify all dates features</li>
+<li>low variance features : identify all features with low variance (&lt;threshold)</li>
 </ul>
 <dl class="function">
-<dt id="MLBG59.Audit.Audit_Dataset.audit_dataset">
-<code class="descclassname">MLBG59.Audit.Audit_Dataset.</code><code class="descname">audit_dataset</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Audit/Audit_Dataset.html#audit_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Audit.Audit_Dataset.audit_dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Achieve a short audit of the dataset</p>
-<p>Identify features of each type (num, cat, date), features containing NA and features whose variance is null</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
-<li><strong>target</strong> (<em>string</em><em> (</em><em>Default : None</em><em>)</em>) – target name</li>
-<li><strong>verbose</strong> (<em>int</em><em> (</em><em>0/1</em><em>) </em><em>(</em><em>Default : 1</em><em>)</em>) – get more operations information</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
-<li>x = num : numerical features</li>
-<li>x = cat : categorical features</li>
-<li>x = date : date features</li>
-<li>x = NA : features which contains NA values</li>
-<li>x = low_var : list of the features with low variance</li>
-</ul>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of the x features names</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="MLBG59.Audit.Audit_Dataset.get_all_dates">
-<code class="descclassname">MLBG59.Audit.Audit_Dataset.</code><code class="descname">get_all_dates</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Audit/Audit_Dataset.html#get_all_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Audit.Audit_Dataset.get_all_dates" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Explore.Get_Infos.get_all_dates">
+<code class="descclassname">MLBG59.Explore.Get_Infos.</code><code class="descname">get_all_dates</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Infos.html#get_all_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Infos.get_all_dates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identify all date features of a DataFrame</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -303,7 +273,7 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df</strong> (<em>DataFrame</em>) – input DataFrame</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of features recognized as date</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of features identified as date</td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
 </tr>
@@ -312,9 +282,9 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Audit.Audit_Dataset.is_date">
-<code class="descclassname">MLBG59.Audit.Audit_Dataset.</code><code class="descname">is_date</code><span class="sig-paren">(</span><em>df</em>, <em>col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Audit/Audit_Dataset.html#is_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Audit.Audit_Dataset.is_date" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test if a DataFrame feature is recognized as a date (using to_datetime)</p>
+<dt id="MLBG59.Explore.Get_Infos.is_date">
+<code class="descclassname">MLBG59.Explore.Get_Infos.</code><code class="descname">is_date</code><span class="sig-paren">(</span><em>df</em>, <em>col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Infos.html#is_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Infos.is_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a DataFrame feature can be considered as a date (using to_datetime)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -325,7 +295,7 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – True if the col is recognized as a date</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – Test result</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
@@ -336,18 +306,18 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Audit.Audit_Dataset.low_variance_features">
-<code class="descclassname">MLBG59.Audit.Audit_Dataset.</code><code class="descname">low_variance_features</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>threshold=0</em>, <em>rescale=True</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Audit/Audit_Dataset.html#low_variance_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Audit.Audit_Dataset.low_variance_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>identify  features with low variance (&lt;= threshold)</p>
+<dt id="MLBG59.Explore.Get_Infos.low_variance_features">
+<code class="descclassname">MLBG59.Explore.Get_Infos.</code><code class="descname">low_variance_features</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>threshold=0</em>, <em>rescale=True</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Infos.html#low_variance_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Infos.low_variance_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify  features with low variance (&lt;= threshold). Possible to rescale feature before computing.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – input DataFrame</li>
-<li><strong>var_list</strong> (<em>list</em><em> (</em><em>default : None</em><em>)</em>) – features to check variance</li>
+<li><strong>var_list</strong> (<em>list</em><em> (</em><em>default : None</em><em>)</em>) – features names</li>
 <li><strong>threshold</strong> (<em>float</em><em> (</em><em>default : 0</em>) – variance threshold</li>
-<li><strong>rescale</strong> (<em>bool</em><em> (</em><em>default : true</em><em>)</em>) – if yes : use MinMaxScaler on data before computing variance</li>
+<li><strong>rescale</strong> (<em>bool</em><em> (</em><em>default : true</em><em>)</em>) – enable  MinMaxScaler before computing variance</li>
 </ul>
 </td>
 </tr>
@@ -361,17 +331,55 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="MLBG59.Explore.Get_Infos.recap">
+<code class="descclassname">MLBG59.Explore.Get_Infos.</code><code class="descname">recap</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Infos.html#recap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Infos.recap" title="Permalink to this definition">¶</a></dt>
+<dd><p>get and store global informations about the dataset :</p>
+<ul class="simple">
+<li>Variables type (num, cat, date)</li>
+<li>NA values</li>
+<li>low variance variables</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>target</strong> (<em>string</em><em> (</em><em>Default : None</em><em>)</em>) – target name</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>{x : list of variables names}</p>
+<ul class="simple">
+<li>x = numerical : numerical features</li>
+<li>x = categorical : categorical features</li>
+<li>x = date : date features</li>
+<li>x = NA : features which contains NA values</li>
+<li>x = low_variance : list of the features with low variance</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="module-MLBG59.Audit.Get_Outliers">
-<span id="get-outliers"></span><h2>Get Outliers<a class="headerlink" href="#module-MLBG59.Audit.Get_Outliers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-MLBG59.Explore.Get_Outliers">
+<span id="get-outliers"></span><h2>Get Outliers<a class="headerlink" href="#module-MLBG59.Explore.Get_Outliers" title="Permalink to this headline">¶</a></h2>
 <p>Outliers detection :</p>
 <ul class="simple">
 <li>get_cat_outliers : identify categorical features containing outliers and store their names in a list</li>
 <li>get_num_outliers : identify numerical features containing outliers and store their names in a list data</li>
 </ul>
 <dl class="function">
-<dt id="MLBG59.Audit.Get_Outliers.get_cat_outliers">
-<code class="descclassname">MLBG59.Audit.Get_Outliers.</code><code class="descname">get_cat_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>threshold=0.05</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Audit/Get_Outliers.html#get_cat_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Audit.Get_Outliers.get_cat_outliers" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Explore.Get_Outliers.get_cat_outliers">
+<code class="descclassname">MLBG59.Explore.Get_Outliers.</code><code class="descname">get_cat_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>threshold=0.05</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Outliers.html#get_cat_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Outliers.get_cat_outliers" title="Permalink to this definition">¶</a></dt>
 <dd><p>outliers detection for categorical features</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -397,8 +405,8 @@ If None, contains all the categorical features</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Audit.Get_Outliers.get_num_outliers">
-<code class="descclassname">MLBG59.Audit.Get_Outliers.</code><code class="descname">get_num_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>xstd=3</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Audit/Get_Outliers.html#get_num_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Audit.Get_Outliers.get_num_outliers" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Explore.Get_Outliers.get_num_outliers">
+<code class="descclassname">MLBG59.Explore.Get_Outliers.</code><code class="descname">get_num_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>xstd=3</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Outliers.html#get_num_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Outliers.get_num_outliers" title="Permalink to this definition">¶</a></dt>
 <dd><p>outliers detection for num features</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -783,7 +791,7 @@ If None, contains all the numeric features</li>
 </ul>
 <dl class="class">
 <dt id="MLBG59.Modelisation.Bagging.Bagging">
-<em class="property">class </em><code class="descclassname">MLBG59.Modelisation.Bagging.</code><code class="descname">Bagging</code><span class="sig-paren">(</span><em>classifier=RandomForestClassifier(bootstrap=True</em>, <em>class_weight=None</em>, <em>criterion='gini'</em>, <em>max_depth=None</em>, <em>max_features='auto'</em>, <em>max_leaf_nodes=100</em>, <em>min_impurity_decrease=0.0</em>, <em>min_impurity_split=None</em>, <em>min_samples_leaf=1</em>, <em>min_samples_split=2</em>, <em>min_weight_fraction_leaf=0.0</em>, <em>n_estimators=100</em>, <em>n_jobs=None</em>, <em>oob_score=False</em>, <em>random_state=None</em>, <em>verbose=0</em>, <em>warm_start=False)</em>, <em>niter=5</em>, <em>pos_sample_size=1.0</em>, <em>replace=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">MLBG59.Modelisation.Bagging.</code><code class="descname">Bagging</code><span class="sig-paren">(</span><em>classifier=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>niter=5</em>, <em>pos_sample_size=1.0</em>, <em>replace=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging" title="Permalink to this definition">¶</a></dt>
 <dd><p>Meta-algo designed to improve the stability and accuracy of ML classif/regression algos
 or to face an “imbalanced target distribution” problem</p>
 <p>Bagging generates m new training sets more balanced. Then, m models are fitted using the m

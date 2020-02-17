@@ -1,9 +1,7 @@
-"""
-https://trello.com/b/mBU1kFpZ/auto-ml
-"""
+import pandas as pd
 from MLBG59.Utils.Display import print_title1
 from MLBG59.Utils.Decorators import timer
-from MLBG59.Explore.Audit_Dataset import audit_dataset
+from MLBG59.Explore.Get_Infos import recap
 from MLBG59.Explore.Get_Outliers import get_cat_outliers, get_num_outliers
 from MLBG59.Preprocessing.Date_Data import all_to_date, date_to_anc
 from MLBG59.Preprocessing.Missing_Values import fill_all_num, fill_all_cat
@@ -28,28 +26,23 @@ class AutoML(pd.DataFrame):
 
     Atributes
     ---------
-    x_columns : list
-        list of the x features names
-        x = num : numerical features
-        x = cat : categorical features
-        x = date : date features
-        x = NA : features which contains NA values
-        x = low_var : features with low variance
-        x = num_outliers : numerical features which contains outliers
-            (deviation from the mean > x*std dev (x=3 by default))
-        x = cat_outliers : categorical features which contains outliers (modalities frequency < 5%)
+    d_features {x : list of variables names} : dict
+        - x = numerical : numerical features
+        - x = categorical : categorical features
+        - x = date : date features
+        - x = NA : features which contains NA values
+        - x = low_variance : list of the features with low variance
+    d_num_outliers : dict
+        numerical features which contains outliers
+    d_cat_outliers : dict
+        categorical features which contains outliers (modalities frequency < 5%)
     """
-
     def __init__(self, *args, target=None):
         super(AutoML, self).__init__(*args)
         # parameters
         self.target = target
         # attributes
-        self.num_columns = None
-        self.date_columns = None
-        self.cat_columns = None
-        self.NA_columns = None
-        self.low_var_columns = None
+        self.d_features
         self.num_outliers_columns = None
         self.cat_outliers_columns = None
 
@@ -75,28 +68,32 @@ class AutoML(pd.DataFrame):
             
         return
         ------
-         > self.num_columns
-         > self.cat_columns
-         > self.date_columns
-         > self.NA_columns
-         > self.low_var_columns
+        self.d_features {x : list of variables names}
+
+        - x = numerical : numerical features
+        - x = categorical : categorical features
+        - x = date : date features
+        - x = NA : features which contains NA values
+        - x = low_variance : list of the features with low variance
         """
         if verbose > 0:
             print('')
             print_title1('Explore')
 
         # call std_audit_dataset function
-        self.num_columns, self.date_columns, self.cat_columns, self.NA_columns, self.low_var_columns = audit_dataset(
+        self.d_features = recap(
             self, verbose=verbose)
 
         # created attributes display
         if verbose > 0:
-            color_print("\nCreated attributes :  ")
-            print("  -> num_columns ")
-            print("  -> date_columns ")
-            print("  -> cat_columns ")
-            print("  -> NA_columns ")
-            print("  -> low_var_columns ")
+            color_print("\nCreated attributes :  d_features (dict) ")
+            print("Keys :")
+            print("  -> numerical")
+            print("  -> categorical")
+            print("  -> date")
+            print("  -> NA")
+            print("  -> low_variance")
+
 
     """
     --------------------------------------------------------------------------------------------------------------------

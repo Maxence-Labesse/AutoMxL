@@ -1,4 +1,4 @@
-from MLBG59.Explore.Audit_Dataset import *
+from MLBG59.Explore.Get_Infos import *
 from MLBG59.Explore.Get_Outliers import *
 import unittest
 import pandas as pd
@@ -9,7 +9,7 @@ df_test = pd.read_csv('test/df_test.csv')
 class Test_Audit(unittest.TestCase):
 
     def test_audit_dataset(self):
-        num_columns, date_columns, cat_columns, NA_columns, low_var_columns = audit_dataset(df_test, verbose=0)
+        num_columns, date_columns, cat_columns, NA_columns, low_var_columns = recap(df_test, verbose=0)
         # numerical features identification
         self.assertEqual(num_columns, ['age', 'euribor3m', 'null_var', 'y_yes'])
         # categorical features identification

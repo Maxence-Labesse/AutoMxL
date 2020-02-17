@@ -1,7 +1,7 @@
 """ Outliers detection :
 
- - get_cat_outliers : identify categorical features containing outliers and store their names in a list
- - get_num_outliers : identify numerical features containing outliers and store their names in a list data
+ - get_cat_outliers : identify categorical features containing outliers
+ - get_num_outliers : identify numerical features containing outliers
 """
 import pandas as pd
 import numpy as np
@@ -9,7 +9,7 @@ from MLBG59.Utils.Display import *
 from MLBG59.Utils.Utils import get_type_features
 
 
-def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=1):
+def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=False):
     """outliers detection for categorical features
 
     Parameters
@@ -21,13 +21,13 @@ def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=1):
         If None, contains all the categorical features
      threshold : float (Default : 0.05)
         Minimum modality frequency
-     verbose : int (0/1) (Default : 1)
-        Get more operations information
+    verbose : boolean (Default False)
+        Get logging information
 
     Returns
     -------
-     outlier_dict : dict
-          {feature : list of modalities considered as outliers}
+    dict
+        {feature : list of categories considered as outliers}
     """
     # if var_list = None, get all categorical features
     # else, exclude features from var_list whose type is not categorical
@@ -35,7 +35,7 @@ def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=1):
 
     df_local = df[var_list].copy()
 
-    if verbose > 0:
+    if verbose:
         color_print('cat features outliers identification (frequency<' + str(threshold) + ')')
         print('  > features : ', var_list,)
 
@@ -51,7 +51,7 @@ def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=1):
         if len(freq_perc.loc[freq_perc < threshold]) > 0:
             outlier_dict[col] = freq_perc.loc[freq_perc < threshold].index.tolist()
 
-    if verbose > 0:
+    if verbose:
         print("  > containing outliers", list(outlier_dict.keys()))
 
     return outlier_dict
@@ -62,7 +62,7 @@ def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=1):
 """
 
 
-def get_num_outliers(df, var_list=None, xstd=3, verbose=0):
+def get_num_outliers(df, var_list=None, xstd=3, verbose=False):
     """outliers detection for num features
     
     Parameters
@@ -74,8 +74,8 @@ def get_num_outliers(df, var_list=None, xstd=3, verbose=0):
         If None, contains all the num features
      xstd : int (Default : 3)
         coefficient (TODO)
-     verbose : int (0/1) (Default : 1)
-        Get more operations information
+    verbose : boolean (Default False)
+        Get logging information
             
     Returns
     -------
@@ -88,7 +88,7 @@ def get_num_outliers(df, var_list=None, xstd=3, verbose=0):
 
     df_bis = df[var_list].copy()
 
-    if verbose > 0:
+    if verbose:
         color_print('num features outliers identification ( x: |x - mean| > '+str(xstd)+' * var)')
         print('  > features : ', var_list, )
 
@@ -113,7 +113,7 @@ def get_num_outliers(df, var_list=None, xstd=3, verbose=0):
         # store features and outliers index in outlierèdict
         outlier_dict[col] = [lower_limit[col], upper_limit[col]]
 
-    if verbose > 0:
+    if verbose:
         print("  > containing outliers", list(outlier_dict.keys()))
 
     return outlier_dict

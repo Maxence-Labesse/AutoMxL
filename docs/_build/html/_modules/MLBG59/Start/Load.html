@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MLBG59.Load.Load &mdash; MLBG59 1.0.0 documentation</title>
+  <title>MLBG59.Start.Load &mdash; MLBG59 1.0.0 documentation</title>
   
 
   
@@ -130,7 +130,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>MLBG59.Load.Load</li>
+      <li>MLBG59.Start.Load</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -145,41 +145,45 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for MLBG59.Load.Load</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Data importation :</span>
+  <h1>Source code for MLBG59.Start.Load</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
 
-<span class="sd"> - get_delimiter : identify csv file delimiter</span>
-<span class="sd"> - load data</span>
+<span class="sd">- get_delimiter : identify delimiter for a csv/txt file</span>
+<span class="sd">- load_data : import dataset into dataframe</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
-<div class="viewcode-block" id="get_delimiter"><a class="viewcode-back" href="../../../features.html#MLBG59.Load.Load.get_delimiter">[docs]</a><span class="k">def</span> <span class="nf">get_delimiter</span><span class="p">(</span><span class="n">csvfile</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Identify the delimiter of a .csv file</span>
+<div class="viewcode-block" id="get_delimiter"><a class="viewcode-back" href="../../../features.html#MLBG59.Start.Load.get_delimiter">[docs]</a><span class="k">def</span> <span class="nf">get_delimiter</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Identify the delimiter for a csv/txt file</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    csvfile : string</span>
+<span class="sd">    file : string</span>
 <span class="sd">        Path and name of the file (Ex : &quot;data/file.csv&quot;)</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    string</span>
-<span class="sd">        Identified delimiter</span>
-
+<span class="sd">        identified delimiter</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># csv file reading</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">csvfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">myCsvfile</span><span class="p">:</span>
-        <span class="c1"># Reads one entire line from the file</span>
-        <span class="n">header</span> <span class="o">=</span> <span class="n">myCsvfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.txt&#39;</span><span class="p">):</span>
+        <span class="c1"># file reading</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">myCsvfile</span><span class="p">:</span>
+            <span class="c1"># Reads one entire line from the file</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">myCsvfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
 
-        <span class="c1"># Returns the lowest index of the substring if it is found in given string. (-1 = not found)</span>
-        <span class="k">if</span> <span class="n">header</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span>
-        <span class="k">elif</span> <span class="n">header</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+            <span class="c1"># Returns the lowest index of the substring if it is found in given string. (-1 = not found)</span>
+            <span class="k">if</span> <span class="n">header</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span>
+            <span class="k">elif</span> <span class="n">header</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
 
-    <span class="k">return</span> <span class="n">delimiter</span></div>
+        <span class="k">return</span> <span class="n">delimiter</span>
+
+    <span class="k">else</span> <span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Please use a .csv or .txt file&#39;</span><span class="p">)</span></div>
 
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -187,26 +191,26 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="load_data"><a class="viewcode-back" href="../../../features.html#MLBG59.Load.Load.load_data">[docs]</a><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Import dataset as a DataFrame</span>
-<span class="sd">    accept .csv, .xlsx, .xls files</span>
+<div class="viewcode-block" id="import_data"><a class="viewcode-back" href="../../../features.html#MLBG59.Start.Load.import_data">[docs]</a><span class="k">def</span> <span class="nf">import_data</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Import dataset as a DataFrame, identify delimiter for txt and csv files.</span>
+
+<span class="sd">    Available files : .txt, .csv, .xlsx, .xls files</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    file : string</span>
 <span class="sd">        Path and name of the file (Ex : &quot;data/file.csv&quot;)</span>
 <span class="sd">        If file is .csv, automatically identify delimiter</span>
-<span class="sd">    index_col : int, str, sequence of int / str, or False, default None</span>
+<span class="sd">    index_col : int, str, sequence of int / str, or False (Default None)</span>
 <span class="sd">        Column(s) to use as the row labels of the DataFrame, either given as string name or column index.</span>
 <span class="sd">        If a sequence of int / str is given, a MultiIndex is used.</span>
-<span class="sd">    verbose : int (0/1) (Default : 1)</span>
-<span class="sd">        Get more operations information</span>
+<span class="sd">    verbose : boolean (Default False)</span>
+<span class="sd">        Get logging information</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    DataFrame :</span>
-<span class="sd">        dataset imported as DataFrame</span>
-
+<span class="sd">    DataFrame</span>
+<span class="sd">        dataset imported into DataFrame</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># CSV</span>
     <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.txt&#39;</span><span class="p">):</span>
@@ -227,7 +231,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">df</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&gt; File &#39;</span> <span class="o">+</span> <span class="n">file</span> <span class="o">+</span> <span class="s1">&#39; successfully imported as DataFrame&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&gt; DataFrame size  : &#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -235,48 +239,6 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File couldn&#39;t be imported&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df</span></div>
-
-
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">-------------------------------------------------------------------------------------------------------------</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-
-<div class="viewcode-block" id="parse_target"><a class="viewcode-back" href="../../../features.html#MLBG59.Load.Load.parse_target">[docs]</a><span class="k">def</span> <span class="nf">parse_target</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">modalite</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform target to boolean (1/0), choosing the reference modality</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    df : dataframe</span>
-<span class="sd">        input dataset</span>
-<span class="sd">    target : string</span>
-<span class="sd">        target feature</span>
-<span class="sd">    modalite : string</span>
-<span class="sd">         modality name</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    dataframe</span>
-<span class="sd">        modified dataframe</span>
-<span class="sd">    string</span>
-<span class="sd">        new target name</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Si la variable cible est numérique, transformation en string (nécessaire pour dichotomiser)</span>
-    <span class="k">if</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">_get_numeric_data</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-
-    <span class="c1"># Dichotomisation</span>
-    <span class="n">target_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">])</span>
-    <span class="c1"># Choix de la nouvelle variable cible et renommage</span>
-    <span class="n">target_dummies</span><span class="p">[</span><span class="n">target</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">modalite</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_dummies</span><span class="p">[</span><span class="n">modalite</span><span class="p">]</span>
-
-    <span class="c1"># Intégration de la nouvelle variable cible dans le dataset</span>
-    <span class="n">df_bis</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">df</span><span class="p">,</span> <span class="n">target_dummies</span><span class="p">[</span><span class="n">target</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">modalite</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="c1"># suppresion de l&#39;ancienne variable cible</span>
-    <span class="k">del</span> <span class="n">df_bis</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">df_bis</span><span class="p">,</span> <span class="n">target</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">modalite</span></div>
 </pre></div>
 
            </div>

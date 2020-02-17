@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MLBG59.Audit.Get_Outliers &mdash; MLBG59 1.0.0 documentation</title>
+  <title>MLBG59.Explore.Get_Outliers &mdash; MLBG59 1.0.0 documentation</title>
   
 
   
@@ -130,7 +130,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>MLBG59.Audit.Get_Outliers</li>
+      <li>MLBG59.Explore.Get_Outliers</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -145,7 +145,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for MLBG59.Audit.Get_Outliers</h1><div class="highlight"><pre>
+  <h1>Source code for MLBG59.Explore.Get_Outliers</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Outliers detection :</span>
 
 <span class="sd"> - get_cat_outliers : identify categorical features containing outliers and store their names in a list</span>
@@ -157,7 +157,7 @@
 <span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="n">get_type_features</span>
 
 
-<div class="viewcode-block" id="get_cat_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Audit.Get_Outliers.get_cat_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_cat_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="get_cat_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Outliers.get_cat_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_cat_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;outliers detection for categorical features</span>
 
 <span class="sd">    Parameters</span>
@@ -210,7 +210,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="get_num_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Audit.Get_Outliers.get_num_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_num_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xstd</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="get_num_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Outliers.get_num_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_num_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xstd</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;outliers detection for num features</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>

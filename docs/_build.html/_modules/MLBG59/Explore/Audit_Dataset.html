@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MLBG59.Audit.Audit_Dataset &mdash; MLBG59 1.0.0 documentation</title>
+  <title>MLBG59.Explore.Audit_Dataset &mdash; MLBG59 1.0.0 documentation</title>
   
 
   
@@ -130,7 +130,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>MLBG59.Audit.Audit_Dataset</li>
+      <li>MLBG59.Explore.Audit_Dataset</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -145,7 +145,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for MLBG59.Audit.Audit_Dataset</h1><div class="highlight"><pre>
+  <h1>Source code for MLBG59.Explore.Audit_Dataset</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Dataset Features analysis :</span>
 
 <span class="sd"> - audit dataset  : get informations on the data (NA, features type, low variance features, ...)</span>
@@ -159,7 +159,7 @@
 <span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="n">get_type_features</span>
 
 
-<div class="viewcode-block" id="audit_dataset"><a class="viewcode-back" href="../../../features.html#MLBG59.Audit.Audit_Dataset.audit_dataset">[docs]</a><span class="k">def</span> <span class="nf">audit_dataset</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="audit_dataset"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Audit_Dataset.audit_dataset">[docs]</a><span class="k">def</span> <span class="nf">audit_dataset</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Achieve a short audit of the dataset</span>
 
 <span class="sd">    Identify features of each type (num, cat, date), features containing NA and features whose variance is null</span>
@@ -237,7 +237,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="is_date"><a class="viewcode-back" href="../../../features.html#MLBG59.Audit.Audit_Dataset.is_date">[docs]</a><span class="k">def</span> <span class="nf">is_date</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
+<div class="viewcode-block" id="is_date"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Audit_Dataset.is_date">[docs]</a><span class="k">def</span> <span class="nf">is_date</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Test if a DataFrame feature is recognized as a date (using to_datetime)</span>
 
 <span class="sd">    Parameters</span>
@@ -273,7 +273,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="get_all_dates"><a class="viewcode-back" href="../../../features.html#MLBG59.Audit.Audit_Dataset.get_all_dates">[docs]</a><span class="k">def</span> <span class="nf">get_all_dates</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+<div class="viewcode-block" id="get_all_dates"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Audit_Dataset.get_all_dates">[docs]</a><span class="k">def</span> <span class="nf">get_all_dates</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Identify all date features of a DataFrame</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
@@ -300,7 +300,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="low_variance_features"><a class="viewcode-back" href="../../../features.html#MLBG59.Audit.Audit_Dataset.low_variance_features">[docs]</a><span class="k">def</span> <span class="nf">low_variance_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="low_variance_features"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Audit_Dataset.low_variance_features">[docs]</a><span class="k">def</span> <span class="nf">low_variance_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;identify  features with low variance (&lt;= threshold)</span>
 
 <span class="sd">    Parameters</span>

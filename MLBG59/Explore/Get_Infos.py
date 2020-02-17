@@ -1,9 +1,9 @@
 """ Dataset Features analysis :
 
- - audit dataset  : get informations on the data (NA, features type, low variance features, ...)
- - is_date : detect if an object/num feature is a date
- - get_all_dates : identify all dates features in a DataFrame and store their names in a list
- - low variance features : identify all features with a low variance (<threshold) and sotre their name in a list
+ - recap : get and store informations related to the dataset (NA, features type, low variance features, ...)
+ - is_date : Test if a variable can be considered as date
+ - get_all_dates : identify all dates features
+ - low variance features : identify all features with low variance (<threshold)
 """
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
@@ -11,10 +11,12 @@ from MLBG59.Utils.Display import *
 from MLBG59.Utils.Utils import get_type_features
 
 
-def audit_dataset(df, verbose=1):
-    """Achieve a short audit of the dataset
+def recap(df, verbose=False):
+    """get and store global informations about the dataset :
 
-    Identify features of each type (num, cat, date), features containing NA and features whose variance is null
+    - Variables type (num, cat, date)
+    - NA values
+    - low variance variables
         
     Parameters
     ----------
@@ -22,21 +24,22 @@ def audit_dataset(df, verbose=1):
         input dataset
     target : string (Default : None)
         target name
-    verbose : int (0/1) (Default : 1)
-        get more operations information
+    verbose : boolean (Default False)
+        Get logging information
             
     Returns
     -------
-    list of the x features names
-        - x = num : numerical features
-        - x = cat : categorical features
+    dict
+        {x : list of variables names}
+
+        - x = numerical : numerical features
+        - x = categorical : categorical features
         - x = date : date features
         - x = NA : features which contains NA values
-        - x = low_var : list of the features with low variance
+        - x = low_variance : list of the features with low variance
     """
-
     # dataset dimensions
-    if verbose > 0:
+    if verbose:
         color_print("Dimensions : ")
         print("  > row number : ", df.shape[0], "\n  > col number : ", df.shape[1])
 
@@ -50,7 +53,7 @@ def audit_dataset(df, verbose=1):
     # categorical
     cat_columns = [x for x in df.columns if (x not in num_columns) and (x not in date_columns)]
 
-    if verbose > 0:
+    if verbose:
         color_print("Features type identification : ")
         print("  > cat : " + str(len(cat_columns)) + ' (' + str(round(len(cat_columns) / df.shape[1] * 100)) + '%)',
               '\n  > num : ' + str(len(num_columns)) + ' (' + str(round(len(num_columns) / df.shape[1] * 100)) + '%)',
@@ -67,7 +70,7 @@ def audit_dataset(df, verbose=1):
     NA_columns = df_col.loc[df_col['Nbr NA'] > 0].sort_values('Nbr NA', ascending=False).variables.tolist()
     col_des = df_col['Taux NA'].describe()
 
-    if verbose > 0:
+    if verbose:
         color_print(str(len(NA_columns)) + " features containing NA")
         print('  > Taux NA moyen : ' + str(round(col_des['mean'] * 100, 2)) + '%',
               '\n  >           min : ' + str(round(col_des['min'] * 100, 2)) + '%',
@@ -76,12 +79,19 @@ def audit_dataset(df, verbose=1):
     #########################
     # Low variance features
     #########################
-    if verbose > 0:
+    if verbose:
         color_print('Low variance features')
     low_var_columns = \
         low_variance_features(df, var_list=num_columns, threshold=0, rescale=True, verbose=verbose).index.tolist()
 
-    return num_columns, date_columns, cat_columns, NA_columns, low_var_columns
+    # store into DataFrame
+    d_features = {'numerical': num_columns,
+                  'date': date_columns,
+                  'categorical': cat_columns,
+                  'NA': NA_columns,
+                  'low_variance': low_var_columns}
+
+    return d_features
 
 
 """
@@ -90,7 +100,7 @@ def audit_dataset(df, verbose=1):
 
 
 def is_date(df, col):
-    """Test if a DataFrame feature is recognized as a date (using to_datetime)
+    """Test if a DataFrame feature can be considered as a date (using to_datetime)
 
     Parameters
     ----------
@@ -102,7 +112,7 @@ def is_date(df, col):
     Returns
     -------
     res : boolean
-        True if the col is recognized as a date
+        Test result
     """
     # if col is datetime type, res = True
     if df[col].dtype == 'datetime64[ns]':
@@ -136,7 +146,7 @@ def get_all_dates(df):
     Returns
     -------
      list
-        list of features recognized as date
+        list of features identified as date
     """
     date_list = list()
 
@@ -153,18 +163,18 @@ def get_all_dates(df):
 
 
 def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=1):
-    """identify  features with low variance (<= threshold)
+    """Identify  features with low variance (<= threshold). Possible to rescale feature before computing.
 
     Parameters
     ----------
      df : DataFrame
         input DataFrame
      var_list : list (default : None)
-        features to check variance
+        features names
      threshold : float (default : 0
         variance threshold
      rescale : bool (default : true)
-        if yes : use MinMaxScaler on data before computing variance
+        enable  MinMaxScaler before computing variance
 
     Returns
     -------

@@ -1,21 +1,25 @@
-Load
+Start
 =====
 Load
 -------------
-.. automodule:: MLBG59.Load.Load
+.. automodule:: MLBG59.Start.Load
     :members:
 
+Encode_Target
+-------------
+.. automodule:: MLBG59.Start.Encode_Target
+    :members:
 
-Audit
-=====
-Audit Data
-----------
-.. automodule:: MLBG59.Audit.Audit_Dataset
+Explore
+=======
+Features summarize
+------------------
+.. automodule:: MLBG59.Explore.Get_Infos
     :members:
 
 Get Outliers
 -------------
-.. automodule:: MLBG59.Audit.Get_Outliers
+.. automodule:: MLBG59.Explore.Get_Outliers
     :members:
 
 
