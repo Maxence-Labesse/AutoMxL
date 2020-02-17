@@ -1,31 +1,31 @@
 """ Categorical Features processing
 
- - dummy_all_var : get one hot encoded vector for each modality of each categorical features
+ - dummy_all_var : get one hot encoded vector for each category of a categorical features list
 """
 import pandas as pd
 from MLBG59.Utils.Utils import get_type_features
 
 
 def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
-    """Replace categorical features from a list with dummified ones
+    """Get one hot encoded vector for each category of a categorical features list
     
     Parameters
     ----------
      df : DatraFrame
         Input dataset
      var_list : list (Default : None)
-        List of the features to dummify
-        If None, contains all the num features
+        Names of the features to dummify
+        If None, all the num features
      prefix_list : list (default : None)
         Prefix to add before new features name
      Keep : boolean (Default = False)
         If True, delete the original feature
-     verbose : int (0/1) (Default : 1)
-        Get more operations information
+    verbose : boolean (Default False)
+        Get logging information
         
     Returns
     -------
-     df_local : DataFrame
+    DataFrame
           Modified dataset
     """
     # if var_list = None, get all categorical features
@@ -34,7 +34,7 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
 
     df_local = df.copy()
 
-    if verbose > 0:
+    if verbose:
         print('  ** method : one hot encoding')
 
     for col in var_list:
@@ -52,7 +52,7 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
         # if keep = False, delete original features
         if keep == False:
             df_local = df_local.drop(col, axis=1)
-        if verbose > 0:
+        if verbose:
             print('  > '+col+' ->',df_cat.columns.tolist())
 
     return df_local

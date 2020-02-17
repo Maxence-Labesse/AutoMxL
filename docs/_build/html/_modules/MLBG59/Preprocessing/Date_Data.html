@@ -77,7 +77,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Features</span></p>
+              <p class="caption"><span class="caption-text">AutoML class</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AutoML class</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#explore">Explore</a></li>
@@ -149,7 +153,7 @@
 <span></span><span class="sd">&quot;&quot;&quot; Date Features processing</span>
 
 <span class="sd"> - all_to_date : detect dates from num/cat features and transform them to datetime format.</span>
-<span class="sd"> - date_to_anc : Compute timelapse (num features) from date features</span>
+<span class="sd"> - date_to_anc : Transform datetime features to timedelta according to a ref date</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -158,17 +162,17 @@
 
 
 <div class="viewcode-block" id="all_to_date"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Date_Data.all_to_date">[docs]</a><span class="k">def</span> <span class="nf">all_to_date</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convert num/cat date features to datetime</span>
+    <span class="sd">&quot;&quot;&quot;etect dates from num/cat features and transform them to datetime format.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    df : DataFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">    var_list : list (Default : None)</span>
-<span class="sd">        List of the features to analyze</span>
-<span class="sd">        If None, contains all the num features</span>
-<span class="sd">    verbose : int (0/1) (Default : 1)</span>
-<span class="sd">        Get more operations information</span>
+<span class="sd">        Names of the features to analyze</span>
+<span class="sd">        If None, all the num features</span>
+<span class="sd">    verbose : boolean (Default False)</span>
+<span class="sd">        Get logging information</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -180,7 +184,7 @@
     <span class="n">var_list</span> <span class="o">=</span> <span class="n">get_type_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">)</span>
     <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; features : &#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; features conversion to date using &quot;try .to_datetime&#39;</span><span class="p">)</span>
 
@@ -203,7 +207,7 @@
 
 
 <div class="viewcode-block" id="date_to_anc"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Date_Data.date_to_anc">[docs]</a><span class="k">def</span> <span class="nf">date_to_anc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convert string date features to timelapse according to a ref date</span>
+    <span class="sd">&quot;&quot;&quot;Transform datetime features to timedelta according to a ref date</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -213,10 +217,10 @@
 <span class="sd">        List of the features to analyze</span>
 <span class="sd">        If None, contains all the num features</span>
 <span class="sd">    date_ref : string &#39;%d/%m/%y&#39; (Default : None)</span>
-<span class="sd">        Date to compute timelapse</span>
+<span class="sd">        Date to compute timedelta</span>
 <span class="sd">        If None, today date</span>
-<span class="sd">    verbose : int (0/1) (Default : 1)</span>
-<span class="sd">        Get more operations information</span>
+<span class="sd">    verbose : boolean (Default False)</span>
+<span class="sd">        Get logging information</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -224,7 +228,7 @@
 <span class="sd">        Modified dataset</span>
 <span class="sd">        </span>
 <span class="sd">    list</span>
-<span class="sd">        List containing new features names</span>
+<span class="sd">        New timedelta features names</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if date_ref is None, use today date</span>
     <span class="k">if</span> <span class="n">date_ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

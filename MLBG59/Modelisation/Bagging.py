@@ -7,9 +7,6 @@ Bagging class methods :
 - predict
 - feat_importance_BAG_RF
 
-Functions :
-
-- Bagging sample
 
 """
 from sklearn.ensemble import RandomForestClassifier

@@ -1,7 +1,7 @@
 """ Date Features processing
 
  - all_to_date : detect dates from num/cat features and transform them to datetime format.
- - date_to_anc : Compute timelapse (num features) from date features
+ - date_to_anc : Transform datetime features to timedelta according to a ref date
 """
 import pandas as pd
 import numpy as np
@@ -10,17 +10,17 @@ from MLBG59.Utils.Utils import get_type_features
 
 
 def all_to_date(df, var_list=None, verbose=1):
-    """Convert num/cat date features to datetime
+    """etect dates from num/cat features and transform them to datetime format.
     
     Parameters
     ----------
     df : DataFrame
         Input dataset
     var_list : list (Default : None)
-        List of the features to analyze
-        If None, contains all the num features
-    verbose : int (0/1) (Default : 1)
-        Get more operations information
+        Names of the features to analyze
+        If None, all the num features
+    verbose : boolean (Default False)
+        Get logging information
         
     Returns
     -------
@@ -32,7 +32,7 @@ def all_to_date(df, var_list=None, verbose=1):
     var_list = get_type_features(df, 'all', var_list)
     df_local = df.copy()
 
-    if verbose > 0:
+    if verbose:
         print('  > features : ', var_list)
         print('  > features conversion to date using "try .to_datetime')
 
@@ -55,7 +55,7 @@ def all_to_date(df, var_list=None, verbose=1):
 
 
 def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
-    """Convert string date features to timelapse according to a ref date
+    """Transform datetime features to timedelta according to a ref date
     
     Parameters
     ----------
@@ -65,10 +65,10 @@ def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
         List of the features to analyze
         If None, contains all the num features
     date_ref : string '%d/%m/%y' (Default : None)
-        Date to compute timelapse
+        Date to compute timedelta
         If None, today date
-    verbose : int (0/1) (Default : 1)
-        Get more operations information
+    verbose : boolean (Default False)
+        Get logging information
 
     Returns
     -------
@@ -76,7 +76,7 @@ def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
         Modified dataset
         
     list
-        List containing new features names
+        New timedelta features names
     """
     # if date_ref is None, use today date
     if date_ref is None:

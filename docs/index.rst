@@ -19,6 +19,13 @@ AutoML is built as a class inherited from pandas dataframe one, allowing user to
 
 .. toctree::
    :maxdepth: 3
+   :caption: AutoML class
+   :hidden:
+
+   autoML
+
+.. toctree::
+   :maxdepth: 3
    :caption: Features
    :hidden:
 

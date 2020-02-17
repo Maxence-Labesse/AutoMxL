@@ -77,7 +77,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Features</span></p>
+              <p class="caption"><span class="caption-text">AutoML class</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AutoML class</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#explore">Explore</a></li>
@@ -158,15 +162,17 @@
 
 
 <div class="viewcode-block" id="get_cat_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Outliers.get_cat_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_cat_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;outliers detection for categorical features</span>
+    <span class="sd">&quot;&quot;&quot;Outliers detection for categorical features.</span>
+
+<span class="sd">    Method : Modalities with frequency &lt;x% (Default 5%)</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">     df : DataFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">     var_list : list (Default : None)</span>
-<span class="sd">        list of the features to analyze.</span>
-<span class="sd">        If None, contains all the categorical features</span>
+<span class="sd">        Names of the features to analyze.</span>
+<span class="sd">        If None, all the categorical features</span>
 <span class="sd">     threshold : float (Default : 0.05)</span>
 <span class="sd">        Minimum modality frequency</span>
 <span class="sd">    verbose : boolean (Default False)</span>
@@ -175,7 +181,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    dict</span>
-<span class="sd">        {feature : list of categories considered as outliers}</span>
+<span class="sd">        {variable : list of categories considered as outliers}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if var_list = None, get all categorical features</span>
     <span class="c1"># else, exclude features from var_list whose type is not categorical</span>
@@ -211,24 +217,26 @@
 
 
 <div class="viewcode-block" id="get_num_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Outliers.get_num_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_num_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xstd</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;outliers detection for num features</span>
+    <span class="sd">&quot;&quot;&quot;outliers detection for num features.</span>
+
+<span class="sd">    Method : x outlier &lt;=&gt; abs(x - mean) &gt; xstd * var</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">     df : DataFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">     var_list : list (Default : None)</span>
-<span class="sd">        List of the features to analyze.</span>
-<span class="sd">        If None, contains all the num features</span>
+<span class="sd">        Names of the features to analyze.</span>
+<span class="sd">        If None, all the num features</span>
 <span class="sd">     xstd : int (Default : 3)</span>
-<span class="sd">        coefficient (TODO)</span>
+<span class="sd">        Variance gap coef</span>
 <span class="sd">    verbose : boolean (Default False)</span>
 <span class="sd">        Get logging information</span>
 <span class="sd">            </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">     outlier_dict : dict</span>
-<span class="sd">         {feature : index of outliers}</span>
+<span class="sd">         {variable : [lower_limit, upper_limit]}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if var_list = None, get all num features</span>
     <span class="c1"># else, exclude features from var_list whose type is not num</span>
@@ -243,7 +251,7 @@
     <span class="c1"># initialize output dict</span>
     <span class="n">outlier_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="c1"># compute features upper and lower limit (deviation from the mean &gt; x*std dev (x=3 by default))</span>
+    <span class="c1"># compute features upper and lower limit (abs(x - mean) &gt; xstd * var (x=3 by default))</span>
     <span class="n">data_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">df_bis</span><span class="p">)</span>
     <span class="n">data_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">df_bis</span><span class="p">)</span>
     <span class="n">anomaly_cut_off</span> <span class="o">=</span> <span class="n">data_std</span> <span class="o">*</span> <span class="n">xstd</span>
@@ -258,7 +266,7 @@
 
     <span class="c1"># for features containing outliers</span>
     <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_outliers</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_outliers</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">():</span>
-        <span class="c1"># store features and outliers index in outlierèdict</span>
+        <span class="c1"># store features and outliers index in outlier_dict</span>
         <span class="n">outlier_dict</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">lower_limit</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">upper_limit</span><span class="p">[</span><span class="n">col</span><span class="p">]]</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
