@@ -1,5 +1,4 @@
-import pandas as pd
-import numpy as np  
+import numpy as np
 from sklearn.metrics import roc_curve, auc, log_loss, f1_score, precision_score, recall_score
 from sklearn import metrics
 

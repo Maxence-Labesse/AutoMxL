@@ -1,4 +1,4 @@
-from MLBG59.Load.Load import *
+from MLBG59.Start.Load import *
 import unittest
 import pandas as pd
 
@@ -11,4 +11,4 @@ class Test_Load(unittest.TestCase):
         self.assertEqual(get_delimiter(file),',')
         
     def test_load(self):
-        self.assertIsNotNone(type(load_data(file=file, verbose=0)),pd.DataFrame)
+        self.assertIsNotNone(type(import_data(file=file, verbose=0)), pd.DataFrame)

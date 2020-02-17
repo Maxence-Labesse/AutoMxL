@@ -1,5 +1,5 @@
-from MLBG59.Audit.Audit_Dataset import *
-from MLBG59.Audit.Get_Outliers import *
+from MLBG59.Explore.Audit_Dataset import *
+from MLBG59.Explore.Get_Outliers import *
 import unittest
 import pandas as pd
 

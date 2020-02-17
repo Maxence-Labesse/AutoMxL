@@ -20,16 +20,13 @@ from MLBG59.Utils.Utils import *
 from MLBG59.Utils.Display import color_print
 from datetime import datetime
 
-"""
-Defaults HP grid for RF and XGBOOST
-"""
+# Defaults HP grid for RF and XGBOOST
 default_RF_grid_param = {
     'n_estimators': np.random.uniform(low=20, high=200, size=20).astype(int),
     'max_features': ['auto', 'log2'],
     'max_depth': np.random.uniform(low=3, high=10, size=20).astype(int),
-    'min_samples_split': [5, 10],
-    # 'min_samples_leaf': [1, 2, 4]
-}
+    'min_samples_split': [5, 10]}
+# 'min_samples_leaf': [1, 2, 4]
 
 default_XGB_grid_param = {
     'n_estimators': np.random.uniform(low=100, high=400, size=20).astype(int),
@@ -38,12 +35,7 @@ default_XGB_grid_param = {
     'min_samples_split': [5, 10, 15],
     'min_samples_leaf': [1, 2, 4, 8],
     'learning_rate': [0.001, 0.003, 0.006, 0.009, 0.01, 0.03, 0.06, 0.09, 0.1, 0.3, 0.6],
-    'scale_pos_weight': [3, 4, 5, 6, 7, 8, 9],
-}
-
-"""
--------------------------------------------------------------------------------------------------------------
-"""
+    'scale_pos_weight': [3, 4, 5, 6, 7, 8, 9]}
 
 
 class Hyperopt(object):

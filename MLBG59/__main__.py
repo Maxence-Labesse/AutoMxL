@@ -3,8 +3,8 @@ https://trello.com/b/mBU1kFpZ/auto-ml
 """
 from MLBG59.Utils.Display import print_title1
 from MLBG59.Utils.Decorators import timer
-from MLBG59.Audit.Audit_Dataset import audit_dataset
-from MLBG59.Audit.Get_Outliers import get_cat_outliers, get_num_outliers
+from MLBG59.Explore.Audit_Dataset import audit_dataset
+from MLBG59.Explore.Get_Outliers import get_cat_outliers, get_num_outliers
 from MLBG59.Preprocessing.Date_Data import all_to_date, date_to_anc
 from MLBG59.Preprocessing.Missing_Values import fill_all_num, fill_all_cat
 from MLBG59.Preprocessing.Outliers import process_cat_outliers, process_num_outliers
@@ -83,7 +83,7 @@ class AutoML(pd.DataFrame):
         """
         if verbose > 0:
             print('')
-            print_title1('Audit')
+            print_title1('Explore')
 
         # call std_audit_dataset function
         self.num_columns, self.date_columns, self.cat_columns, self.NA_columns, self.low_var_columns = audit_dataset(

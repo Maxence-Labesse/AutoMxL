@@ -187,7 +187,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="load_data"><a class="viewcode-back" href="../../../features.html#MLBG59.Load.Load.load_data">[docs]</a><span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="import_data"><a class="viewcode-back" href="../../../features.html#MLBG59.Load.Load.import_data">[docs]</a><span class="k">def</span> <span class="nf">import_data</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Import dataset as a DataFrame</span>
 <span class="sd">    accept .csv, .xlsx, .xls files</span>
 
@@ -242,7 +242,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="parse_target"><a class="viewcode-back" href="../../../features.html#MLBG59.Load.Load.parse_target">[docs]</a><span class="k">def</span> <span class="nf">parse_target</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">modalite</span><span class="p">):</span>
+<div class="viewcode-block" id="category_to_target"><a class="viewcode-back" href="../../../features.html#MLBG59.Load.Load.category_to_target">[docs]</a><span class="k">def</span> <span class="nf">category_to_target</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">modalite</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Transform target to boolean (1/0), choosing the reference modality</span>
 
 <span class="sd">    Parameters</span>

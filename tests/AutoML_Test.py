@@ -34,7 +34,7 @@ class TestAudit(unittest.TestCase):
     def setUpClass(cls):
         # Instantiate autoML object from df_test and target
         cls.df = AutoML(df_test.copy(), target='y_yes')
-        # Audit 
+        # Explore
         cls.df.audit(verbose=0)
 
 
