@@ -1,6 +1,5 @@
 import os
 import sys
-
 cwd = os.getcwd()
 sys.path.insert(0, os.path.dirname(cwd))
 from MLBG59.Preprocessing.Categorical_Data import *
@@ -11,7 +10,7 @@ import unittest
 import pandas as pd
 import numpy as np
 
-data = {'Name': ['Tom', 'nick', 'krish', np.nan],
+data = {'Name': ['Tom', 'Nick', 'Krish', np.nan],
         'Age': [20, np.nan, np.nan, 18],
         'Height': [np.nan, 170, 180, 190],
         'Eyes': ['blue', 'red', 'red', 'blue'],
@@ -43,7 +42,7 @@ class Test_Date_preprocessing(unittest.TestCase):
 
     def setUp(self):
         self.df = pd.DataFrame(data)
-        self.df_to_date = all_to_date(self.df, ['Date_nai', 'American_date_nai'], verbose=0)
+        self.df_to_date = all_to_date(self.df, ['Date_nai', 'American_date_nai'], verbose=False)
         self.df_to_anc, self.new_var_list = date_to_anc(self.df_to_date, var_list=['American_date_nai', 'Date_nai'],
                                                         date_ref='27/10/2010',
                                                         verbose=0)
@@ -66,9 +65,9 @@ class Test_Categorical(unittest.TestCase):
 
     def setUp(self):
         self.df = pd.DataFrame(data)
-        self.df_dummy = dummy_all_var(self.df, var_list=['Eyes', 'Sexe'], prefix_list=None, keep=False, verbose=0)
+        self.df_dummy = dummy_all_var(self.df, var_list=['Eyes', 'Sexe'], prefix_list=None, keep=False, verbose=False)
         self.df_dummy_pref = dummy_all_var(self.df, var_list=['Eyes', 'Sexe'], prefix_list=['Ey', 'Sx'], keep=True,
-                                           verbose=0)
+                                           verbose=False)
 
     def test_dummy_all_var(self):
         self.assertIn('Eyes_blue', self.df_dummy.columns)
@@ -83,26 +82,18 @@ class Test_Categorical(unittest.TestCase):
         self.assertIn('Sexe', self.df_dummy_pref.columns)
 
 
-"""
 class Test_Outliers(unittest.TestCase):
 
     def setUp(self):
         self.df = pd.DataFrame(data)
-        self.df_process_cat = replace_category(self.df, ['Name', 'Hair'], method="percent", threshold=0.30,
-                                               verbose=0)
-
-    def test_remove_bind(self):
-        self.assertEqual(self.df_perc_bind['Hair'].tolist(), ['brown', 'brown', 'brown', 'other'])
-        self.assertEqual(self.df_nb_bind['Hair'].tolist(), ['brown', 'brown', 'brown', 'other'])
-        self.assertEqual(self.df_nbvar_bind['Hair'].tolist(), ['brown', 'brown', 'brown', 'other'])
+        self.df_process_cat = replace_category(self.df, 'Hair', ['blond'], verbose=False)
+        self.df_process_cat = replace_category(self.df_process_cat, 'Name', ['Tom', 'Nick'], verbose=False)
 
     def test_process_cat_outliers(self):
-        self.assertEqual(self.df_process_cat['Name'].tolist(), ['other', 'other', 'other', 'other'])
+        self.assertEqual(self.df_process_cat['Name'].tolist(), ['other', 'other', 'Krish', np.nan])
         self.assertEqual(self.df_process_cat['Hair'].tolist(), ['brown', 'brown', 'brown', 'other'])
 
     def test_process_num_outliers(self):
-        df_outlier = pd.DataFrame({'Out_1': np.ones(1000).tolist() + [1000], 'Out_2': np.ones(1000).tolist() + [-1000]})
-        df_outlier_proc = replace_extreme_values(df_outlier, None, xstd=3, verbose=0)
-        self.assertEqual(df_outlier_proc['Out_1'][1000], 96.67678469055576)
-        self.assertEqual(df_outlier_proc['Out_2'][1000], -94.86832980505137)
-"""
+        df_outlier_proc = replace_extreme_values(self.df, 'Height', 175, 185)
+        self.assertEqual(df_outlier_proc['Height'].tolist()[1:], [175.0, 180.0, 185.0])
+

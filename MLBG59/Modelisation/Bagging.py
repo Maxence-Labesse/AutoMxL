@@ -44,7 +44,7 @@ class Bagging(object):
         Enable sampling with replacement
 
     list_model : list (Default : None)
-        Fitted models
+        Fitted models (created with fit method)
     """
     def __init__(self,
                  classifier=RandomForestClassifier(n_estimators=100, max_leaf_nodes=100),
@@ -93,7 +93,7 @@ class Bagging(object):
         Returns
         -------
          self.list_model : list
-            Fitted models lisdt
+            Fitted models
         """
         # list_model init
         self.list_model = [None] * self.niter
@@ -125,14 +125,14 @@ class Bagging(object):
     -------------------------------------------------------------------------------------------------------------
     """
 
-    def predict(self, X):
+    def predict(self, df):
         """Apply bagging models on a  dataset.
-        Combine models by averaging the output (for regression) or voting (for classification)
+        Combine models by averaging the outputs (for regression) or voting (for classification)
 
         Parameters
         ----------
         self
-        X : DataFrame
+        df : DataFrame
             Dataset to apply the model
 
         Returns
@@ -143,12 +143,12 @@ class Bagging(object):
             Predictions for each observation
         """
         # Init probs storage matrix
-        mat_prob = np.zeros((self.niter, X.shape[0]))
+        mat_prob = np.zeros((self.niter, df.shape[0]))
 
         # for each fitted models
         for j in range(self.niter):
             # apply the model on test set
-            y_prob_rf = self.list_model[j].predict_proba(X)
+            y_prob_rf = self.list_model[j].predict_proba(df)
             # probabilities storage in matrix
             mat_prob[j] = y_prob_rf[:, 1]
 
@@ -164,7 +164,7 @@ class Bagging(object):
     """
 
     def feature_importance(self, X):
-        """Get features importance of the model
+        """Get features importance of the model by averaging importance of models fitted on the samples
         
         Parameters
         ----------

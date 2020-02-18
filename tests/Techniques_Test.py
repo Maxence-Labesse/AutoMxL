@@ -1,11 +1,14 @@
+import os
+import sys
+cwd = os.getcwd()
+sys.path.insert(0, os.path.dirname(cwd))
 from MLBG59.Modelisation.Bagging import *
 from MLBG59.Utils.Utils import *
-
 import unittest
 import pandas as pd
 import sklearn
 
-df_iris_binary = pd.read_csv("test/iris_binary.csv")
+df_iris_binary = pd.read_csv("iris_binary.csv")
 df_train, df_test = train_test(df_iris_binary, 0.2)
 df_test = df_test.drop('Setosa', axis=1)
 
@@ -36,6 +39,7 @@ class Test_Bagging(unittest.TestCase):
         self.assertEqual(param_dict['list_model'], list())
 
     #
+    """
     def test_set_params(self):
         self.bagging.set_params({'niter': 5, 'replace': False, 'test': 'invalid'})
         param_dict = self.bagging.get_params()
@@ -43,7 +47,7 @@ class Test_Bagging(unittest.TestCase):
         self.assertEqual(param_dict['pos_sample_size'], 1.0)
         self.assertEqual(param_dict['replace'], False)
         self.assertEqual(param_dict['list_model'], list())
-
+    """
     #
     def test_train(self):
         self.bagging.fit(df_train, 'Setosa')

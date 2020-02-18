@@ -5,7 +5,7 @@
 """
 
 
-def replace_category(df, var, categories, replace_with='other', verbose=True):
+def replace_category(df, var, categories, replace_with='other', verbose=False):
     """Replace multiple categories of a categorical variable
     
     Parameters
@@ -43,7 +43,7 @@ def replace_category(df, var, categories, replace_with='other', verbose=True):
 """
 
 
-def replace_extreme_values(df, var, lower_th=None, upper_th=None, verbose=True):
+def replace_extreme_values(df, var, lower_th=None, upper_th=None, verbose=False):
     """Replace values with lower/upper thresholds limits
     
     Parameters

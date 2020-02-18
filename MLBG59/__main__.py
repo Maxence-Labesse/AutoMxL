@@ -273,7 +273,7 @@ class AutoML(pd.DataFrame):
 
         # Entrainement des modèles
         color_print('training models')
-        hyperopt.train(df_train, self.target, verbose=verbose)
+        hyperopt.fit(df_train, self.target, verbose=verbose)
 
         color_print('\napplying models')
         # Application des modèles sur X_test :

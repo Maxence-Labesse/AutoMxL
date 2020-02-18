@@ -853,12 +853,12 @@ Combine models by averaging the output (for regression) or voting (for classific
 <div class="section" id="module-MLBG59.Modelisation.HyperOpt">
 <span id="hyperoptimisation"></span><h2>Hyperoptimisation<a class="headerlink" href="#module-MLBG59.Modelisation.HyperOpt" title="Permalink to this headline">¶</a></h2>
 <p>Hyperoptimisation class :
-Create random HPs combinations, train and predict models.
+Create random HPs combinations, fit and predict models.
 Available algorithms : Random Forest, XGBOOST</p>
 <p>Hyperopt class methods :</p>
 <ul class="simple">
 <li>get_params</li>
-<li>train</li>
+<li>fit</li>
 <li>predict</li>
 <li>get_best_model</li>
 <li>model_res_to_df</li>
@@ -867,7 +867,7 @@ Available algorithms : Random Forest, XGBOOST</p>
 <dt id="MLBG59.Modelisation.HyperOpt.Hyperopt">
 <em class="property">class </em><code class="descclassname">MLBG59.Modelisation.HyperOpt.</code><code class="descname">Hyperopt</code><span class="sig-paren">(</span><em>classifier='RF'</em>, <em>grid_param=None</em>, <em>n_param_comb=10</em>, <em>top_bagging=False</em>, <em>bagging_param={'niter': 5</em>, <em>'pos_sample_size': 1.0</em>, <em>'replace': False}</em>, <em>comb_seed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt" title="Permalink to this definition">¶</a></dt>
 <dd><p>For a selected algorithm and a hyper-parameters grid.
-Pick N random HPs combinations and train/predict the models</p>
+Pick N random HPs combinations and fit/predict the models</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -888,7 +888,7 @@ Pick N random HPs combinations and train/predict the models</p>
 <dl class="method">
 <dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model">
 <code class="descname">get_best_model</code><span class="sig-paren">(</span><em>test_model_dict</em>, <em>metric='F1'</em>, <em>delta_auc_th=0.03</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.get_best_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the best model according to a selected metric among valid model (abs(auc(train)-auc(test)))</p>
+<dd><p>Get the best model according to a selected metric among valid model (abs(auc(fit)-auc(test)))</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -896,7 +896,7 @@ Pick N random HPs combinations and train/predict the models</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>test_model_dict</strong> (<em>dict</em>) – {model index : model outputs and metrics}</li>
 <li><strong>metric</strong> (<em>string</em><em> (</em><em>default = F1-score</em><em>)</em>) – Metric used to get the best model</li>
-<li><strong>delta_auc_th</strong> (<em>float</em>) – value available for abs(auc(train) - auc(test))</li>
+<li><strong>delta_auc_th</strong> (<em>float</em>) – value available for abs(auc(fit) - auc(test))</li>
 </ul>
 </td>
 </tr>
@@ -962,7 +962,7 @@ Pick N random HPs combinations and train/predict the models</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – Set to apply the models</li>
 <li><strong>target</strong> (<em>string</em>) – Target name</li>
-<li><strong>delta_auc_th</strong> (<em>float</em>) – value available for abs(auc(train) - auc(test))</li>
+<li><strong>delta_auc_th</strong> (<em>float</em>) – value available for abs(auc(fit) - auc(test))</li>
 <li><strong>verbose</strong> (<em>int</em><em> (</em><em>0/1</em><em>) </em><em>(</em><em>Default : 1</em><em>)</em>) – Get more operations information</li>
 </ul>
 </td>
@@ -978,8 +978,8 @@ Pick N random HPs combinations and train/predict the models</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.train">
-<code class="descname">train</code><span class="sig-paren">(</span><em>df_train</em>, <em>target</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.train" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df_train</em>, <em>target</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Train the models</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

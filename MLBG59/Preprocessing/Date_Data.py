@@ -43,9 +43,9 @@ def all_to_date(df, var_list=None, verbose=1):
                 df_local[col] = pd.to_datetime(df_local[col])
             else:
                 df_local[col] = pd.to_datetime(df_local[col].astype('Int32').astype(str))
-                print(np.dtype(df_local[col]))
         except:
             pass
+
     return df_local
 
 
