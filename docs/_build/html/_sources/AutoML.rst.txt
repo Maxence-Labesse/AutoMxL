@@ -1,2 +1,4 @@
 AutoML class
 ============
+.. autoclass:: MLBG59.__main__.AutoML
+    :members:

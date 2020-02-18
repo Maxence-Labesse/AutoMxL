@@ -77,7 +77,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Features</span></p>
+              <p class="caption"><span class="caption-text">AutoML class</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AutoML class</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#explore">Explore</a></li>
@@ -148,32 +152,32 @@
   <h1>Source code for MLBG59.Preprocessing.Categorical_Data</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Categorical Features processing</span>
 
-<span class="sd"> - dummy_all_var : get one hot encoded vector for each modality of each categorical features</span>
+<span class="sd"> - dummy_all_var : get one hot encoded vector for each category of a categorical features list</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="n">get_type_features</span>
 
 
 <div class="viewcode-block" id="dummy_all_var"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Categorical_Data.dummy_all_var">[docs]</a><span class="k">def</span> <span class="nf">dummy_all_var</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Replace categorical features from a list with dummified ones</span>
+    <span class="sd">&quot;&quot;&quot;Get one hot encoded vector for each category of a categorical features list</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">     df : DatraFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">     var_list : list (Default : None)</span>
-<span class="sd">        List of the features to dummify</span>
-<span class="sd">        If None, contains all the num features</span>
+<span class="sd">        Names of the features to dummify</span>
+<span class="sd">        If None, all the num features</span>
 <span class="sd">     prefix_list : list (default : None)</span>
 <span class="sd">        Prefix to add before new features name</span>
 <span class="sd">     Keep : boolean (Default = False)</span>
 <span class="sd">        If True, delete the original feature</span>
-<span class="sd">     verbose : int (0/1) (Default : 1)</span>
-<span class="sd">        Get more operations information</span>
+<span class="sd">    verbose : boolean (Default False)</span>
+<span class="sd">        Get logging information</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">     df_local : DataFrame</span>
+<span class="sd">    DataFrame</span>
 <span class="sd">          Modified dataset</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if var_list = None, get all categorical features</span>
@@ -182,7 +186,7 @@
 
     <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  ** method : one hot encoding&#39;</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">:</span>
@@ -200,7 +204,7 @@
         <span class="c1"># if keep = False, delete original features</span>
         <span class="k">if</span> <span class="n">keep</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">df_local</span> <span class="o">=</span> <span class="n">df_local</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; &#39;</span><span class="o">+</span><span class="n">col</span><span class="o">+</span><span class="s1">&#39; -&gt;&#39;</span><span class="p">,</span><span class="n">df_cat</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 
     <span class="k">return</span> <span class="n">df_local</span></div>

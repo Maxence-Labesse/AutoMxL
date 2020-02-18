@@ -1,7 +1,7 @@
 Start
 =====
 Load
--------------
+----
 .. automodule:: MLBG59.Start.Load
     :members:
 
@@ -42,7 +42,7 @@ Date Features Detection and processing
 
 Outliers handling
 -----------------
-.. automodule:: MLBG59.Preprocessing.Outliers
+.. automodule:: MLBG59.Preprocessing.Process_Outliers
     :members:
 
 
@@ -51,11 +51,6 @@ Modelisation
 Bagging
 -------
 .. automodule:: MLBG59.Modelisation.Bagging
-    :members:
-
-Classifiers utils
------------------
-.. automodule:: MLBG59.Modelisation.Classifiers
     :members:
 
 Hyperoptimisation

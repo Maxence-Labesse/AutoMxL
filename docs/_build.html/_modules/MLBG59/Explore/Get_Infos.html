@@ -77,7 +77,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Features</span></p>
+              <p class="caption"><span class="caption-text">AutoML class</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AutoML class</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#explore">Explore</a></li>
@@ -311,15 +315,16 @@
 
 
 <div class="viewcode-block" id="low_variance_features"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Infos.low_variance_features">[docs]</a><span class="k">def</span> <span class="nf">low_variance_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Identify  features with low variance (&lt;= threshold). Possible to rescale feature before computing.</span>
+    <span class="sd">&quot;&quot;&quot;Identify  features with low variance (&lt;= threshold).</span>
+<span class="sd">    Possible to rescale feature before computing.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">     df : DataFrame</span>
 <span class="sd">        input DataFrame</span>
 <span class="sd">     var_list : list (default : None)</span>
-<span class="sd">        features names</span>
-<span class="sd">     threshold : float (default : 0</span>
+<span class="sd">        names of the variables to test variance</span>
+<span class="sd">     threshold : float (default : 0)</span>
 <span class="sd">        variance threshold</span>
 <span class="sd">     rescale : bool (default : true)</span>
 <span class="sd">        enable  MinMaxScaler before computing variance</span>
@@ -327,7 +332,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    list</span>
-<span class="sd">        list of the variable with low variance</span>
+<span class="sd">       Names of the variables with low variance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if var_list = None, get all numerical features</span>
     <span class="c1"># else, exclude features from var_list whose type is not numerical</span>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MLBG59.Start.Encode_Target &mdash; MLBG59 1.0.0 documentation</title>
+  <title>MLBG59.Utils.Decorators &mdash; MLBG59 1.0.0 documentation</title>
   
 
   
@@ -134,7 +134,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>MLBG59.Start.Encode_Target</li>
+      <li>MLBG59.Utils.Decorators</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -149,42 +149,36 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for MLBG59.Start.Encode_Target</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+  <h1>Source code for MLBG59.Utils.Decorators</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Utils.Display</span> <span class="k">import</span> <span class="n">print_title1</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="k">import</span> <span class="n">CodeType</span>
 
-<div class="viewcode-block" id="category_to_target"><a class="viewcode-back" href="../../../features.html#MLBG59.Start.Encode_Target.category_to_target">[docs]</a><span class="k">def</span> <span class="nf">category_to_target</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">cat</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform target to boolean (1/0), choosing the reference modality</span>
+<span class="c1"># Timer</span>
+<span class="k">def</span> <span class="nf">timer</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">before</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">after</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span><span class="s1">&#39;execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">after</span> <span class="o">-</span> <span class="n">before</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span><span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rv</span>
+    <span class="n">f</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">f</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__doc__</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    df : DataFrame</span>
-<span class="sd">        input dataset</span>
-<span class="sd">    var : string</span>
-<span class="sd">        variable containing the target category</span>
-<span class="sd">    cat : string</span>
-<span class="sd">         target category</span>
+    <span class="k">return</span> <span class="n">f</span>
 
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    DataFrame : modified dataset</span>
-<span class="sd">    string : new target name (var_cat)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># transform variable to string if numerical</span>
-    <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">_get_numeric_data</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-
-    <span class="c1"># one hot encoding</span>
-    <span class="n">target_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">var</span><span class="p">])</span>
-    <span class="c1"># select cat feature</span>
-    <span class="n">target_dummies</span><span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_dummies</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span>
-
-    <span class="c1"># add encoded cat feature to dataset</span>
-    <span class="n">df_bis</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">df</span><span class="p">,</span> <span class="n">target_dummies</span><span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="c1"># remove var</span>
-    <span class="k">del</span> <span class="n">df_bis</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">df_bis</span><span class="p">,</span> <span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span></div>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">------------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># def funct_title</span>
+<span class="k">def</span> <span class="nf">func_title</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">print_title1</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rv</span>
+    <span class="n">f</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">return</span> <span class="n">f</span>
 </pre></div>
 
            </div>

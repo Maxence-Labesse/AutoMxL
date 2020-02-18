@@ -77,7 +77,11 @@
               
             
             
-              <p class="caption"><span class="caption-text">Features</span></p>
+              <p class="caption"><span class="caption-text">AutoML class</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AutoML class</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#explore">Explore</a></li>
@@ -146,22 +150,18 @@
            <div itemprop="articleBody">
             
   <h1>Source code for MLBG59.Modelisation.Bagging</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Bagging algorithm class</span>
-
-<span class="sd">Bagging class methods :</span>
+<span></span><span class="sd">&quot;&quot;&quot; Bagging algorithm class. Methods :</span>
 
 <span class="sd">- get_params</span>
-<span class="sd">- train</span>
+<span class="sd">- fit</span>
 <span class="sd">- predict</span>
 <span class="sd">- feat_importance_BAG_RF</span>
 
-<span class="sd">Functions :</span>
-
-<span class="sd">- Bagging sample</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Default bagging parameters</span>
@@ -173,36 +173,39 @@
 
 <div class="viewcode-block" id="Bagging"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging">[docs]</a><span class="k">class</span> <span class="nc">Bagging</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Meta-algo designed to improve the stability and accuracy of ML classif/regression algos</span>
-<span class="sd">    or to face an &quot;imbalanced target distribution&quot; problem</span>
+<span class="sd">    or to face an &quot;imbalanced target distribution&quot; issue.</span>
 <span class="sd">    </span>
-<span class="sd">    Bagging generates m new training sets more balanced. Then, m models are fitted using the m</span>
-<span class="sd">    samples and combined by averaging the output (for regression) or voting (for classification).</span>
+<span class="sd">    Bagging generates m new training sets more balanced. Then, a model is fitted on each</span>
+<span class="sd">    sample and outputs are combined by averaging (for regression) or voting (for classification).</span>
+
+<span class="sd">    Available classifiers : Random Forest and XGBOOST</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    classifier : Model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)</span>
 <span class="sd">        Model fitted on the samples</span>
-<span class="sd">    niter : int (Default : 5)</span>
-<span class="sd">        # samples</span>
+<span class="sd">    n_sample : int (Default : 5)</span>
+<span class="sd">        number a samples</span>
 <span class="sd">    pos_sample_size : int/float (Default : 1.0)</span>
-<span class="sd">        Number of target=1 observations in each sample (filled with 3*target=0 obs )</span>
+<span class="sd">        Number/rate of target=1 observations in each sample (filled with 3 times more target=0 )</span>
 
-<span class="sd">        - if int : pos_sample_size</span>
-<span class="sd">        - if float : pos_sample_size*df.loc[df[target] == 1]</span>
+<span class="sd">        - if int : number of target=1</span>
+<span class="sd">        - if float : rate of total target=1</span>
+
 <span class="sd">    replace : Boolean (Default : False)</span>
-<span class="sd">        If True, sampling with replacement</span>
+<span class="sd">        Enable sampling with replacement</span>
 
 <span class="sd">    list_model : list (Default : None)</span>
-<span class="sd">        Fitted models list</span>
+<span class="sd">        Fitted models</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">classifier</span><span class="o">=</span><span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_leaf_nodes</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
-                 <span class="n">niter</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                 <span class="n">n_sample</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                  <span class="n">pos_sample_size</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
                  <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span> <span class="o">=</span> <span class="n">classifier</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">niter</span> <span class="o">=</span> <span class="n">niter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">niter</span> <span class="o">=</span> <span class="n">n_sample</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos_sample_size</span> <span class="o">=</span> <span class="n">pos_sample_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">replace</span> <span class="o">=</span> <span class="n">replace</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -212,11 +215,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Bagging.get_params"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get object parameters</span>
+        <span class="sd">&quot;&quot;&quot;Get bagging object parameters</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        self</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            {param : value}</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;classifier&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">,</span>
                 <span class="s1">&#39;niter&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">niter</span><span class="p">,</span>
@@ -228,17 +232,15 @@
 <span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Bagging.train"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create bagging samples from a DataFrame.</span>
-<span class="sd">        Fit the model on each sample</span>
+<div class="viewcode-block" id="Bagging.fit"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create bagging samples from a DataFrame and fit the model on each sample</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        self</span>
 <span class="sd">        df_train : DataFrame</span>
 <span class="sd">            Training dataset</span>
 <span class="sd">        target : String</span>
-<span class="sd">            Target</span>
+<span class="sd">            Target name</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -276,21 +278,21 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Bagging.predict"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Apply bagging models on a test set.</span>
-<span class="sd">        combine by averaging the output (for regression) or voting (for classification)</span>
+        <span class="sd">&quot;&quot;&quot;Apply bagging models on a  dataset.</span>
+<span class="sd">        Combine models by averaging the output (for regression) or voting (for classification)</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        self</span>
 <span class="sd">        X : DataFrame</span>
-<span class="sd">            Testing dataset</span>
+<span class="sd">            Dataset to apply the model</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        numpy.ndarray</span>
+<span class="sd">        numpy.ndarray (float)</span>
 <span class="sd">            Averaged classification probabilities</span>
-<span class="sd">        numpy.ndarray</span>
-<span class="sd">            Predictions for each obs</span>
+<span class="sd">        numpy.ndarray (int)</span>
+<span class="sd">            Predictions for each observation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Init probs storage matrix</span>
         <span class="n">mat_prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">niter</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
@@ -313,12 +315,11 @@
 <span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Bagging.feat_importance_BAG_RF"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.feat_importance_BAG_RF">[docs]</a>    <span class="k">def</span> <span class="nf">feat_importance_BAG_RF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="Bagging.feature_importance"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.feature_importance">[docs]</a>    <span class="k">def</span> <span class="nf">feature_importance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get features importance of the model</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        self</span>
 <span class="sd">        X : DataFrame</span>
 <span class="sd">            Input Dataset</span>
 <span class="sd">            </span>
@@ -350,14 +351,14 @@
 
 
 <div class="viewcode-block" id="Bagging_sample"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging_sample">[docs]</a><span class="k">def</span> <span class="nf">Bagging_sample</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Sample creation with N target=1 and 3*N target=0 observations</span>
+    <span class="sd">&quot;&quot;&quot;Sample creation with N target=1 (+ 3 times more target=0)</span>
 <span class="sd">        </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    df : DataFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">    target : String</span>
-<span class="sd">        target</span>
+<span class="sd">        target name</span>
 <span class="sd">    N : int</span>
 <span class="sd">        Number of target=1 observations</span>
 <span class="sd">    replace : Boolean (défaut : False)</span>
