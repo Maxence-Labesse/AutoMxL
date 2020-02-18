@@ -1,6 +1,5 @@
 """ Hyperoptimisation class :
-Create random HPs combinations, train and predict models
-
+Create random HPs combinations, train and predict models.
 Available algorithms : Random Forest, XGBOOST
 
 Hyperopt class methods :
@@ -174,10 +173,10 @@ class Hyperopt(object):
                 # init bagging object with default params
                 bag = Bagging(clf, **self.bagging_param)
                 # model training
-                bag.train(df_train, target)
+                bag.fit(df_train, target)
                 clf_fit = bag.list_model
                 # features importance
-                features_dict = bag.feat_importance_BAG_RF(X_train)
+                features_dict = bag.feature_importance(X_train)
                 # classification probas
                 y_proba, y_pred = bag.predict(df_train.drop(target, axis=1))
 
@@ -363,7 +362,7 @@ class Hyperopt(object):
             dict_tmp.update(value['HP'].copy())
             dict_tmp.update({x: test_model_dict[key]['evaluation'][x] for x in metrics_col})
             dict_tmp.update({'bagging': self.top_bagging})
-            df_tmp = pd.DataFrame.from_dict(self.train_model_dict[0]['features_importance'],
+            df_tmp = pd.DataFrame.from_dict(self.train_model_dict[key]['features_importance'],
                                             orient='index').reset_index().rename(
                 columns={'index': 'feat', 0: 'importance'}).sort_values(by='importance', ascending=False).head(5)
             serie_tmp = df_tmp['feat'] + ' ' + round(df_tmp['importance'], 5).astype(str)

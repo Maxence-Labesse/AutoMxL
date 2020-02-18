@@ -1,5 +1,6 @@
 from time import time
 from MLBG59.Utils.Display import print_title1
+from types import CodeType
 
 # Timer
 def timer(func):
@@ -10,6 +11,8 @@ def timer(func):
         print('\t\t>>>',func.__name__,'execution time:', round(after - before, 4),'secs. <<<')
         return rv
     f.__name__ = func.__name__
+    f.__doc__ = func.__doc__
+
     return f
 
 """
@@ -23,4 +26,5 @@ def func_title(func):
         rv = func(*args, **kwargs)
         return rv
     f.__name__ = func.__name__
+    f.__doc__ = func.__doc.__
     return f

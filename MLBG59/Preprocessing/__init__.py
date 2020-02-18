@@ -5,7 +5,7 @@ Modules :
 - Categorical_Data
 - Date_Data
 - Missing_Values
-- Outliers
+- Process_Outliers
 - Scaling
 
 """
@@ -13,5 +13,6 @@ Modules :
 __all__ = ['Categorical_Data',
            'Date_Data',
            'Missing_Values',
-           'Outliers',
+           'Process_Outliers',
            'Scaling']
+

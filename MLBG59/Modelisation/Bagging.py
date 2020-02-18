@@ -1,9 +1,7 @@
-""" Bagging algorithm class
-
-Bagging class methods :
+""" Bagging algorithm class. Methods :
 
 - get_params
-- train
+- fit
 - predict
 - feat_importance_BAG_RF
 
@@ -11,6 +9,7 @@ Bagging class methods :
 """
 from sklearn.ensemble import RandomForestClassifier
 from MLBG59.Utils.Utils import *
+import pandas as pd
 
 """
 Default bagging parameters
@@ -22,36 +21,39 @@ default_bagging_param = {'niter': 5,
 
 class Bagging(object):
     """Meta-algo designed to improve the stability and accuracy of ML classif/regression algos
-    or to face an "imbalanced target distribution" problem
+    or to face an "imbalanced target distribution" issue.
     
-    Bagging generates m new training sets more balanced. Then, m models are fitted using the m
-    samples and combined by averaging the output (for regression) or voting (for classification).
+    Bagging generates m new training sets more balanced. Then, a model is fitted on each
+    sample and outputs are combined by averaging (for regression) or voting (for classification).
+
+    Available classifiers : Random Forest and XGBOOST
     
     Parameters
     ----------
     classifier : Model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)
         Model fitted on the samples
-    niter : int (Default : 5)
-        # samples
+    n_sample : int (Default : 5)
+        number a samples
     pos_sample_size : int/float (Default : 1.0)
-        Number of target=1 observations in each sample (filled with 3*target=0 obs )
+        Number/rate of target=1 observations in each sample (filled with 3 times more target=0 )
 
-        - if int : pos_sample_size
-        - if float : pos_sample_size*df.loc[df[target] == 1]
+        - if int : number of target=1
+        - if float : rate of total target=1
+
     replace : Boolean (Default : False)
-        If True, sampling with replacement
+        Enable sampling with replacement
 
     list_model : list (Default : None)
-        Fitted models list
+        Fitted models
     """
     def __init__(self,
                  classifier=RandomForestClassifier(n_estimators=100, max_leaf_nodes=100),
-                 niter=5,
+                 n_sample=5,
                  pos_sample_size=1.0,
                  replace=True):
 
         self.classifier = classifier
-        self.niter = niter
+        self.niter = n_sample
         self.pos_sample_size = pos_sample_size
         self.replace = replace
         self.list_model = list()
@@ -61,11 +63,12 @@ class Bagging(object):
     """
 
     def get_params(self):
-        """Get object parameters
+        """Get bagging object parameters
 
-        Parameters
-        ----------
-        self
+        Returns
+        -------
+        dict
+            {param : value}
         """
         return {'classifier': self.classifier,
                 'niter': self.niter,
@@ -77,17 +80,15 @@ class Bagging(object):
     -------------------------------------------------------------------------------------------------------------
     """
 
-    def train(self, df_train, target):
-        """Create bagging samples from a DataFrame.
-        Fit the model on each sample
+    def fit(self, df_train, target):
+        """Create bagging samples from a DataFrame and fit the model on each sample
         
         Parameters
         ----------
-        self
         df_train : DataFrame
             Training dataset
         target : String
-            Target
+            Target name
 
         Returns
         -------
@@ -125,21 +126,21 @@ class Bagging(object):
     """
 
     def predict(self, X):
-        """Apply bagging models on a test set.
-        combine by averaging the output (for regression) or voting (for classification)
+        """Apply bagging models on a  dataset.
+        Combine models by averaging the output (for regression) or voting (for classification)
 
         Parameters
         ----------
         self
         X : DataFrame
-            Testing dataset
+            Dataset to apply the model
 
         Returns
         -------
-        numpy.ndarray
+        numpy.ndarray (float)
             Averaged classification probabilities
-        numpy.ndarray
-            Predictions for each obs
+        numpy.ndarray (int)
+            Predictions for each observation
         """
         # Init probs storage matrix
         mat_prob = np.zeros((self.niter, X.shape[0]))
@@ -162,12 +163,11 @@ class Bagging(object):
     -------------------------------------------------------------------------------------------------------------
     """
 
-    def feat_importance_BAG_RF(self, X):
+    def feature_importance(self, X):
         """Get features importance of the model
         
         Parameters
         ----------
-        self
         X : DataFrame
             Input Dataset
             
@@ -199,14 +199,14 @@ class Bagging(object):
 
 
 def Bagging_sample(df, target, N, replace=False):
-    """Sample creation with N target=1 and 3*N target=0 observations
+    """Sample creation with N target=1 (+ 3 times more target=0)
         
     Parameters
     ----------
     df : DataFrame
         Input dataset
     target : String
-        target
+        target name
     N : int
         Number of target=1 observations
     replace : Boolean (défaut : False)

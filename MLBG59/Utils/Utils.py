@@ -128,3 +128,15 @@ def get_type_features(df, features_type, var_list=None):
             var_list = [i for i in var_list if i in type_list]
 
     return var_list
+
+
+"""
+----------------------------------------------------------------------------------------------------------------------
+"""
+
+
+def print_dict(dic):
+    """
+    """
+    for key, value in dic.items():
+        print(key,' : ',value)

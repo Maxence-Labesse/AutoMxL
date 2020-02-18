@@ -1,18 +1,17 @@
-import pandas as pd
 from MLBG59.Utils.Display import print_title1
 from MLBG59.Utils.Decorators import timer
 from MLBG59.Explore.Get_Infos import recap
 from MLBG59.Explore.Get_Outliers import get_cat_outliers, get_num_outliers
 from MLBG59.Preprocessing.Date_Data import all_to_date, date_to_anc
 from MLBG59.Preprocessing.Missing_Values import fill_numerical, fill_categorical
-from MLBG59.Preprocessing.Outliers import process_cat_outliers, process_num_outliers
+from MLBG59.Preprocessing.Process_Outliers import replace_category, replace_extreme_values
 from MLBG59.Preprocessing.Categorical_Data import dummy_all_var
 from MLBG59.Modelisation.HyperOpt import *
 
 
 class AutoML(pd.DataFrame):
-    """
-    Allow the user to quickly move forward the different steps of a score computing task (binary classification)
+    """Allow the user to quickly move forward the different steps of a score computing task (binary classification)
+
     * data analysis
     * preprocessing
     * features selection
@@ -23,28 +22,26 @@ class AutoML(pd.DataFrame):
     ----------
     _obj : DataFrame
         Source Dataset
-
-    Atributes
-    ---------
-    d_features {x : list of variables names} : dict
+    d_features {x : list of variables names} : dict (created by audit method)
         - x = numerical : numerical features
         - x = categorical : categorical features
         - x = date : date features
         - x = NA : features which contains NA values
         - x = low_variance : list of the features with low variance
-    d_num_outliers : dict
+    d_num_outliers : dict (created by get_outliers method)
         numerical features which contains outliers
-    d_cat_outliers : dict
+    d_cat_outliers : dict (created by get_outliers method)
         categorical features which contains outliers (modalities frequency < 5%)
     """
+
     def __init__(self, *args, target=None):
         super(AutoML, self).__init__(*args)
         # parameters
         self.target = target
         # attributes
-        self.d_features
-        self.num_outliers_columns = None
-        self.cat_outliers_columns = None
+        self.d_features = None
+        self.d_num_outliers = None
+        self.d_cat_outliers = None
 
     def __repr__(self):
         return 'MLBG59 instance'
@@ -54,21 +51,23 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def audit(self, verbose=1):
-        """
-        * Short audit of the dataset
-        * Identify features of each type (num, cat, date), features containing NA and features whose variance is null
+    def recap(self, verbose=False):
+        """get and store global informations about the dataset :
+
+        - Variables type (num, cat, date)
+        - NA values
+        - low variance variables
         
-        input
-        -----
-         > target : string (Default : None)
+        Parameters
+        ----------
+        target : string (Default : None)
               target name
-         > verbose : int (0/1) (Default : 1)
-             get more operations information
+        verbose : boolean (Default False)
+            Get logging information
             
-        return
-        ------
-        self.d_features {x : list of variables names}
+        Returns
+        -------
+        dict self.d_features {x : list of variables names}
 
         - x = numerical : numerical features
         - x = categorical : categorical features
@@ -76,16 +75,15 @@ class AutoML(pd.DataFrame):
         - x = NA : features which contains NA values
         - x = low_variance : list of the features with low variance
         """
-        if verbose > 0:
-            print('')
-            print_title1('Explore')
+        if verbose:
+            print_title1('\nExplore')
 
         # call std_audit_dataset function
         self.d_features = recap(
             self, verbose=verbose)
 
         # created attributes display
-        if verbose > 0:
+        if verbose:
             color_print("\nCreated attributes :  d_features (dict) ")
             print("Keys :")
             print("  -> numerical")
@@ -94,147 +92,146 @@ class AutoML(pd.DataFrame):
             print("  -> NA")
             print("  -> low_variance")
 
-
     """
     --------------------------------------------------------------------------------------------------------------------
     """
 
     @timer
-    def get_outliers(self, verbose=1):
-        """
-        Identify cat and num features which contains outlier
+    def get_outliers(self, verbose=False):
+        """Identify cat and num features which contains outlier
         * num : deviation from the mean > x*std dev (x=3 by default)
         * cat : <x% frequency modalities (x=5 by default)
         
-        input
-        -----
-         > verbose : int (0/1) (Default : 1)
-             get more operations information
+        Parameters
+        ----------
+        verbose : boolean (Default False)
+            Get logging information
 
-        return
-        ------
-         > self.num_outliers_columns
-         > self.cat_outliers_columns
+        Returns
+        -------
+        dict self.d_num_outliers
+        dict self.d_num_outliers
         """
-        if verbose > 0:
-            print('')
-            print_title1('Get_outliers')
+        if verbose:
+            print_title1('\nGet_outliers')
         # cat outliers
-        self.cat_outliers_columns = [
-            *get_cat_outliers(self, var_list=self.cat_columns, threshold=0.05, verbose=verbose)]
+        self.d_cat_outliers = get_cat_outliers(self, var_list=self.d_features['categorical'], threshold=0.05, verbose=verbose)
         # num outliers
-        self.num_outliers_columns = [*get_num_outliers(self, var_list=self.num_columns, xstd=4, verbose=verbose)]
+        self.d_num_outliers = get_num_outliers(self, var_list=self.d_features['numerical'], xstd=4, verbose=verbose)
 
         # created attributes display
-        if verbose > 0:
+        if verbose:
             color_print("\nCreated attributes : ")
-            print("  -> num_outliers_columns ")
-            print("  -> cat_outliers_columns ")
+            print("  -> d_num_outliers")
+            print("  -> d_cat_outliers")
 
     """
     --------------------------------------------------------------------------------------------------------------------
     """
 
     @timer
-    def preprocess(self, date_ref=None, process_outliers=False, verbose=1):
-        """
-        Preprocessing of the dataset :
-        * Remove features with null variance
-        * transform date to time between date and date_ref
-        * fill NA values
-        * replace outliers
-        * one hot encoding
+    def preprocess(self, date_ref=None, process_outliers=False, verbose=False):
+        """Preprocessing of the dataset :
+
+        - Remove features with null variance
+        - transform date to time between date and date_ref
+        - fill NA values
+        - replace outliers
+        - one hot encoding
         
-        input
-        -----
-         > date_ref : str (Default : None)
-              date_ref to compute time between date en date_ref
-         > process_outliers = boolean (Default : False)
-              if True, process outliers
-         > verbose : int (0/1) (Default : 1)
-             get more operations information
+        Parameters
+        ----------
+        date_ref : string '%d/%m/%y' (Default : None)
+            Date to compute timedelta
+            If None, today date
+        process_outliers : boolean (Default : False)
+              Enable outliers replacement
+        verbose : boolean (Default False)
+            Get logging information
         
-        return
-        ------
+        Returns
+        -------
         preprocessed dataset
         """
-        if verbose > 0:
-            print('')
-            print_title1('Preprocess')
+        if verbose:
+            print_title1('\nPreprocess')
 
         target = self.target
 
         ######################################
         # Remove features with null variance
         ######################################
-        if verbose > 0:
+        if verbose:
             color_print("Remove features with null variance")
-            print('  features : ', list(self.low_var_columns))
+            print('  features : ', list(self.d_features['low_variance']))
 
         df_local = self.copy()
 
-        if self.low_var_columns is not None:
-            for col in self.low_var_columns:
+        if self.d_features['low_variance'] is not None:
+            for col in self.d_features['low_variance']:
                 if col in df_local.columns.tolist() and col != self.target:
                     df_local = df_local.drop(col, axis=1)
 
         # delete removed cols from num_column
-        self.num_columns = [x for x in self.num_columns if x not in self.low_var_columns]
+        self.d_features['numerical'] = [x for x in self.d_features['numerical'] if x not in self.d_features['low_variance']]
 
         ####################################################
         # Transform date -> time between date and date_ref
         ####################################################
-        if verbose > 0:
+        if verbose:
             strg = "Transform date -> timelapse"
             color_print(strg)
 
         # Parse date to datetime
-        df_local = all_to_date(df_local, var_list=self.date_columns, verbose=0)
+        df_local = all_to_date(df_local, var_list=self.d_features['date'], verbose=0)
 
         # compute time between date and date_ref
         df_local, new_var_list = date_to_anc(df_local, var_list=None, date_ref=date_ref, verbose=verbose)
-        self.num_columns = self.num_columns + new_var_list
+        self.d_features['numerical'] = self.d_features['numerical'] + new_var_list
 
         ##################
         # fill NA values
         ##################
         # num features
-        if verbose > 0:
+        if verbose:
             color_print('Fill NA')
             color_print('  Num:')
-        df_local = fill_numerical(df_local, var_list=self.num_columns, method='median', top_var_NA=True,
+        df_local = fill_numerical(df_local, var_list=self.d_features['numerical'], method='median', top_var_NA=True,
                                   verbose=verbose)
 
         # cat features
-        if verbose > 0:
+        if verbose:
             color_print('  Cat:')
-        df_local = fill_categorical(df_local, var_list=self.cat_columns, method='NR', verbose=verbose)
+        df_local = fill_categorical(df_local, var_list=self.d_features['categorical'], method='NR', verbose=verbose)
 
         ####################
         # replace outliers
         ####################
         if process_outliers:
-            # cat features
-            if verbose > 0:
+            # num features
+            if verbose:
                 color_print('Outliers processing')
                 color_print('  Num:')
-            if self.target in self.num_outliers_columns:
-                self.num_outliers_columns.remove(self.target)
-            df_local = process_num_outliers(df_local, self.num_outliers_columns, xstd=4, verbose=verbose)
+            if self.target in self.d_num_outliers:
+                self.d_num_outliers.remove(self.target)
+            for var in self.d_num_outliers.keys():
+                df_local = replace_extreme_values(df_local, var, self.d_num_outliers[var][0],
+                                                  self.d_num_outliers[var][1], verbose=verbose)
 
-            # num features
-            if verbose > 0:
+            # cat features
+            if verbose:
                 color_print('  Cat:')
-            df_local = process_cat_outliers(df_local, self.cat_outliers_columns, threshold=0.05, method="percent",
-                                        verbose=verbose)
+            for var in self.d_cat_outliers.keys():
+                df_local = replace_category(df_local, var, self.d_cat_outliers[var],
+                                            verbose=verbose)
 
         ####################
         # one hot encoding
         ####################
-        if verbose > 0:
+        if verbose:
             color_print('Categorical features processing')
 
-        df_local = dummy_all_var(df_local, var_list=self.cat_columns, prefix_list=None, keep=False, verbose=verbose)
+        df_local = dummy_all_var(df_local, var_list=self.d_features['categorical'], prefix_list=None, keep=False, verbose=verbose)
 
         self.__dict__.update(df_local.__dict__)
         self.target = target
@@ -244,26 +241,26 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def train_predict(self, n_comb=5, comb_seed=None, verbose=1):
+    def train_predict(self, n_comb=10, comb_seed=None, verbose=True):
         """
         Train and apply models
         
-        input
-        -----
-         > n_comb : int (Default : 10)
-             HP combination number
-         > comb_seed = int
-             random combination seed
-         > verbose : int (0/1) (Default : 1)
-             get more operations information
+        Parameters
+        ----------
+        n_comb : int (Default : 10)
+            HP combination number
+        comb_seed = int (Default : None)
+            random combination seed
+        verbose : int (0/1) (Default : 1)
+            get more operations information
             
-        return
-        ------
-         > hyperopt.train_model_dict
-         > dict_res_model
-         > hyperopt
+        Returns
+        -------
+        dict : hyperopt.train_model_dict
+        dict : dict_res_model
+        HyperOpt object : hyperopt
         """
-        if verbose > 0:
+        if verbose:
             print('')
             print_title1('Train predict')
 
@@ -286,8 +283,10 @@ class AutoML(pd.DataFrame):
         color_print('\nbest model selection')
         best_model_idx, _ = hyperopt.get_best_model(dict_res_model, metric='F1', delta_auc_th=0.03, verbose=verbose)
 
-        if verbose > 0:
+        if verbose:
             print_title1('best model : ' + str(best_model_idx))
             print(hyperopt.model_res_to_df(dict_res_model, sort_metric='F1'))
 
-        return hyperopt, dict_res_model, best_model_idx
+        df_test = hyperopt.model_res_to_df(dict_res_model, sort_metric='F1')
+
+        return hyperopt, dict_res_model, best_model_idx, df_test

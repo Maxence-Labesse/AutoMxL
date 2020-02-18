@@ -102,8 +102,8 @@ class Test_Outliers(unittest.TestCase):
         self.df_perc_bind, _ = remove_bind(self.df, 'Hair', method='percent', threshold=0.30)
         self.df_nb_bind, _ = remove_bind(self.df, 'Hair', method='number', threshold=1)
         self.df_nbvar_bind, _ = remove_bind(self.df, 'Hair', method='nbvar', threshold=2)
-        self.df_process_cat = process_cat_outliers(self.df, ['Name', 'Hair'], method="percent", threshold=0.30,
-                                                   verbose=0)
+        self.df_process_cat = replace_category(self.df, ['Name', 'Hair'], method="percent", threshold=0.30,
+                                               verbose=0)
 
     def test_remove_bind(self):
         self.assertEqual(self.df_perc_bind['Hair'].tolist(), ['brown', 'brown', 'brown', 'other'])
@@ -116,6 +116,6 @@ class Test_Outliers(unittest.TestCase):
 
     def test_process_num_outliers(self):
         df_outlier = pd.DataFrame({'Out_1': np.ones(1000).tolist() + [1000], 'Out_2': np.ones(1000).tolist() + [-1000]})
-        df_outlier_proc = process_num_outliers(df_outlier, None, xstd=3, verbose=0)
+        df_outlier_proc = replace_extreme_values(df_outlier, None, xstd=3, verbose=0)
         self.assertEqual(df_outlier_proc['Out_1'][1000], 96.67678469055576)
         self.assertEqual(df_outlier_proc['Out_2'][1000], -94.86832980505137)

@@ -14,7 +14,7 @@ class Test_Bagging(unittest.TestCase):
 
     def setUp(self):
         self.bagging = Bagging(classifier=RandomForestClassifier(n_estimators=100, max_leaf_nodes=100),
-                               niter=3,
+                               n_sample=3,
                                pos_sample_size=1.0,
                                replace=True)
 
@@ -46,13 +46,13 @@ class Test_Bagging(unittest.TestCase):
 
     #
     def test_train(self):
-        self.bagging.train(df_train, 'Setosa')
+        self.bagging.fit(df_train, 'Setosa')
         for i in range(3):
             self.assertEqual(type(self.bagging.list_model[i]), sklearn.ensemble.forest.RandomForestClassifier)
 
     #
     def test_predict(self):
-        self.bagging.train(df_train, 'Setosa')
+        self.bagging.fit(df_train, 'Setosa')
         res_bagging = self.bagging.predict(df_test)
         self.assertEqual(len(res_bagging[0]), df_test.shape[0])
         self.assertEqual(len(res_bagging[1]), df_test.shape[0])
