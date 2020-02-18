@@ -9,14 +9,16 @@ from MLBG59.Utils.Utils import print_dict
 df_raw = import_data('data/bank-additional-full.csv', verbose=True)
 trgt = 'y'
 
-df_raw, target = category_to_target(df_raw, trgt, cat='yes')
+df_raw_bis, target = category_to_target(df_raw, trgt, cat='yes')
 
-# help(load_data)
-#print(import_data.__doc__)
+print(df_raw[trgt].value_counts()['yes'])
+print(df_raw_bis['y_yes'].sum())
+print(df_raw[trgt].value_counts()['yes']==df_raw_bis['y_yes'].sum())
 
-print(import_data.__globals__)
 
-print(import_data.__code__.co_varnames[:import_data.__code__.co_argcount])
+df = import_data('tests/df_test.csv', verbose=True)
+print(df.columns)
+print(df.job.value_counts())
 
 """
 ############################
