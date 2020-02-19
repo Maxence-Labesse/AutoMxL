@@ -48,17 +48,17 @@ class Test_Date_preprocessing(unittest.TestCase):
                                                         verbose=0)
 
     def test_all_to_date(self):
-        # self.assertEqual(np.dtype(self.df_to_date['American_date_nai']), 'datetime64[ns]')
+        self.assertEqual(np.dtype(self.df_to_date['American_date_nai']), 'datetime64[ns]')
         self.assertEqual(np.dtype(self.df_to_date['Date_nai']), 'datetime64[ns]')
-        #self.assertEqual(np.dtype(self.df_to_date['American_date_nai']), 'datetime64[ns]')
+        self.assertEqual(np.dtype(self.df_to_date['American_date_nai']), 'datetime64[ns]')
 
     def test_date_to_anc(self):
-        #self.assertIn('anc_American_date_nai', self.df_to_anc.columns)
+        self.assertIn('anc_American_date_nai', self.df_to_anc.columns)
         self.assertIn('anc_Date_nai', self.df_to_anc.columns)
         self.assertNotIn('Date_nai', self.df_to_anc.columns)
         self.assertNotIn('American_Date_nai', self.df_to_anc.columns)
-        #self.assertEqual(self.df_to_anc['anc_date_nai'][0], 0.0)
-        #self.assertIn('anc_American_date_nai', self.new_var_list)
+        self.assertEqual(self.df_to_anc['anc_Date_nai'][0], 0.0)
+        self.assertIn('anc_American_date_nai', self.new_var_list)
 
 
 class Test_Categorical(unittest.TestCase):

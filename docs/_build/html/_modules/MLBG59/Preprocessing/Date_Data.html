@@ -195,9 +195,9 @@
                 <span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;Int32&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">]))</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">pass</span>
+
     <span class="k">return</span> <span class="n">df_local</span></div>
 
 

@@ -644,7 +644,7 @@ If None, today date</li>
 </ul>
 <dl class="function">
 <dt id="MLBG59.Preprocessing.Process_Outliers.replace_category">
-<code class="descclassname">MLBG59.Preprocessing.Process_Outliers.</code><code class="descname">replace_category</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>categories</em>, <em>replace_with='other'</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Process_Outliers.html#replace_category"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Process_Outliers.replace_category" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">MLBG59.Preprocessing.Process_Outliers.</code><code class="descname">replace_category</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>categories</em>, <em>replace_with='other'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Process_Outliers.html#replace_category"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Process_Outliers.replace_category" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace multiple categories of a categorical variable</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -671,7 +671,7 @@ If None, today date</li>
 
 <dl class="function">
 <dt id="MLBG59.Preprocessing.Process_Outliers.replace_extreme_values">
-<code class="descclassname">MLBG59.Preprocessing.Process_Outliers.</code><code class="descname">replace_extreme_values</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>lower_th=None</em>, <em>upper_th=None</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Process_Outliers.html#replace_extreme_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Process_Outliers.replace_extreme_values" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">MLBG59.Preprocessing.Process_Outliers.</code><code class="descname">replace_extreme_values</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>lower_th=None</em>, <em>upper_th=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Process_Outliers.html#replace_extreme_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Process_Outliers.replace_extreme_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace values with lower/upper thresholds limits</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -731,7 +731,7 @@ sample and outputs are combined by averaging (for regression) or voting (for cla
 </ul>
 </li>
 <li><strong>replace</strong> (<em>Boolean</em><em> (</em><em>Default : False</em><em>)</em>) – Enable sampling with replacement</li>
-<li><strong>list_model</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – Fitted models</li>
+<li><strong>list_model</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – Fitted models (created with fit method)</li>
 </ul>
 </td>
 </tr>
@@ -740,7 +740,7 @@ sample and outputs are combined by averaging (for regression) or voting (for cla
 <dl class="method">
 <dt id="MLBG59.Modelisation.Bagging.Bagging.feature_importance">
 <code class="descname">feature_importance</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging.feature_importance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging.feature_importance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get features importance of the model</p>
+<dd><p>Get features importance of the model by averaging importance of models fitted on the samples</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -769,7 +769,7 @@ sample and outputs are combined by averaging (for regression) or voting (for cla
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>self.list_model</strong> – Fitted models lisdt</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>self.list_model</strong> – Fitted models</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
@@ -797,16 +797,16 @@ sample and outputs are combined by averaging (for regression) or voting (for cla
 
 <dl class="method">
 <dt id="MLBG59.Modelisation.Bagging.Bagging.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging.predict" title="Permalink to this definition">¶</a></dt>
+<code class="descname">predict</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply bagging models on a  dataset.
-Combine models by averaging the output (for regression) or voting (for classification)</p>
+Combine models by averaging the outputs (for regression) or voting (for classification)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>self</strong> – </li>
-<li><strong>X</strong> (<em>DataFrame</em>) – Dataset to apply the model</li>
+<li><strong>df</strong> (<em>DataFrame</em>) – Dataset to apply the model</li>
 </ul>
 </td>
 </tr>
@@ -853,12 +853,12 @@ Combine models by averaging the output (for regression) or voting (for classific
 <div class="section" id="module-MLBG59.Modelisation.HyperOpt">
 <span id="hyperoptimisation"></span><h2>Hyperoptimisation<a class="headerlink" href="#module-MLBG59.Modelisation.HyperOpt" title="Permalink to this headline">¶</a></h2>
 <p>Hyperoptimisation class :
-Create random HPs combinations, fit and predict models.
-Available algorithms : Random Forest, XGBOOST</p>
+Create random HPs combinations, train and predict models.
+Available algorithms : Random Forest, XGBOOST (and bagging)</p>
 <p>Hyperopt class methods :</p>
 <ul class="simple">
 <li>get_params</li>
-<li>fit</li>
+<li>train</li>
 <li>predict</li>
 <li>get_best_model</li>
 <li>model_res_to_df</li>
@@ -867,13 +867,13 @@ Available algorithms : Random Forest, XGBOOST</p>
 <dt id="MLBG59.Modelisation.HyperOpt.Hyperopt">
 <em class="property">class </em><code class="descclassname">MLBG59.Modelisation.HyperOpt.</code><code class="descname">Hyperopt</code><span class="sig-paren">(</span><em>classifier='RF'</em>, <em>grid_param=None</em>, <em>n_param_comb=10</em>, <em>top_bagging=False</em>, <em>bagging_param={'niter': 5</em>, <em>'pos_sample_size': 1.0</em>, <em>'replace': False}</em>, <em>comb_seed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt" title="Permalink to this definition">¶</a></dt>
 <dd><p>For a selected algorithm and a hyper-parameters grid.
-Pick N random HPs combinations and fit/predict the models</p>
+Pick N random HPs combinations and train/predict the models</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>classifier</strong> (<em>string</em><em> (</em><em>Default : 'RF'</em><em>)</em>) – classifier</li>
+<li><strong>classifier</strong> (<em>string</em><em> (</em><em>Default : 'RF'</em><em>)</em>) – classifier for modelisation</li>
 <li><strong>grid_param</strong> (<em>dict</em><em> (</em><em>Default : default_RF_grid_param</em><em>)</em>) – HPs grid</li>
 <li><strong>n_param_comb</strong> (<em>int</em><em> (</em><em>Default : 10</em><em>)</em>) – number of HPS combinations</li>
 <li><strong>top_bagging</strong> (<em>Boolean</em><em> (</em><em>Default = False</em><em>)</em>) – use bagging method</li>
@@ -886,23 +886,49 @@ Pick N random HPs combinations and fit/predict the models</p>
 </tbody>
 </table>
 <dl class="method">
-<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model">
-<code class="descname">get_best_model</code><span class="sig-paren">(</span><em>test_model_dict</em>, <em>metric='F1'</em>, <em>delta_auc_th=0.03</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.get_best_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the best model according to a selected metric among valid model (abs(auc(fit)-auc(test)))</p>
+<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df_train</em>, <em>target</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train the models</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>test_model_dict</strong> (<em>dict</em>) – {model index : model outputs and metrics}</li>
+<li><strong>df_train</strong> (<em>DataFrame</em>) – Training set</li>
+<li><strong>target</strong> (<em>string</em>) – Target name</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">self</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model">
+<code class="descname">get_best_model</code><span class="sig-paren">(</span><em>d_model_info</em>, <em>metric='F1'</em>, <em>delta_auc_th=0.03</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.get_best_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indentify valid models according to delta auc (test/train).
+Get the best model according to a selected metric among valid model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>d_model_info</strong> (<em>dict</em>) – {model index : model outputs and metrics}</li>
 <li><strong>metric</strong> (<em>string</em><em> (</em><em>default = F1-score</em><em>)</em>) – Metric used to get the best model</li>
-<li><strong>delta_auc_th</strong> (<em>float</em>) – value available for abs(auc(fit) - auc(test))</li>
+<li><strong>delta_auc_th</strong> (<em>float</em>) – threshold for valid models : abs(auc(train) - auc(test))</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
 <li><em>int</em> – Best model index</li>
-<li><em>list</em> – List containing valid model indexes</li>
+<li><em>list</em> – Valid model indexes</li>
 </ul>
 </p>
 </td>
@@ -914,7 +940,7 @@ Pick N random HPs combinations and fit/predict the models</p>
 <dl class="method">
 <dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.get_params">
 <code class="descname">get_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.get_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return object parameters</p>
+<dd><p>Return hyperopt object parameters</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -929,19 +955,19 @@ Pick N random HPs combinations and fit/predict the models</p>
 
 <dl class="method">
 <dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.model_res_to_df">
-<code class="descname">model_res_to_df</code><span class="sig-paren">(</span><em>test_model_dict</em>, <em>sort_metric='F1'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.model_res_to_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.model_res_to_df" title="Permalink to this definition">¶</a></dt>
+<code class="descname">model_res_to_df</code><span class="sig-paren">(</span><em>d_model_infos</em>, <em>sort_metric='F1'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.model_res_to_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.model_res_to_df" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store models summary in DataFrame</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>test_model_dict</strong> (<em>dict</em>) – dict containing models informations</li>
-<li><strong>sort_metric</strong> (<em>string</em><em> (</em><em>default = 'F1'</em><em>)</em>) – metric to sort models in DataFrame</li>
+<li><strong>d_model_info</strong> (<em>dict</em>) – {model index : model outputs and metrics}</li>
+<li><strong>sort_metric</strong> (<em>string</em><em> (</em><em>default = 'F1'</em><em>)</em>) – metric to sort models (descendant)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">DataFrame containing model results</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">model infos and metrics</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
@@ -953,7 +979,7 @@ Pick N random HPs combinations and fit/predict the models</p>
 
 <dl class="method">
 <dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>delta_auc</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.predict" title="Permalink to this definition">¶</a></dt>
+<code class="descname">predict</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>delta_auc</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply the models</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -962,8 +988,8 @@ Pick N random HPs combinations and fit/predict the models</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – Set to apply the models</li>
 <li><strong>target</strong> (<em>string</em>) – Target name</li>
-<li><strong>delta_auc_th</strong> (<em>float</em>) – value available for abs(auc(fit) - auc(test))</li>
-<li><strong>verbose</strong> (<em>int</em><em> (</em><em>0/1</em><em>) </em><em>(</em><em>Default : 1</em><em>)</em>) – Get more operations information</li>
+<li><strong>delta_auc_th</strong> (<em>float</em>) – threshold for valid models : abs(auc(train) - auc(test))</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
 </ul>
 </td>
 </tr>
@@ -971,31 +997,6 @@ Pick N random HPs combinations and fit/predict the models</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>df_train</em>, <em>target</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Train the models</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df_train</strong> (<em>DataFrame</em>) – Training set</li>
-<li><strong>target</strong> (<em>string</em>) – Target name</li>
-<li><strong>verbose</strong> (<em>int</em><em> (</em><em>0/1</em><em>) </em><em>(</em><em>Default : 1</em><em>)</em>) – Get more operations information</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">self</p>
 </td>
 </tr>
 </tbody>

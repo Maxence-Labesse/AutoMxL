@@ -40,9 +40,9 @@ def all_to_date(df, var_list=None, verbose=1):
     for col in var_list:
         try:
             if df_local[col].dtype == 'object':
-                df_local[col] = pd.to_datetime(df_local[col])
+                df_local[col] = pd.to_datetime(df_local[col], errors='coerce')
             else:
-                df_local[col] = pd.to_datetime(df_local[col].astype('Int32').astype(str))
+                df_local[col] = pd.to_datetime(df_local[col].astype('Int32').astype(str), errors='coerce')
         except:
             pass
 

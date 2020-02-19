@@ -151,13 +151,13 @@
             
   <h1>Source code for MLBG59.Modelisation.HyperOpt</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Hyperoptimisation class :</span>
-<span class="sd">Create random HPs combinations, fit and predict models.</span>
-<span class="sd">Available algorithms : Random Forest, XGBOOST</span>
+<span class="sd">Create random HPs combinations, train and predict models.</span>
+<span class="sd">Available algorithms : Random Forest, XGBOOST (and bagging)</span>
 
 <span class="sd">Hyperopt class methods :</span>
 
 <span class="sd">- get_params</span>
-<span class="sd">- fit</span>
+<span class="sd">- train</span>
 <span class="sd">- predict</span>
 <span class="sd">- get_best_model</span>
 <span class="sd">- model_res_to_df</span>
@@ -191,12 +191,12 @@
 
 <div class="viewcode-block" id="Hyperopt"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt">[docs]</a><span class="k">class</span> <span class="nc">Hyperopt</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;For a selected algorithm and a hyper-parameters grid.</span>
-<span class="sd">    Pick N random HPs combinations and fit/predict the models</span>
+<span class="sd">    Pick N random HPs combinations and train/predict the models</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    classifier : string (Default : &#39;RF&#39;)</span>
-<span class="sd">        classifier</span>
+<span class="sd">        classifier for modelisation</span>
 <span class="sd">    grid_param : dict (Default : default_RF_grid_param)</span>
 <span class="sd">        HPs grid</span>
 <span class="sd">    n_param_comb : int (Default : 10)</span>
@@ -237,7 +237,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Hyperopt.get_params"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.get_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return object parameters</span>
+        <span class="sd">&quot;&quot;&quot;Return hyperopt object parameters</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -255,7 +255,7 @@
 <span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Hyperopt.fit"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Hyperopt.fit"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Train the models</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -264,8 +264,8 @@
 <span class="sd">            Training set</span>
 <span class="sd">        target : string</span>
 <span class="sd">            Target name</span>
-<span class="sd">        verbose : int (0/1) (Default : 1)</span>
-<span class="sd">            Get more operations information</span>
+<span class="sd">        verbose : boolean (Default False)</span>
+<span class="sd">            Get logging information</span>
 <span class="sd">            </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -281,7 +281,7 @@
         <span class="n">sample_combinations</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">it</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid_param</span><span class="p">[</span><span class="n">Name</span><span class="p">]</span> <span class="k">for</span> <span class="n">Name</span> <span class="ow">in</span> <span class="n">grid_names</span><span class="p">))),</span>
                                             <span class="n">k</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_param_comb</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[34m&#39;</span> <span class="o">+</span> <span class="s1">&#39;Random among grid search:&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_param_comb</span><span class="p">,</span> <span class="s1">&#39;HP combs&#39;</span><span class="p">,</span>
                   <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[34m&#39;</span> <span class="o">+</span> <span class="s1">&#39;Model : &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span><span class="p">)</span>
@@ -348,7 +348,7 @@
 
             <span class="n">t_fin_model</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sample_combinations</span><span class="p">))</span> <span class="o">+</span>
                       <span class="s1">&#39; &gt;&gt; </span><span class="si">{}</span><span class="s1"> Sec.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">t_fin_model</span> <span class="o">-</span> <span class="n">t_ini_model</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span>
 
@@ -358,7 +358,7 @@
 <span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Hyperopt.predict"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Hyperopt.predict"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply the models</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -368,9 +368,9 @@
 <span class="sd">        target : string</span>
 <span class="sd">            Target name</span>
 <span class="sd">        delta_auc_th : float</span>
-<span class="sd">            value available for abs(auc(fit) - auc(test))</span>
-<span class="sd">        verbose : int (0/1) (Default : 1)</span>
-<span class="sd">            Get more operations information</span>
+<span class="sd">            threshold for valid models : abs(auc(train) - auc(test))</span>
+<span class="sd">        verbose : boolean (Default False)</span>
+<span class="sd">            Get logging information</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -419,7 +419,7 @@
                                    <span class="s1">&#39;evaluation&#39;</span><span class="p">:</span> <span class="n">eval_dict</span><span class="p">}</span>
 
             <span class="c1"># print metrics</span>
-            <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;HP&#39;</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">eval_dict</span><span class="p">[</span><span class="s1">&#39;delta_auc&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">delta_auc</span><span class="p">:</span>
                     <span class="n">c_code</span> <span class="o">=</span> <span class="mi">32</span>
@@ -428,13 +428,13 @@
 
                 <span class="n">roc_auc_train</span> <span class="o">=</span> <span class="n">auc</span><span class="p">(</span><span class="n">fpr_train</span><span class="p">,</span> <span class="n">tpr_train</span><span class="p">)</span>
                 <span class="n">color_print</span><span class="p">(</span>
-                    <span class="s1">&#39; &gt; AUC fit: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">[</span><span class="s2">&quot;Roc_auc&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; test: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">roc_auc_train</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span>
+                    <span class="s1">&#39; &gt; AUC train: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">[</span><span class="s2">&quot;Roc_auc&quot;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39; test: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">roc_auc_train</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span>
                     <span class="s1">&#39; / F1: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">[</span><span class="s1">&#39;F1&#39;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span>
                     <span class="s1">&#39; / prec: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">[</span><span class="s1">&#39;Precision&#39;</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span> <span class="o">+</span>
                     <span class="s1">&#39; / recall: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">[</span><span class="s1">&#39;Recall&#39;</span><span class="p">],</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">color_code</span><span class="o">=</span><span class="n">c_code</span><span class="p">)</span>
 
             <span class="n">t_fin_model</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> Sec.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">t_fin_model</span> <span class="o">-</span> <span class="n">t_ini_model</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()))</span>
 
         <span class="k">return</span> <span class="n">res_model_dict</span></div>
@@ -443,28 +443,29 @@
 <span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Hyperopt.get_best_model"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_best_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_model_dict</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">delta_auc_th</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the best model according to a selected metric among valid model (abs(auc(fit)-auc(test)))</span>
+<div class="viewcode-block" id="Hyperopt.get_best_model"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_best_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model_info</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">delta_auc_th</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indentify valid models according to delta auc (test/train).</span>
+<span class="sd">        Get the best model according to a selected metric among valid model</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        test_model_dict : dict</span>
+<span class="sd">        d_model_info : dict</span>
 <span class="sd">            {model index : model outputs and metrics}</span>
 <span class="sd">        metric : string (default = F1-score)</span>
 <span class="sd">            Metric used to get the best model</span>
 <span class="sd">        delta_auc_th : float</span>
-<span class="sd">            value available for abs(auc(fit) - auc(test))</span>
+<span class="sd">            threshold for valid models : abs(auc(train) - auc(test))</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        int</span>
 <span class="sd">            Best model index</span>
 <span class="sd">        list</span>
-<span class="sd">            List containing valid model indexes</span>
+<span class="sd">            Valid model indexes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># select valid models (abs(auc_train - auc_test)&lt;0.03)</span>
         <span class="n">valid_model</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">test_model_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">d_model_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">param</span><span class="p">[</span><span class="s1">&#39;evaluation&#39;</span><span class="p">][</span><span class="s1">&#39;delta_auc&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">delta_auc_th</span><span class="p">:</span>
                 <span class="n">valid_model</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
 
@@ -472,7 +473,7 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_model</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">best_model_idx</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">valid_model</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">valid_model</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;evaluation&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">verbose</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &gt;&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_model</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">&#39; valid models |auc(fit)-auc(test)|&lt;=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">delta_auc_th</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &gt;&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_model</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="s1">&#39; valid models |auc(train)-auc(test)|&lt;=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">delta_auc_th</span><span class="p">))</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; &gt; best model : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">best_model_idx</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">best_model_idx</span> <span class="o">=</span> <span class="kc">None</span>
@@ -484,20 +485,20 @@
 <span class="sd">    ---------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Hyperopt.model_res_to_df"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.model_res_to_df">[docs]</a>    <span class="k">def</span> <span class="nf">model_res_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_model_dict</span><span class="p">,</span> <span class="n">sort_metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Hyperopt.model_res_to_df"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.model_res_to_df">[docs]</a>    <span class="k">def</span> <span class="nf">model_res_to_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model_infos</span><span class="p">,</span> <span class="n">sort_metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Store models summary in DataFrame</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        test_model_dict : dict</span>
-<span class="sd">            dict containing models informations</span>
+<span class="sd">        d_model_info : dict</span>
+<span class="sd">            {model index : model outputs and metrics}</span>
 <span class="sd">        sort_metric : string (default = &#39;F1&#39;)</span>
-<span class="sd">            metric to sort models in DataFrame</span>
+<span class="sd">            metric to sort models (descendant)</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        DataFrame</span>
-<span class="sd">            DataFrame containing model results</span>
+<span class="sd">            model infos and metrics</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># dataFrame columns names</span>
         <span class="n">model_col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;model_index&#39;</span><span class="p">]</span>
@@ -512,7 +513,7 @@
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">dict_tmp</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;model_index&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">}</span>
             <span class="n">dict_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="s1">&#39;HP&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
-            <span class="n">dict_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">x</span><span class="p">:</span> <span class="n">test_model_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;evaluation&#39;</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">metrics_col</span><span class="p">})</span>
+            <span class="n">dict_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">x</span><span class="p">:</span> <span class="n">d_model_infos</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;evaluation&#39;</span><span class="p">][</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">metrics_col</span><span class="p">})</span>
             <span class="n">dict_tmp</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;bagging&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_bagging</span><span class="p">})</span>
             <span class="n">df_tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_model_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;features_importance&#39;</span><span class="p">],</span>
                                             <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
