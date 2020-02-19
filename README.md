@@ -28,7 +28,7 @@ called with only default parameters or chosen ones.
 
 Note : you can specify verbose=True in each method to get logging informations.
 
-####  Import and target encoding :
+###  Import and target encoding :
 
 If needed, you can find in <span style="color: orange"> Start </span> sub-package functions to facilitate data loading and target encoding.
 ```python
@@ -46,7 +46,7 @@ new_df, new_target = category_to_target(df_raw, var='y' , cat='yes')
 auto_df = AutoML(new_df.copy(), target=new_target)
 ```
 
-#### Data exploration :
+### Data exploration :
 
 <span style="color: orange">recap</span> method allows to get global informations about the dataset (features types,
 missing values, low variance variables). This information is also stored in object attribute dict "d_features".
@@ -64,15 +64,14 @@ You can also call <span style="color: orange">get_outliers</span> method to perf
 auto_df.get_outliers(verbose=False)
 ```
 
-#### Preprocessing
+### Preprocessing
 
 <span style="color: orange">preprocess</span> method
 
+# Information
 ### Release History
 
-- 1.0.0 : First proper release
-
-# Information 
+- 1.0.0 : First proper release 
 ### Licence
 Distributed under the MIT license. See License.txt for more information
 
