@@ -28,7 +28,7 @@ called with only default parameters or chosen ones.
 
 Note : you can specify verbose=True in each method to get logging informations.
 
-###  Import and target encoding :
+### Import and target encoding :
 
 If needed, you can find in <span style="color: orange"> Start </span> sub-package functions to facilitate data loading and target encoding.
 ```python
@@ -65,21 +65,31 @@ auto_df.get_outliers(verbose=False)
 ```
 
 ### Preprocessing
+<span style="color: orange">preprocess</span> method prepare the data before feeding it to the model :
 
-<span style="color: orange">preprocess</span> method
+- remove low variance features
+- transform date features to timedelta
+- fill missing values
+- process categorical data
+- replace outliers (optional)
 
+```python
+auto_df.preprocess(verbose=False)
+```
+
+### Modelisation
+```python
+auto_df.preprocess(verbose=False)
+```
 # Information
-### Release History
-
+#### Release History
 - 1.0.0 : First proper release 
-### Licence
+#### Licence
 Distributed under the MIT license. See License.txt for more information
 
-### Author
+#### Author
 Maxence Labesse - maxence.labesse@yahoo.fr
 https://github.com/Maxence-Labesse/MLBG59
 
-### Contributors
-
-n.
+#### Contributors
 

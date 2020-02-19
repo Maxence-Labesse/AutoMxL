@@ -134,7 +134,7 @@ class AutoML(pd.DataFrame):
         """Preprocessing of the dataset :
 
         - Remove features with null variance
-        - transform date to time between date and date_ref
+        - transform date to timedelta
         - fill NA values
         - replace outliers
         - one hot encoding
