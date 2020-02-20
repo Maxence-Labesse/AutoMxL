@@ -158,30 +158,32 @@
 <dl class="class">
 <dt id="MLBG59.__main__.AutoML">
 <em class="property">class </em><code class="descclassname">MLBG59.__main__.</code><code class="descname">AutoML</code><span class="sig-paren">(</span><em>*args</em>, <em>target=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AutoML"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AutoML" title="Permalink to this definition">¶</a></dt>
-<dd><p>Allow the user to quickly move forward the different steps of a score computing task (binary classification)</p>
+<dd><p>Covers the complete pipeline of a classification project from the raw dataset to a deployable model.</p>
+<p>AutoML is Built as a class inherited from pandas DataFrame for which each step correponds to a class method that
+can be called with only default parameters or chosen ones.</p>
 <ul class="simple">
-<li>data analysis</li>
-<li>preprocessing</li>
-<li>features selection</li>
-<li>modelisation</li>
-<li>models selection</li>
+<li>Data exploration (dataset information and outliers analysis)</li>
+<li>Preprocessing (clean and prepare data)</li>
+<li>Modelisation (random search)</li>
 </ul>
+<p>Available classifiers : Random Forest and XGBOOST</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>_obj</strong> (<em>DataFrame</em>) – Source Dataset</li>
-<li><strong>{x</strong> (<em>d_features</em>) – <ul>
+<li><strong>d_features</strong> (<em>dict</em><em> (</em><em>created by audit method</em><em>)</em>) – <p>{x : list of variables names}</p>
+<ul>
 <li>x = numerical : numerical features</li>
 <li>x = categorical : categorical features</li>
 <li>x = date : date features</li>
 <li>x = NA : features which contains NA values</li>
-<li>x = low_variance : list of the features with low variance</li>
+<li>x = low_variance : list of the low variance features</li>
 </ul>
 </li>
-<li><strong>d_num_outliers</strong> (<em>dict</em><em> (</em><em>created by get_outliers method</em><em>)</em>) – numerical features which contains outliers</li>
-<li><strong>d_cat_outliers</strong> (<em>dict</em><em> (</em><em>created by get_outliers method</em><em>)</em>) – categorical features which contains outliers (modalities frequency &lt; 5%)</li>
+<li><strong>d_num_outliers</strong> (<em>dict</em><em> (</em><em>created with get_outliers method</em><em>)</em>) – {feature : [lower_limit,upper_limit]}</li>
+<li><strong>d_cat_outliers</strong> (<em>dict</em><em> (</em><em>created with get_outliers method</em><em>)</em>) – {feature : outliers categories list}</li>
 </ul>
 </td>
 </tr>
@@ -190,19 +192,27 @@
 <dl class="method">
 <dt id="MLBG59.__main__.AutoML.get_outliers">
 <code class="descname">get_outliers</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AutoML.get_outliers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identify cat and num features which contains outlier
-* num : deviation from the mean &gt; x*std dev (x=3 by default)
-* cat : &lt;x% frequency modalities (x=5 by default)</p>
+<dd><p>Identify cat and num features which contains outlier</p>
+<ul class="simple">
+<li>num : x outlier &lt;=&gt; abs(x - mean) &gt; num_xstd * var</li>
+<li>cat : Modalities with frequency &lt;x% (Default 5%)</li>
+</ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li><em>dict self.d_num_outliers</em></li>
-<li><em>dict self.d_num_outliers</em></li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>num_xstd</strong> (<em>int</em><em> (</em><em>Default : 3</em><em>)</em>) – Variance gap coef</li>
+<li><strong>cat_freq</strong> (<em>float</em><em> (</em><em>Default : 0.05</em><em>)</em>) – Minimum modality frequency</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><em>self.d_num_outliers</em> – {variable : list of categories considered as outliers}</li>
+<li><em>self.d_num_outliers</em> – {variable : [lower_limit, upper_limit]}</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>
@@ -212,20 +222,22 @@
 <dl class="method">
 <dt id="MLBG59.__main__.AutoML.preprocess">
 <code class="descname">preprocess</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AutoML.preprocess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Preprocessing of the dataset :</p>
-<ul class="simple">
-<li>Remove features with null variance</li>
-<li>transform date to timedelta</li>
-<li>fill NA values</li>
-<li>replace outliers</li>
-<li>one hot encoding</li>
+<dd><p>Prepare the data before feeding it to the model :</p>
+<blockquote>
+<div><ul class="simple">
+<li>remove low variance features</li>
+<li>transform date features to timedelta</li>
+<li>fill missing values</li>
+<li>process categorical data</li>
+<li>replace outliers (optional)</li>
 </ul>
+</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>date_ref</strong> (<em>string '%d/%m/%y'</em><em> (</em><em>Default : None</em><em>)</em>) – Date to compute timedelta
+<li><strong>date_ref</strong> (<em>string '%d/%m/%y'</em><em> (</em><em>Default : None</em><em>)</em>) – ref ate to compute timedelta.
 If None, today date</li>
 <li><strong>process_outliers</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – Enable outliers replacement</li>
 <li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
@@ -235,7 +247,7 @@ If None, today date</li>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">preprocessed dataset</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">self</p>
 </td>
 </tr>
 </tbody>
@@ -262,7 +274,7 @@ If None, today date</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>dict self.d_features {x</strong> (<em>list of variables names}</em>)</li>
+<li><strong>dict</strong> (<em>self.d_features {x : list of variables names}</em>)</li>
 <li><strong>- x = numerical</strong> (<em>numerical features</em>)</li>
 <li><strong>- x = categorical</strong> (<em>categorical features</em>)</li>
 <li><strong>- x = date</strong> (<em>date features</em>)</li>
@@ -279,22 +291,30 @@ If None, today date</li>
 <dl class="method">
 <dt id="MLBG59.__main__.AutoML.train_predict">
 <code class="descname">train_predict</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AutoML.train_predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Train and apply models</p>
+<dd><p>Model hyper-optimisation with random search.</p>
+<ul class="simple">
+<li>Creates random hyper-parameters combinations from HP grid</li>
+<li>train and test a model for each combination</li>
+<li>get the best model in respect of a selected metric among valid model</li>
+</ul>
+<p>Available algorithms : Random Forest, XGBOOST (and bagging)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>clf</strong> (<em>string</em><em> (</em><em>Default : 'XGBOOST'</em><em>)</em>) – classifier used for modelisation</li>
+<li><strong>metric</strong> (<em>string</em><em> (</em><em>Default : 'F1'</em><em>)</em>) – objective metric</li>
 <li><strong>n_comb</strong> (<em>int</em><em> (</em><em>Default : 10</em><em>)</em>) – HP combination number</li>
 <li><strong>= int</strong><strong> (</strong><strong>Default</strong> (<em>comb_seed</em>) – random combination seed</li>
-<li><strong>verbose</strong> (<em>int</em><em> (</em><em>0/1</em><em>) </em><em>(</em><em>Default : 1</em><em>)</em>) – get more operations information</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><strong>dict</strong> (<em>hyperopt.train_model_dict</em>)</li>
-<li><strong>dict</strong> (<em>dict_res_model</em>)</li>
-<li><strong>HyperOpt object</strong> (<em>hyperopt</em>)</li>
+<li><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
+<li><em>int</em> – best model index</li>
+<li><em>DataFrame</em> – Models info and metrics stored in DataFrame</li>
 </ul>
 </p>
 </td>

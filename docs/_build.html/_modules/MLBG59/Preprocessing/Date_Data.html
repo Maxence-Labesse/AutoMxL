@@ -150,7 +150,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for MLBG59.Preprocessing.Date_Data</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Date Features processing</span>
+<span></span><span class="sd">&quot;&quot;&quot; Date Features processing functions:</span>
 
 <span class="sd"> - all_to_date : detect dates from num/cat features and transform them to datetime format.</span>
 <span class="sd"> - date_to_anc : Transform datetime features to timedelta according to a ref date</span>
@@ -162,19 +162,19 @@
 
 
 <div class="viewcode-block" id="all_to_date"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Date_Data.all_to_date">[docs]</a><span class="k">def</span> <span class="nf">all_to_date</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;etect dates from num/cat features and transform them to datetime format.</span>
+    <span class="sd">&quot;&quot;&quot;Detect dates from selected/all features and transform them to datetime format.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    df : DataFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">    var_list : list (Default : None)</span>
-<span class="sd">        Names of the features to analyze</span>
-<span class="sd">        If None, all the num features</span>
+<span class="sd">        Names of the features</span>
+<span class="sd">        If None, all the features</span>
 <span class="sd">    verbose : boolean (Default False)</span>
 <span class="sd">        Get logging information</span>
 <span class="sd">        </span>
-<span class="sd">    Returns</span>
+<span class="sd">    Return</span>
 <span class="sd">    -------</span>
 <span class="sd">    DataFrame</span>
 <span class="sd">        Modified dataset</span>
@@ -207,17 +207,17 @@
 
 
 <div class="viewcode-block" id="date_to_anc"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Date_Data.date_to_anc">[docs]</a><span class="k">def</span> <span class="nf">date_to_anc</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform datetime features to timedelta according to a ref date</span>
+    <span class="sd">&quot;&quot;&quot;Transform selected/all datetime features to timedelta according to a ref date</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    df : DataFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">    var_list : list (Default : None)</span>
-<span class="sd">        List of the features to analyze</span>
-<span class="sd">        If None, contains all the num features</span>
+<span class="sd">        List of the features to analyze.</span>
+<span class="sd">        If None, contains all the datetime features</span>
 <span class="sd">    date_ref : string &#39;%d/%m/%y&#39; (Default : None)</span>
-<span class="sd">        Date to compute timedelta</span>
+<span class="sd">        Date to compute timedelta.</span>
 <span class="sd">        If None, today date</span>
 <span class="sd">    verbose : boolean (Default False)</span>
 <span class="sd">        Get logging information</span>
@@ -256,7 +256,7 @@
         <span class="n">new_var_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var_name</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt;&quot;</span><span class="p">,</span><span class="n">col</span> <span class="o">+</span> <span class="s1">&#39; -&gt; &#39;</span> <span class="o">+</span> <span class="n">var_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt;&quot;</span><span class="p">,</span> <span class="n">col</span> <span class="o">+</span> <span class="s1">&#39; -&gt; &#39;</span> <span class="o">+</span> <span class="n">var_name</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df_local</span><span class="p">,</span> <span class="n">new_var_list</span></div>
 </pre></div>

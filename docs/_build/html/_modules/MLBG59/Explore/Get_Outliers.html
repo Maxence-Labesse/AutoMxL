@@ -150,7 +150,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for MLBG59.Explore.Get_Outliers</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Outliers detection :</span>
+<span></span><span class="sd">&quot;&quot;&quot; Outliers detection functions :</span>
 
 <span class="sd"> - get_cat_outliers : identify categorical features containing outliers</span>
 <span class="sd"> - get_num_outliers : identify numerical features containing outliers</span>
@@ -162,7 +162,7 @@
 
 
 <div class="viewcode-block" id="get_cat_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Outliers.get_cat_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_cat_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Outliers detection for categorical features.</span>
+    <span class="sd">&quot;&quot;&quot;Outliers detection for selected/all categorical features.</span>
 
 <span class="sd">    Method : Modalities with frequency &lt;x% (Default 5%)</span>
 
@@ -171,11 +171,11 @@
 <span class="sd">     df : DataFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">     var_list : list (Default : None)</span>
-<span class="sd">        Names of the features to analyze.</span>
+<span class="sd">        Names of the features</span>
 <span class="sd">        If None, all the categorical features</span>
 <span class="sd">     threshold : float (Default : 0.05)</span>
 <span class="sd">        Minimum modality frequency</span>
-<span class="sd">    verbose : boolean (Default False)</span>
+<span class="sd">     verbose : boolean (Default False)</span>
 <span class="sd">        Get logging information</span>
 
 <span class="sd">    Returns</span>
@@ -191,7 +191,7 @@
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;cat features outliers identification (frequency&lt;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">threshold</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; features : &#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">,)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; features : &#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">,</span> <span class="p">)</span>
 
     <span class="c1"># initialize output dict</span>
     <span class="n">outlier_dict</span> <span class="o">=</span> <span class="p">{}</span>
@@ -217,7 +217,7 @@
 
 
 <div class="viewcode-block" id="get_num_outliers"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Outliers.get_num_outliers">[docs]</a><span class="k">def</span> <span class="nf">get_num_outliers</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">xstd</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;outliers detection for num features.</span>
+    <span class="sd">&quot;&quot;&quot;Outliers detection for selected/all numerical features.</span>
 
 <span class="sd">    Method : x outlier &lt;=&gt; abs(x - mean) &gt; xstd * var</span>
 <span class="sd">    </span>
@@ -226,17 +226,17 @@
 <span class="sd">     df : DataFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">     var_list : list (Default : None)</span>
-<span class="sd">        Names of the features to analyze.</span>
+<span class="sd">        Names of the features</span>
 <span class="sd">        If None, all the num features</span>
 <span class="sd">     xstd : int (Default : 3)</span>
 <span class="sd">        Variance gap coef</span>
-<span class="sd">    verbose : boolean (Default False)</span>
+<span class="sd">     verbose : boolean (Default False)</span>
 <span class="sd">        Get logging information</span>
 <span class="sd">            </span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">     outlier_dict : dict</span>
-<span class="sd">         {variable : [lower_limit, upper_limit]}</span>
+<span class="sd">    dict</span>
+<span class="sd">        {variable : [lower_limit, upper_limit]}</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># if var_list = None, get all num features</span>
     <span class="c1"># else, exclude features from var_list whose type is not num</span>
@@ -245,7 +245,7 @@
     <span class="n">df_bis</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var_list</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;num features outliers identification ( x: |x - mean| &gt; &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">xstd</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39; * var)&#39;</span><span class="p">)</span>
+        <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;num features outliers identification ( x: |x - mean| &gt; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">xstd</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; * var)&#39;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; features : &#39;</span><span class="p">,</span> <span class="n">var_list</span><span class="p">,</span> <span class="p">)</span>
 
     <span class="c1"># initialize output dict</span>

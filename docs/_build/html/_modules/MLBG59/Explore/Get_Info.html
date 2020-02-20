@@ -155,7 +155,7 @@
 <span class="sd"> - recap : get global information about the dataset (NA, features type, low variance features, ...)</span>
 <span class="sd"> - is_date : test if a variable is as date</span>
 <span class="sd"> - get_all_dates : identify date features</span>
-<span class="sd"> - low variance features : identify all features with low variance (&lt;threshold)</span>
+<span class="sd"> - low variance features : identify features with low variance</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">MinMaxScaler</span>
@@ -174,8 +174,6 @@
 <span class="sd">    ----------</span>
 <span class="sd">    df : DataFrame</span>
 <span class="sd">        input dataset</span>
-<span class="sd">    target : string (Default : None)</span>
-<span class="sd">        target name</span>
 <span class="sd">    verbose : boolean (Default False)</span>
 <span class="sd">        Get logging information</span>
 <span class="sd">            </span>
@@ -252,7 +250,9 @@
 
 
 <div class="viewcode-block" id="is_date"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Info.is_date">[docs]</a><span class="k">def</span> <span class="nf">is_date</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Test if a variable is as date</span>
+    <span class="sd">&quot;&quot;&quot;Test if a variable is as date.</span>
+
+<span class="sd">    Method : try to apply to_datetime</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -289,11 +289,13 @@
 
 
 <div class="viewcode-block" id="get_all_dates"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Info.get_all_dates">[docs]</a><span class="k">def</span> <span class="nf">get_all_dates</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Identify all date features of a DataFrame</span>
+    <span class="sd">&quot;&quot;&quot;Identify dates variables</span>
+
+<span class="sd">    Method : try to apply to_datetime</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">     df : DataFrame</span>
+<span class="sd">    df : DataFrame</span>
 <span class="sd">        input DataFrame</span>
 
 <span class="sd">    Returns</span>
@@ -316,7 +318,7 @@
 
 
 <div class="viewcode-block" id="low_variance_features"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Info.low_variance_features">[docs]</a><span class="k">def</span> <span class="nf">low_variance_features</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">rescale</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Identify  features with low variance (&lt;= threshold).</span>
+    <span class="sd">&quot;&quot;&quot;Identify  features with low variance (&lt; threshold).</span>
 <span class="sd">    Possible to rescale feature before computing.</span>
 
 <span class="sd">    Parameters</span>

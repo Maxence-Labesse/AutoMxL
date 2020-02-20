@@ -150,16 +150,17 @@
            <div itemprop="articleBody">
             
   <h1>Source code for MLBG59.Preprocessing.Categorical_Data</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Categorical Features processing</span>
+<span></span><span class="sd">&quot;&quot;&quot; Categorical features processing</span>
 
 <span class="sd"> - dummy_all_var : get one hot encoded vector for each category of a categorical features list</span>
+<span class="sd"> - label encoding : coming soon</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="n">get_type_features</span>
 
 
 <div class="viewcode-block" id="dummy_all_var"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Categorical_Data.dummy_all_var">[docs]</a><span class="k">def</span> <span class="nf">dummy_all_var</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get one hot encoded vector for each category of a categorical features list</span>
+    <span class="sd">&quot;&quot;&quot;Get one hot encoded vector for selected/all categorical features</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -169,10 +170,11 @@
 <span class="sd">        Names of the features to dummify</span>
 <span class="sd">        If None, all the num features</span>
 <span class="sd">     prefix_list : list (default : None)</span>
-<span class="sd">        Prefix to add before new features name</span>
+<span class="sd">        Prefix to add before new features name (prefix+&#39;_&#39;+cat).</span>
+<span class="sd">        It None, prefix=variable name</span>
 <span class="sd">     Keep : boolean (Default = False)</span>
 <span class="sd">        If True, delete the original feature</span>
-<span class="sd">    verbose : boolean (Default False)</span>
+<span class="sd">     verbose : boolean (Default False)</span>
 <span class="sd">        Get logging information</span>
 <span class="sd">        </span>
 <span class="sd">    Returns</span>
@@ -205,12 +207,9 @@
         <span class="k">if</span> <span class="n">keep</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
             <span class="n">df_local</span> <span class="o">=</span> <span class="n">df_local</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; &#39;</span><span class="o">+</span><span class="n">col</span><span class="o">+</span><span class="s1">&#39; -&gt;&#39;</span><span class="p">,</span><span class="n">df_cat</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; &#39;</span> <span class="o">+</span> <span class="n">col</span> <span class="o">+</span> <span class="s1">&#39; -&gt;&#39;</span><span class="p">,</span> <span class="n">df_cat</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 
     <span class="k">return</span> <span class="n">df_local</span></div>
-
-
-
 </pre></div>
 
            </div>

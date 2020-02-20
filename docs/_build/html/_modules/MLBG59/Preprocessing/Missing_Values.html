@@ -150,17 +150,17 @@
            <div itemprop="articleBody">
             
   <h1>Source code for MLBG59.Preprocessing.Missing_Values</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Missing values handling:</span>
+<span></span><span class="sd">&quot;&quot;&quot; Missing values handling functions :</span>
 
-<span class="sd"> - fill_num/fill_all_num: Replace missing values for numerical features</span>
-<span class="sd"> - fill_cat/fill_all_cat: Replace missing values for categorical features</span>
+<span class="sd"> - fill_numerical: replace missing values for numerical features</span>
+<span class="sd"> - fill_categorical: replace missing values for categorical features</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="n">get_type_features</span>
 
 
 <div class="viewcode-block" id="fill_numerical"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Missing_Values.fill_numerical">[docs]</a><span class="k">def</span> <span class="nf">fill_numerical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="n">top_var_NA</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Fill missing values for numerical features from a list.</span>
-<span class="sd">    You can also chose to keep track of which values were missing.</span>
+    <span class="sd">&quot;&quot;&quot;Fill missing values for selected/all numerical features.</span>
+<span class="sd">    top_var_NA parameter allows to create a variable to keep track of missing values.</span>
 
 <span class="sd">    Available methods : replace with zero, median or mean (Default = median)</span>
 <span class="sd">    </span>
@@ -170,11 +170,11 @@
 <span class="sd">        Input dataset</span>
 <span class="sd">    var_list : list (Default : None)</span>
 <span class="sd">        names of the features to fill.</span>
-<span class="sd">        If None, all the num features</span>
+<span class="sd">        If None, all the numerical features</span>
 <span class="sd">    method : string (Default : &#39;median&#39;)</span>
 <span class="sd">        Method used to fill the NA values :</span>
 
-<span class="sd">        - zero : replace NA with zero</span>
+<span class="sd">        - zero : replace with zero</span>
 <span class="sd">        - median : replace with median</span>
 <span class="sd">        - mean : replace with mean</span>
 
@@ -230,15 +230,15 @@
 
 
 <div class="viewcode-block" id="fill_categorical"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Missing_Values.fill_categorical">[docs]</a><span class="k">def</span> <span class="nf">fill_categorical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;NR&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Fill missing values for categorical features from a list</span>
+    <span class="sd">&quot;&quot;&quot;Fill missing values for selected/all categorical features.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    df : DataFrame</span>
 <span class="sd">        Input dataset</span>
 <span class="sd">    var_list : list (Default : None)</span>
-<span class="sd">        list of the features to fill</span>
-<span class="sd">        If None, contains all the cat features</span>
+<span class="sd">        list of the features to fill.</span>
+<span class="sd">        If None, contains all the categorical features</span>
 <span class="sd">    method : string (Default : &#39;NR&#39;)</span>
 <span class="sd">        Method used to fill the NA values :</span>
 
