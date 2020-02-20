@@ -32,8 +32,7 @@ def replace_category(df, var, categories, replace_with='outliers', verbose=False
     df_local.loc[df_local[var].isin(categories), var] = replace_with
 
     if verbose:
-        print('  ** categories replaced with \'' + replace_with + '\' for the variable ' + var + ': ')
-        print(categories)
+        print('  > ' + var +' '+replace_with+ ' ->', categories,)
 
     return df_local
 
@@ -47,7 +46,7 @@ def replace_extreme_values(df, var, lower_th=None, upper_th=None, verbose=False)
     """Replace extrem values : > upper threshold or < lower threshold
     
     Parameters
-    ----------s
+    ----------
     df : DataFrame
         Input dataset
     var : string
@@ -73,8 +72,7 @@ def replace_extreme_values(df, var, lower_th=None, upper_th=None, verbose=False)
         df_local.loc[df_local[var] < lower_th, var] = lower_th
 
     if verbose:
-        print('  ** Values replaced for variable ' + var + ' :')
-        print(' values lower than', lower_th)
-        print(' values upper than', upper_th)
+        print('  > Values replaced for variable ' + var + ' : <'+str(round(lower_th,4))+' or >' +str(round(upper_th,4)))
+
 
     return df_local

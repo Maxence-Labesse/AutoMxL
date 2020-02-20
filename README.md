@@ -5,7 +5,7 @@
 
 # Presentation 
 
-The main purpose of ths package is to provide a Python AutoML class that covers the complete pipeline of a classification problem 
+The main purpose of ths package is to provide a Python AutoML class that covers the complete pipeline of a classification project 
 from the raw dataset to a deployable model.
 It can be used as well as a functions/classes catalogue to ease and speed-up the Data Scientists repetitive dev tasks.
 
@@ -78,9 +78,21 @@ auto_df.preprocess(verbose=False)
 ```
 
 ### Modelisation
+Model hyper-optimisation with random search.
+
+- Creates random hyper-parameters combinations from HP grid
+- train and test a model for each combination
+- get the best model in respect of a selected metric among valid model
+
+Available classifiers : Random Forest, XGBOOST (and bagging)
 ```python
 auto_df.train_predict(verbose=False)
 ```
+outputs :
+- dict : {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
+- int : best model index
+- DataFrame : Models info and metrics stored in DataFrame
+
 # Information
 #### Release History
 - 1.0.0 : First proper release 

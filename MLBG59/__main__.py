@@ -10,28 +10,35 @@ from MLBG59.Modelisation.HyperOpt import *
 
 
 class AutoML(pd.DataFrame):
-    """Allow the user to quickly move forward the different steps of a score computing task (binary classification)
+    """Covers the complete pipeline of a classification project from the raw dataset to a deployable model.
 
-    * data analysis
-    * preprocessing
-    * features selection
-    * modelisation
-    * models selection
+    AutoML is Built as a class inherited from pandas DataFrame for which each step correponds to a class method that
+    can be called with only default parameters or chosen ones.
+
+    - Data exploration (dataset information and outliers analysis)
+    - Preprocessing (clean and prepare data)
+    - Modelisation (random search)
+
+    Available classifiers : Random Forest and XGBOOST
+
     
     Parameters 
     ----------
     _obj : DataFrame
         Source Dataset
-    d_features {x : list of variables names} : dict (created by audit method)
+    d_features : dict (created by audit method)
+
+        {x : list of variables names}
+
         - x = numerical : numerical features
         - x = categorical : categorical features
         - x = date : date features
         - x = NA : features which contains NA values
-        - x = low_variance : list of the features with low variance
-    d_num_outliers : dict (created by get_outliers method)
-        numerical features which contains outliers
-    d_cat_outliers : dict (created by get_outliers method)
-        categorical features which contains outliers (modalities frequency < 5%)
+        - x = low_variance : list of the low variance features
+    d_num_outliers : dict (created with get_outliers method)
+        {feature : [lower_limit,upper_limit]}
+    d_cat_outliers : dict (created with get_outliers method)
+        {feature : outliers categories list}
     """
 
     def __init__(self, *args, target=None):
@@ -67,7 +74,7 @@ class AutoML(pd.DataFrame):
             
         Returns
         -------
-        dict self.d_features {x : list of variables names}
+        dict : self.d_features {x : list of variables names}
 
         - x = numerical : numerical features
         - x = categorical : categorical features
@@ -97,27 +104,36 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def get_outliers(self, verbose=False):
+    def get_outliers(self, num_xstd=4, cat_freq=0.05, verbose=False):
         """Identify cat and num features which contains outlier
-        * num : deviation from the mean > x*std dev (x=3 by default)
-        * cat : <x% frequency modalities (x=5 by default)
+
+        * num : x outlier <=> abs(x - mean) > num_xstd * var
+        * cat : Modalities with frequency <x% (Default 5%)
         
         Parameters
         ----------
+        num_xstd : int (Default : 3)
+            Variance gap coef
+        cat_freq : float (Default : 0.05)
+            Minimum modality frequency
         verbose : boolean (Default False)
             Get logging information
 
         Returns
         -------
-        dict self.d_num_outliers
-        dict self.d_num_outliers
+        self.d_num_outliers
+            {variable : list of categories considered as outliers}
+        self.d_num_outliers
+            {variable : [lower_limit, upper_limit]}
         """
         if verbose:
             print_title1('\nGet_outliers')
         # cat outliers
-        self.d_cat_outliers = get_cat_outliers(self, var_list=self.d_features['categorical'], threshold=0.05, verbose=verbose)
+        self.d_cat_outliers = get_cat_outliers(self, var_list=self.d_features['categorical'], threshold=cat_freq,
+                                               verbose=verbose)
         # num outliers
-        self.d_num_outliers = get_num_outliers(self, var_list=self.d_features['numerical'], xstd=4, verbose=verbose)
+        self.d_num_outliers = get_num_outliers(self, var_list=self.d_features['numerical'], xstd=num_xstd,
+                                               verbose=verbose)
 
         # created attributes display
         if verbose:
@@ -131,18 +147,18 @@ class AutoML(pd.DataFrame):
 
     @timer
     def preprocess(self, date_ref=None, process_outliers=False, verbose=False):
-        """Preprocessing of the dataset :
+        """Prepare the data before feeding it to the model :
 
-        - Remove features with null variance
-        - transform date to timedelta
-        - fill NA values
-        - replace outliers
-        - one hot encoding
+            - remove low variance features
+            - transform date features to timedelta
+            - fill missing values
+            - process categorical data
+            - replace outliers (optional)
         
         Parameters
         ----------
         date_ref : string '%d/%m/%y' (Default : None)
-            Date to compute timedelta
+            ref ate to compute timedelta.
             If None, today date
         process_outliers : boolean (Default : False)
               Enable outliers replacement
@@ -151,7 +167,7 @@ class AutoML(pd.DataFrame):
         
         Returns
         -------
-        preprocessed dataset
+        self
         """
         if verbose:
             print_title1('\nPreprocess')
@@ -173,7 +189,8 @@ class AutoML(pd.DataFrame):
                     df_local = df_local.drop(col, axis=1)
 
         # delete removed cols from num_column
-        self.d_features['numerical'] = [x for x in self.d_features['numerical'] if x not in self.d_features['low_variance']]
+        self.d_features['numerical'] = [x for x in self.d_features['numerical'] if
+                                        x not in self.d_features['low_variance']]
 
         ####################################################
         # Transform date -> time between date and date_ref
@@ -231,7 +248,8 @@ class AutoML(pd.DataFrame):
         if verbose:
             color_print('Categorical features processing')
 
-        df_local = dummy_all_var(df_local, var_list=self.d_features['categorical'], prefix_list=None, keep=False, verbose=verbose)
+        df_local = dummy_all_var(df_local, var_list=self.d_features['categorical'], prefix_list=None, keep=False,
+                                 verbose=verbose)
 
         self.__dict__.update(df_local.__dict__)
         self.target = target
@@ -241,24 +259,36 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def train_predict(self, n_comb=10, comb_seed=None, verbose=True):
-        """
-        Train and apply models
+    def train_predict(self, clf='XGBOOST', metric='F1', n_comb=10, comb_seed=None, verbose=True):
+        """Model hyper-optimisation with random search.
+
+        - Creates random hyper-parameters combinations from HP grid
+        - train and test a model for each combination
+        - get the best model in respect of a selected metric among valid model
+
+        Available classifiers : Random Forest, XGBOOST (and bagging)
         
         Parameters
         ----------
+        clf : string (Default : 'XGBOOST')
+            classifier used for modelisation
+        metric : string (Default : 'F1')
+            objective metric
         n_comb : int (Default : 10)
             HP combination number
         comb_seed = int (Default : None)
             random combination seed
-        verbose : int (0/1) (Default : 1)
-            get more operations information
+        verbose : boolean (Default False)
+            Get logging information
             
         Returns
         -------
-        dict : hyperopt.train_model_dict
-        dict : dict_res_model
-        HyperOpt object : hyperopt
+        dict
+            {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
+        int
+            best model index
+        DataFrame
+            Models info and metrics stored in DataFrame
         """
         if verbose:
             print('')
@@ -268,7 +298,7 @@ class AutoML(pd.DataFrame):
         df_train, df_test = train_test(self, 0.3)
 
         # Create Hyperopt object
-        hyperopt = Hyperopt(classifier='XGBOOST', grid_param=default_XGB_grid_param, n_param_comb=n_comb,
+        hyperopt = Hyperopt(classifier=clf, grid_param=default_XGB_grid_param, n_param_comb=n_comb,
                             top_bagging=False, comb_seed=comb_seed)
 
         # Entrainement des modèles
@@ -281,12 +311,13 @@ class AutoML(pd.DataFrame):
 
         # selection best model
         color_print('\nbest model selection')
-        best_model_idx, _ = hyperopt.get_best_model(dict_res_model, metric='F1', delta_auc_th=0.03, verbose=verbose)
+        best_model_idx, _ = hyperopt.get_best_model(dict_res_model, metric=metric, delta_auc_th=0.03, verbose=False)
 
         if verbose:
             print_title1('best model : ' + str(best_model_idx))
-            print(hyperopt.model_res_to_df(dict_res_model, sort_metric='F1'))
+            print(metric+' : '+str(round(dict_res_model[best_model_idx]['metrics'][metric],4)))
+            print('AUC : '+str(round(dict_res_model[best_model_idx]['metrics']['Roc_auc'],4)))
 
-        df_test = hyperopt.model_res_to_df(dict_res_model, sort_metric='F1')
+        df_model_res = hyperopt.model_res_to_df(dict_res_model, sort_metric=metric)
 
-        return hyperopt, dict_res_model, best_model_idx, df_test
+        return dict_res_model, best_model_idx, df_model_res
