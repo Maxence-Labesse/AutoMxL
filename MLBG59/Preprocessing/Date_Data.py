@@ -1,4 +1,4 @@
-""" Date Features processing
+""" Date Features processing functions:
 
  - all_to_date : detect dates from num/cat features and transform them to datetime format.
  - date_to_anc : Transform datetime features to timedelta according to a ref date
@@ -10,19 +10,19 @@ from MLBG59.Utils.Utils import get_type_features
 
 
 def all_to_date(df, var_list=None, verbose=1):
-    """etect dates from num/cat features and transform them to datetime format.
+    """Detect dates from selected/all features and transform them to datetime format.
     
     Parameters
     ----------
     df : DataFrame
         Input dataset
     var_list : list (Default : None)
-        Names of the features to analyze
-        If None, all the num features
+        Names of the features
+        If None, all the features
     verbose : boolean (Default False)
         Get logging information
         
-    Returns
+    Return
     -------
     DataFrame
         Modified dataset
@@ -55,17 +55,17 @@ def all_to_date(df, var_list=None, verbose=1):
 
 
 def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
-    """Transform datetime features to timedelta according to a ref date
+    """Transform selected/all datetime features to timedelta according to a ref date
     
     Parameters
     ----------
     df : DataFrame
         Input dataset
     var_list : list (Default : None)
-        List of the features to analyze
-        If None, contains all the num features
+        List of the features to analyze.
+        If None, contains all the datetime features
     date_ref : string '%d/%m/%y' (Default : None)
-        Date to compute timedelta
+        Date to compute timedelta.
         If None, today date
     verbose : boolean (Default False)
         Get logging information
@@ -104,6 +104,6 @@ def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
         new_var_list.append(var_name)
 
         if verbose > 0:
-            print("  >",col + ' -> ' + var_name)
+            print("  >", col + ' -> ' + var_name)
 
     return df_local, new_var_list

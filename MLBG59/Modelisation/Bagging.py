@@ -1,9 +1,9 @@
 """ Bagging algorithm class. Methods :
 
-- get_params
-- fit
-- predict
-- feat_importance_BAG_RF
+- get_params : get bagging object parameters
+- fit : create bagging samples from a DataFrame and fit the model on each sample
+- predict : apply models fitted on sample to a  dataset
+- feature_importance : get features importance of the model
 
 
 """
@@ -30,7 +30,7 @@ class Bagging(object):
     
     Parameters
     ----------
-    classifier : Model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)
+    clf : Model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)
         Model fitted on the samples
     n_sample : int (Default : 5)
         number a samples
@@ -46,13 +46,14 @@ class Bagging(object):
     list_model : list (Default : None)
         Fitted models (created with fit method)
     """
+
     def __init__(self,
-                 classifier=RandomForestClassifier(n_estimators=100, max_leaf_nodes=100),
+                 clf=RandomForestClassifier(n_estimators=100, max_leaf_nodes=100),
                  n_sample=5,
                  pos_sample_size=1.0,
                  replace=True):
 
-        self.classifier = classifier
+        self.classifier = clf
         self.niter = n_sample
         self.pos_sample_size = pos_sample_size
         self.replace = replace
@@ -81,7 +82,7 @@ class Bagging(object):
     """
 
     def fit(self, df_train, target):
-        """Create bagging samples from a DataFrame and fit the model on each sample
+        """Create bagging samples from a DataFrame and fit the model (self.clf) on each sample
         
         Parameters
         ----------
@@ -126,12 +127,11 @@ class Bagging(object):
     """
 
     def predict(self, df):
-        """Apply bagging models on a  dataset.
+        """Apply models fitted on sample to a  dataset.
         Combine models by averaging the outputs (for regression) or voting (for classification)
 
         Parameters
         ----------
-        self
         df : DataFrame
             Dataset to apply the model
 
@@ -198,23 +198,23 @@ class Bagging(object):
 """
 
 
-def Bagging_sample(df, target, N, replace=False):
-    """Sample creation with N target=1 (+ 3 times more target=0)
+def Bagging_sample(df, target, pos_target_nb, replace=False):
+    """Create a DataFrame sample with selected number of target=1
         
     Parameters
     ----------
     df : DataFrame
         Input dataset
     target : String
-        target name
-    N : int
-        Number of target=1 observations
+        Target name
+    pos_target_nb : int
+        Number of target=1 observations in the sample
     replace : Boolean (défaut : False)
         If True, create samples with replacement
             
     Returns
     -------
-    df_bag : DataFrame
+    DataFrame
         sample dataset
     """
     # split target = 1 / 0
@@ -222,6 +222,6 @@ def Bagging_sample(df, target, N, replace=False):
     df_neg = df.loc[(df[target] == 0)]
 
     # sample creation
-    df_bag = pd.concat((df_pos.sample(n=N, replace=replace), df_neg.sample(n=3 * N, replace=replace)), axis=0)
+    df_bag = pd.concat((df_pos.sample(n=pos_target_nb, replace=replace), df_neg.sample(n=3 * pos_target_nb, replace=replace)), axis=0)
 
     return df_bag

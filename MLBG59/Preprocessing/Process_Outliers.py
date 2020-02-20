@@ -1,12 +1,12 @@
-""" Outliers handling :
+""" Outliers handling functions
 
- - replace_category : Replace multiple categories of a categorical variable
- - replace_extreme_values : Replace values upper/lower than thresholds
+ - replace_category : replace categories of a categorical variable
+ - replace_extreme_values : replace extreme values (oh!)
 """
 
 
-def replace_category(df, var, categories, replace_with='other', verbose=False):
-    """Replace multiple categories of a categorical variable
+def replace_category(df, var, categories, replace_with='outliers', verbose=False):
+    """Replace categories of a categorical variable
     
     Parameters
     ----------
@@ -16,7 +16,7 @@ def replace_category(df, var, categories, replace_with='other', verbose=False):
         variable to modify
     categories : list(string)
         categories to replace
-    replace_with : string (Default : 'other')
+    replace_with : string (Default : 'outliers')
         word to replace categories with
     verbose : boolean (Default False)
         Get logging information
@@ -29,7 +29,7 @@ def replace_category(df, var, categories, replace_with='other', verbose=False):
     df_local = df.copy()
 
     # replace categories
-    df_local.loc[df_local[var].isin(categories), var] = 'other'
+    df_local.loc[df_local[var].isin(categories), var] = replace_with
 
     if verbose:
         print('  ** categories replaced with \'' + replace_with + '\' for the variable ' + var + ': ')
@@ -44,10 +44,10 @@ def replace_category(df, var, categories, replace_with='other', verbose=False):
 
 
 def replace_extreme_values(df, var, lower_th=None, upper_th=None, verbose=False):
-    """Replace values with lower/upper thresholds limits
+    """Replace extrem values : > upper threshold or < lower threshold
     
     Parameters
-    ----------
+    ----------s
     df : DataFrame
         Input dataset
     var : string

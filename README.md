@@ -55,7 +55,7 @@ missing values, low variance variables). This information is also stored in obje
 auto_df.recap(verbose=False)
 
 print(auto_df.d_features.keys())
-output : dict_keys(['numerical', 'date', 'categorical', 'NA', 'low_variance'])
+> output : dict_keys(['numerical', 'date', 'categorical', 'NA', 'low_variance'])
 ```
 \
 You can also call <span style="color: orange">get_outliers</span> method to perform an outliers analysis on categorical 
@@ -79,7 +79,7 @@ auto_df.preprocess(verbose=False)
 
 ### Modelisation
 ```python
-auto_df.preprocess(verbose=False)
+auto_df.train_predict(verbose=False)
 ```
 # Information
 #### Release History

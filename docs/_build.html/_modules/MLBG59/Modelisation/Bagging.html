@@ -196,7 +196,7 @@
 <span class="sd">        Enable sampling with replacement</span>
 
 <span class="sd">    list_model : list (Default : None)</span>
-<span class="sd">        Fitted models</span>
+<span class="sd">        Fitted models (created with fit method)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">classifier</span><span class="o">=</span><span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">max_leaf_nodes</span><span class="o">=</span><span class="mi">100</span><span class="p">),</span>
@@ -245,7 +245,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">         self.list_model : list</span>
-<span class="sd">            Fitted models lisdt</span>
+<span class="sd">            Fitted models</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># list_model init</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">niter</span>
@@ -277,14 +277,14 @@
 <span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Bagging.predict"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="Bagging.predict"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply bagging models on a  dataset.</span>
-<span class="sd">        Combine models by averaging the output (for regression) or voting (for classification)</span>
+<span class="sd">        Combine models by averaging the outputs (for regression) or voting (for classification)</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        self</span>
-<span class="sd">        X : DataFrame</span>
+<span class="sd">        df : DataFrame</span>
 <span class="sd">            Dataset to apply the model</span>
 
 <span class="sd">        Returns</span>
@@ -295,12 +295,12 @@
 <span class="sd">            Predictions for each observation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Init probs storage matrix</span>
-        <span class="n">mat_prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">niter</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">mat_prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">niter</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 
         <span class="c1"># for each fitted models</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">niter</span><span class="p">):</span>
             <span class="c1"># apply the model on test set</span>
-            <span class="n">y_prob_rf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">y_prob_rf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
             <span class="c1"># probabilities storage in matrix</span>
             <span class="n">mat_prob</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_prob_rf</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
 
@@ -316,7 +316,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Bagging.feature_importance"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.feature_importance">[docs]</a>    <span class="k">def</span> <span class="nf">feature_importance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get features importance of the model</span>
+        <span class="sd">&quot;&quot;&quot;Get features importance of the model by averaging importance of models fitted on the samples</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>

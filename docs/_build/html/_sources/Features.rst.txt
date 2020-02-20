@@ -12,9 +12,9 @@ Encode_Target
 
 Explore
 =======
-Features summarize
+Get_Info
 ------------------
-.. automodule:: MLBG59.Explore.Get_Infos
+.. automodule:: MLBG59.Explore.Get_Info
     :members:
 
 Get Outliers
@@ -25,7 +25,7 @@ Get Outliers
 
 Preprocessing
 =============
-Missing Values
+Missing_Values
 --------------
 .. automodule:: MLBG59.Preprocessing.Missing_Values
     :members:

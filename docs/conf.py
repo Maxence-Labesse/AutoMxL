@@ -24,6 +24,7 @@ project_root = os.path.dirname(cwd)
 # This lets us ensure that the source package is imported, and that its
 # version is used.
 
+print("project_root : ",project_root)
 sys.path.insert(0, project_root)
 
 

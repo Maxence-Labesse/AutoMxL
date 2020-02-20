@@ -1,7 +1,12 @@
+"""Target encoding functions :
+
+- category_to_target : create a target variable (1/0) from a selected category
+"""
 import pandas as pd
 
+
 def category_to_target(df, var, cat):
-    """Transform target to boolean (1/0), choosing the reference modality
+    """Create a target variable (1/0) from a selected category
 
     Parameters
     ----------
@@ -15,7 +20,7 @@ def category_to_target(df, var, cat):
     Returns
     -------
     DataFrame : modified dataset
-    string : new target name (var_cat)
+    string : new target name (var+'_'+cat)
     """
     # transform variable to string if numerical
     if var in df._get_numeric_data().columns:

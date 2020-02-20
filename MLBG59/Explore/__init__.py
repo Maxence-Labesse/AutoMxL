@@ -8,5 +8,5 @@ Modules :
 """
 
 
-__all__ = ['Get_Infos.py',
+__all__ = ['Get_Info',
            'Get_Outliers']

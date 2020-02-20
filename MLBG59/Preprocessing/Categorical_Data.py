@@ -1,13 +1,14 @@
-""" Categorical Features processing
+""" Categorical features processing
 
  - dummy_all_var : get one hot encoded vector for each category of a categorical features list
+ - label encoding : coming soon
 """
 import pandas as pd
 from MLBG59.Utils.Utils import get_type_features
 
 
 def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
-    """Get one hot encoded vector for each category of a categorical features list
+    """Get one hot encoded vector for selected/all categorical features
     
     Parameters
     ----------
@@ -17,10 +18,11 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
         Names of the features to dummify
         If None, all the num features
      prefix_list : list (default : None)
-        Prefix to add before new features name
+        Prefix to add before new features name (prefix+'_'+cat).
+        It None, prefix=variable name
      Keep : boolean (Default = False)
         If True, delete the original feature
-    verbose : boolean (Default False)
+     verbose : boolean (Default False)
         Get logging information
         
     Returns
@@ -53,9 +55,6 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
         if keep == False:
             df_local = df_local.drop(col, axis=1)
         if verbose:
-            print('  > '+col+' ->',df_cat.columns.tolist())
+            print('  > ' + col + ' ->', df_cat.columns.tolist())
 
     return df_local
-
-
-

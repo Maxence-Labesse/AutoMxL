@@ -1,9 +1,9 @@
-""" Dataset Features analysis :
+""" Global dataset information functions :
 
- - recap : get and store informations related to the dataset (NA, features type, low variance features, ...)
- - is_date : Test if a variable can be considered as date
- - get_all_dates : identify all dates features
- - low variance features : identify all features with low variance (<threshold)
+ - recap : get global information about the dataset (NA, features type, low variance features, ...)
+ - is_date : test if a variable is as date
+ - get_all_dates : identify date features
+ - low variance features : identify features with low variance
 """
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
@@ -12,7 +12,7 @@ from MLBG59.Utils.Utils import get_type_features
 
 
 def recap(df, verbose=False):
-    """get and store global informations about the dataset :
+    """Get global information about the dataset
 
     - Variables type (num, cat, date)
     - NA values
@@ -22,8 +22,6 @@ def recap(df, verbose=False):
     ----------
     df : DataFrame
         input dataset
-    target : string (Default : None)
-        target name
     verbose : boolean (Default False)
         Get logging information
             
@@ -100,19 +98,22 @@ def recap(df, verbose=False):
 
 
 def is_date(df, col):
-    """Test if a DataFrame feature can be considered as a date (using to_datetime)
+    """Test if a variable is as date.
+
+    Method : try to apply to_datetime
 
     Parameters
     ----------
-     df : DataFrame
+    df : DataFrame
         input dataset
-     col : string
-        feature name
+    col : string
+        variable name
 
     Returns
     -------
     res : boolean
-        Test result
+        test result
+        test result
     """
     # if col is datetime type, res = True
     if df[col].dtype == 'datetime64[ns]':
@@ -136,17 +137,19 @@ def is_date(df, col):
 
 
 def get_all_dates(df):
-    """Identify all date features of a DataFrame
+    """Identify dates variables
+
+    Method : try to apply to_datetime
     
     Parameters
     ----------
-     df : DataFrame
+    df : DataFrame
         input DataFrame
 
     Returns
     -------
-     list
-        list of features identified as date
+    list
+        features identified as date
     """
     date_list = list()
 
@@ -163,7 +166,7 @@ def get_all_dates(df):
 
 
 def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=1):
-    """Identify  features with low variance (<= threshold).
+    """Identify  features with low variance (< threshold).
     Possible to rescale feature before computing.
 
     Parameters

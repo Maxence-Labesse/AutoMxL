@@ -16,7 +16,7 @@ df_test = df_test.drop('Setosa', axis=1)
 class Test_Bagging(unittest.TestCase):
 
     def setUp(self):
-        self.bagging = Bagging(classifier=RandomForestClassifier(n_estimators=100, max_leaf_nodes=100),
+        self.bagging = Bagging(clf=RandomForestClassifier(n_estimators=100, max_leaf_nodes=100),
                                n_sample=3,
                                pos_sample_size=1.0,
                                replace=True)

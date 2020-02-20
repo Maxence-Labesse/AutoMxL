@@ -152,7 +152,7 @@
   <h1>Source code for MLBG59.__main__</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">MLBG59.Utils.Display</span> <span class="k">import</span> <span class="n">print_title1</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Utils.Decorators</span> <span class="k">import</span> <span class="n">timer</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Explore.Get_Infos</span> <span class="k">import</span> <span class="n">recap</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Explore.Get_Info</span> <span class="k">import</span> <span class="n">recap</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Explore.Get_Outliers</span> <span class="k">import</span> <span class="n">get_cat_outliers</span><span class="p">,</span> <span class="n">get_num_outliers</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Date_Data</span> <span class="k">import</span> <span class="n">all_to_date</span><span class="p">,</span> <span class="n">date_to_anc</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Missing_Values</span> <span class="k">import</span> <span class="n">fill_numerical</span><span class="p">,</span> <span class="n">fill_categorical</span>
@@ -286,7 +286,7 @@
         <span class="sd">&quot;&quot;&quot;Preprocessing of the dataset :</span>
 
 <span class="sd">        - Remove features with null variance</span>
-<span class="sd">        - transform date to time between date and date_ref</span>
+<span class="sd">        - transform date to timedelta</span>
 <span class="sd">        - fill NA values</span>
 <span class="sd">        - replace outliers</span>
 <span class="sd">        - one hot encoding</span>

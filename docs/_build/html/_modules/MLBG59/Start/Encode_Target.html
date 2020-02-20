@@ -150,10 +150,15 @@
            <div itemprop="articleBody">
             
   <h1>Source code for MLBG59.Start.Encode_Target</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span></span><span class="sd">&quot;&quot;&quot;Target encoding functions :</span>
+
+<span class="sd">- category_to_target : create a target variable (1/0) from a selected category</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
 
 <div class="viewcode-block" id="category_to_target"><a class="viewcode-back" href="../../../features.html#MLBG59.Start.Encode_Target.category_to_target">[docs]</a><span class="k">def</span> <span class="nf">category_to_target</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">cat</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Transform target to boolean (1/0), choosing the reference modality</span>
+    <span class="sd">&quot;&quot;&quot;Create a target variable (1/0) from a selected category</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -167,7 +172,7 @@
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    DataFrame : modified dataset</span>
-<span class="sd">    string : new target name (var_cat)</span>
+<span class="sd">    string : new target name (var+&#39;_&#39;+cat)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># transform variable to string if numerical</span>
     <span class="k">if</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">_get_numeric_data</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>

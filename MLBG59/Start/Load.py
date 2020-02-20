@@ -1,8 +1,7 @@
-"""
+"""Data import functions :
 
-- get_delimiter : identify delimiter for a csv/txt file
-- load_data : import dataset into dataframe
-
+- get_delimiter : identify delimiter for a .csv/.txt file
+- load_data : import dataset file into dataframe
 """
 import pandas as pd
 
@@ -34,7 +33,7 @@ def get_delimiter(file):
 
         return delimiter
 
-    else :
+    else:
         print('Please use a .csv or .txt file')
 
 
@@ -44,7 +43,7 @@ def get_delimiter(file):
 
 
 def import_data(file, index_col=None, verbose=False):
-    """Import dataset as a DataFrame, identify delimiter for txt and csv files.
+    """Import dataset as a DataFrame (identify delimiter for txt and csv files)
 
     Available files : .txt, .csv, .xlsx, .xls files
 
@@ -62,7 +61,7 @@ def import_data(file, index_col=None, verbose=False):
     Returns
     -------
     DataFrame
-        dataset imported into DataFrame
+        imported dataset
     """
     # CSV
     if file.endswith('.csv') or file.endswith('.txt'):

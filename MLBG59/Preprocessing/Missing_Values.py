@@ -1,14 +1,14 @@
-""" Missing values handling:
+""" Missing values handling functions :
 
- - fill_num/fill_all_num: Replace missing values for numerical features
- - fill_cat/fill_all_cat: Replace missing values for categorical features
+ - fill_numerical: replace missing values for numerical features
+ - fill_categorical: replace missing values for categorical features
 """
 from MLBG59.Utils.Utils import get_type_features
 
 
 def fill_numerical(df, var_list=None, method='median', top_var_NA=True, verbose=True):
-    """Fill missing values for numerical features from a list.
-    You can also chose to keep track of which values were missing.
+    """Fill missing values for selected/all numerical features.
+    top_var_NA parameter allows to create a variable to keep track of missing values.
 
     Available methods : replace with zero, median or mean (Default = median)
     
@@ -18,11 +18,11 @@ def fill_numerical(df, var_list=None, method='median', top_var_NA=True, verbose=
         Input dataset
     var_list : list (Default : None)
         names of the features to fill.
-        If None, all the num features
+        If None, all the numerical features
     method : string (Default : 'median')
         Method used to fill the NA values :
 
-        - zero : replace NA with zero
+        - zero : replace with zero
         - median : replace with median
         - mean : replace with mean
 
@@ -78,15 +78,15 @@ def fill_numerical(df, var_list=None, method='median', top_var_NA=True, verbose=
 
 
 def fill_categorical(df, var_list=None, method='NR', verbose=1):
-    """Fill missing values for categorical features from a list
+    """Fill missing values for selected/all categorical features.
     
     Parameters
     ----------
     df : DataFrame
         Input dataset
     var_list : list (Default : None)
-        list of the features to fill
-        If None, contains all the cat features
+        list of the features to fill.
+        If None, contains all the categorical features
     method : string (Default : 'NR')
         Method used to fill the NA values :
 

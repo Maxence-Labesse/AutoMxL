@@ -1,4 +1,4 @@
-""" Outliers detection :
+""" Outliers detection functions :
 
  - get_cat_outliers : identify categorical features containing outliers
  - get_num_outliers : identify numerical features containing outliers
@@ -10,7 +10,7 @@ from MLBG59.Utils.Utils import get_type_features
 
 
 def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=False):
-    """Outliers detection for categorical features.
+    """Outliers detection for selected/all categorical features.
 
     Method : Modalities with frequency <x% (Default 5%)
 
@@ -19,11 +19,11 @@ def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=False):
      df : DataFrame
         Input dataset
      var_list : list (Default : None)
-        Names of the features to analyze.
+        Names of the features
         If None, all the categorical features
      threshold : float (Default : 0.05)
         Minimum modality frequency
-    verbose : boolean (Default False)
+     verbose : boolean (Default False)
         Get logging information
 
     Returns
@@ -39,7 +39,7 @@ def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=False):
 
     if verbose:
         color_print('cat features outliers identification (frequency<' + str(threshold) + ')')
-        print('  > features : ', var_list,)
+        print('  > features : ', var_list, )
 
     # initialize output dict
     outlier_dict = {}
@@ -65,7 +65,7 @@ def get_cat_outliers(df, var_list=None, threshold=0.05, verbose=False):
 
 
 def get_num_outliers(df, var_list=None, xstd=3, verbose=False):
-    """outliers detection for num features.
+    """Outliers detection for selected/all numerical features.
 
     Method : x outlier <=> abs(x - mean) > xstd * var
     
@@ -74,17 +74,17 @@ def get_num_outliers(df, var_list=None, xstd=3, verbose=False):
      df : DataFrame
         Input dataset
      var_list : list (Default : None)
-        Names of the features to analyze.
+        Names of the features
         If None, all the num features
      xstd : int (Default : 3)
         Variance gap coef
-    verbose : boolean (Default False)
+     verbose : boolean (Default False)
         Get logging information
             
     Returns
     -------
-     outlier_dict : dict
-         {variable : [lower_limit, upper_limit]}
+    dict
+        {variable : [lower_limit, upper_limit]}
     """
     # if var_list = None, get all num features
     # else, exclude features from var_list whose type is not num
@@ -93,7 +93,7 @@ def get_num_outliers(df, var_list=None, xstd=3, verbose=False):
     df_bis = df[var_list].copy()
 
     if verbose:
-        color_print('num features outliers identification ( x: |x - mean| > '+str(xstd)+' * var)')
+        color_print('num features outliers identification ( x: |x - mean| > ' + str(xstd) + ' * var)')
         print('  > features : ', var_list, )
 
     # initialize output dict
