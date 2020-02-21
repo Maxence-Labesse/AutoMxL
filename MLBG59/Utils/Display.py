@@ -1,4 +1,4 @@
-def print_title1(titre,color_code = 34) :
+def print_title1(titre, color_code=34):
     """
     print text as a title
     
@@ -14,12 +14,12 @@ def print_title1(titre,color_code = 34) :
     ------
     print formatted text
     """
-    col='\033['+str(color_code)+'m'
+    col = '\033[' + str(color_code) + 'm'
     print(col + '-------------------')
     print(' ' + '\033[1m' + titre + '\033[0m' + col)
     print('-------------------' + '\033[0m')
-    
-    
+
+
 def bold_print(text):
     """
     print bold text
@@ -43,5 +43,5 @@ def color_print(text, color_code=34):
        text to print crolorized
 
     """
-    col='\033['+str(color_code)+'m'
+    col = '\033[' + str(color_code) + 'm'
     print(col + text + '\033[0m')

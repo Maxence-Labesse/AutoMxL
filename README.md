@@ -93,9 +93,20 @@ outputs :
 - int : best model index
 - DataFrame : Models info and metrics stored in DataFrame
 
+
+# function and class catalogue
+You can find 
+
+
 # Information
 #### Release History
 - 1.0.0 : First proper release 
+
+#### Next steps
+- Categorical features processing : Label encoding
+- Features selection section
+- Regression and multi-class classification
+
 #### Licence
 Distributed under the MIT license. See License.txt for more information
 

@@ -4,6 +4,18 @@ from types import CodeType
 
 # Timer
 def timer(func):
+    """Function decorator to get the execution time
+
+    Parameters
+    ----------
+    func : function
+        input function
+
+    Returns
+    -------
+    function
+        wrapped function
+    """
     def f(*args, **kwargs):
         before = time()
         rv = func(*args, **kwargs)
@@ -13,18 +25,4 @@ def timer(func):
     f.__name__ = func.__name__
     f.__doc__ = func.__doc__
 
-    return f
-
-"""
-------------------------------------------------------------------------------------------------------------------------
-"""
-# def funct_title
-def func_title(func):
-    def f(*args, **kwargs):
-        print('\n')
-        print_title1(func.__name__)
-        rv = func(*args, **kwargs)
-        return rv
-    f.__name__ = func.__name__
-    f.__doc__ = func.__doc.__
     return f

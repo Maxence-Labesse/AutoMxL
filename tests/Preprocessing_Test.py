@@ -90,10 +90,9 @@ class Test_Outliers(unittest.TestCase):
         self.df_process_cat = replace_category(self.df_process_cat, 'Name', ['Tom', 'Nick'], verbose=False)
 
     def test_process_cat_outliers(self):
-        self.assertEqual(self.df_process_cat['Name'].tolist(), ['other', 'other', 'Krish', np.nan])
-        self.assertEqual(self.df_process_cat['Hair'].tolist(), ['brown', 'brown', 'brown', 'other'])
+        self.assertEqual(self.df_process_cat['Name'].tolist(), ['outliers', 'outliers', 'Krish', np.nan])
+        self.assertEqual(self.df_process_cat['Hair'].tolist(), ['brown', 'brown', 'brown', 'outliers'])
 
     def test_process_num_outliers(self):
         df_outlier_proc = replace_extreme_values(self.df, 'Height', 175, 185)
         self.assertEqual(df_outlier_proc['Height'].tolist()[1:], [175.0, 180.0, 185.0])
-

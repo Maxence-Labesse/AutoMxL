@@ -64,6 +64,7 @@ class Hyperopt(object):
     comb_seed : int
         seed for randomized HP combinations
     """
+
     def __init__(self,
                  classifier='RF',
                  grid_param=None,
@@ -328,7 +329,7 @@ class Hyperopt(object):
         # Best model according to selected metric
         if len(valid_model.keys()) > 0:
             best_model_idx = max(valid_model, key=lambda x: valid_model[x].get('metrics').get(metric))
-            if verbose :
+            if verbose:
                 print(' >', len(valid_model.keys()), ' valid models |auc(train)-auc(test)|<=' + str(delta_auc_th))
                 print(' > best model : ' + str(best_model_idx))
         else:

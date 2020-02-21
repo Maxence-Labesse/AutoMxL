@@ -2,7 +2,7 @@ import os
 import sys
 cwd = os.getcwd()
 sys.path.insert(0, os.path.dirname(cwd))
-from MLBG59.Explore.Get_Infos import *
+from MLBG59.Explore.Get_Info import *
 from MLBG59.Explore.Get_Outliers import *
 import unittest
 import pandas as pd

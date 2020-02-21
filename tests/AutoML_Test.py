@@ -1,9 +1,13 @@
+import os
+import sys
+cwd = os.getcwd()
+sys.path.insert(0, os.path.dirname(cwd))
 from MLBG59.__main__ import AutoML
 import unittest
 import pandas as pd
 import numpy as np
 
-df_test = pd.read_csv('tests/df_test.csv')
+df_test = pd.read_csv('df_test.csv')
 
 
 
@@ -35,28 +39,28 @@ class TestAudit(unittest.TestCase):
         # Instantiate autoML object from df_test and target
         cls.df = AutoML(df_test.copy(), target='y_yes')
         # Explore
-        cls.df.recap(verbose=0)
+        cls.df.recap(verbose=False)
 
 
     def test_num_columns(self):
         # numerical features identification
-        self.assertEqual(self.df.num_columns, ['age', 'euribor3m', 'null_var', 'y_yes'])
+        self.assertEqual(self.df.d_features['numerical'], ['age', 'euribor3m', 'null_var', 'y_yes'])
 
     def test_cat_columns(self):
         # categorical features identification
-        self.assertEqual(self.df.cat_columns, ['job', 'education'])
+        self.assertEqual(self.df.d_features['categorical'], ['job', 'education'])
 
     def test_date_columns(self):
         # date features identification
-        self.assertEqual(self.df.date_columns, ['date_1', 'date_2'])
+        self.assertEqual(self.df.d_features['date'], ['date_1', 'date_2'])
 
     def test_NA_columns(self):
         # features containing NA values identification
-        self.assertEqual(self.df.NA_columns, ['job', 'age', 'date_1'])
+        self.assertEqual(self.df.d_features['NA'], ['job', 'age', 'date_1'])
 
     def test_low_var_columns(self):
         # null variance features identification
-        self.assertEqual(self.df.low_var_columns, ['null_var'])
+        self.assertEqual(self.df.d_features['low_variance'], ['null_var'])
 
 
 """
@@ -71,19 +75,19 @@ class TestGet_outliers(unittest.TestCase):
         # instantiate autoML object
         cls.df = AutoML(df_test.copy(), target='y_yes')
         # audit
-        cls.df.recap(verbose=0)
+        cls.df.recap(verbose=False)
         # get outliers
-        cls.df.get_outliers(verbose=0)
+        cls.df.get_outliers(verbose=False)
 
     #
     def test_cat_outliers_columns(self):
         # categorical features containing outliers identification
-        self.assertEqual(self.df.d_cat_outliers, ['job'])
+        self.assertEqual(list(self.df.d_cat_outliers.keys()), ['job'])
 
     #
     def test_num_outliers_columns(self):
         # numerical features containing outliers identification
-        self.assertEqual(self.df.d_num_outliers, ['age'])
+        self.assertEqual(list(self.df.d_num_outliers.keys()), ['age'])
 
 
 """
@@ -98,9 +102,9 @@ class TestPreprocess(unittest.TestCase):
         # instantiate autoML object
         cls.df = AutoML(df_test.copy(), target='y_yes')
         # audit
-        cls.df.recap(verbose=0)
+        cls.df.recap(verbose=False)
         # get outliers
-        cls.df.get_outliers(verbose=0)
+        cls.df.get_outliers(verbose=False)
         # clean and preprocess
         cls.df.preprocess(date_ref=df_test['date_1'][0], process_outliers=True, verbose=0)
 

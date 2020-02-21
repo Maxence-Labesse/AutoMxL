@@ -7,23 +7,23 @@ def classifier_evaluate(y, y_pred, y_proba_pred, print_level=1):
     """
     affiche et renvoie les différentes métriques de notre classification avec bagging
         
-    input
-    -----
-     > y : pandas.Series
-          série qui contient les classifications réelles
-     > list_proba_pred : numpy.ndarray
-          contient les probabilités de classification obtenus par notre bagging
-     > list_pred : numpy.ndarray
-          contient les prédictions pour chaque ligne de X
+    Parameters
+    ----------
+    y : pandas.Series
+        série qui contient les classifications réelles
+    list_proba_pred : numpy.ndarray
+        contient les probabilités de classification obtenus par notre bagging
+    list_pred : numpy.ndarray
+        contient les prédictions pour chaque ligne de X
             
-    return
-    ------
-     > eval_dict : dictionnaire
-          contient l'ensemble des métriques
+    Returns
+    -------
+    dict
+        contient l'ensemble des métriques
         
     """
     # Calcul des métriques
-    fpr, tpr, thresholds = roc_curve(y, y_proba_pred) 
+    fpr, tpr, thresholds = roc_curve(y, y_proba_pred)
     acc = metrics.accuracy_score(y, y_pred)
     roc_auc = auc(fpr, tpr)
     f1 = f1_score(y, y_pred)
@@ -51,7 +51,7 @@ def classifier_evaluate(y, y_pred, y_proba_pred, print_level=1):
         "Precision": precision,
         "Recall": recall
     }
-    
+
     return eval_dict
 
 
@@ -80,12 +80,12 @@ def train_test(df, test_size):
     """
     # Liste des index
     list_index_df = df.index
-    
+
     # Tirage aléatoire dans la liste des index (en fonction de train_size)
-    chosen_idx = np.random.choice(list_index_df, replace=False, size=int(len(list_index_df)*test_size))
+    chosen_idx = np.random.choice(list_index_df, replace=False, size=int(len(list_index_df) * test_size))
     df_train = df.loc[~df.index.isin(chosen_idx)]
     df_test = df.loc[df.index.isin(chosen_idx)]
-    
+
     return df_train, df_test
 
 
@@ -139,4 +139,4 @@ def print_dict(dic):
     """
     """
     for key, value in dic.items():
-        print(key,' : ',value)
+        print(key, ' : ', value)
