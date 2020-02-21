@@ -29,12 +29,12 @@ default_RF_grid_param = {
 # 'min_samples_leaf': [1, 2, 4]
 
 default_XGB_grid_param = {
-    'n_estimators': np.random.uniform(low=100, high=400, size=20).astype(int),
+    'n_estimators': np.random.uniform(low=100, high=300, size=20).astype(int),
     'max_features': ['auto', 'log2'],
     'max_depth': np.random.uniform(low=3, high=10, size=20).astype(int),
     'min_samples_split': [5, 10, 15],
     'min_samples_leaf': [1, 2, 4, 8],
-    'learning_rate': [0.001, 0.003, 0.006, 0.009, 0.01, 0.03, 0.06, 0.09, 0.1, 0.3, 0.6],
+    'learning_rate': [0.0001, 0.0003, 0.0006, 0.0009, 0.001, 0.003, 0.006, 0.009, 0.01, 0.03, 0.06, 0.09, 0.1, 0.3, 0.6],
     'scale_pos_weight': [3, 4, 5, 6, 7, 8, 9]}
 
 
@@ -283,7 +283,7 @@ class Hyperopt(object):
 
                 roc_auc_train = auc(fpr_train, tpr_train)
                 color_print(
-                    ' > AUC train: ' + str(round(eval_dict["Roc_auc"], 3)) + ' test: ' + str(round(roc_auc_train, 3)) +
+                    ' > AUC test: ' + str(round(eval_dict["Roc_auc"], 3)) + ' train: ' + str(round(roc_auc_train, 3)) +
                     ' / F1: ' + str(round(eval_dict['F1'], 3)) +
                     ' / prec: ' + str(round(eval_dict['Precision'], 3)) +
                     ' / recall: ' + str(round(eval_dict['Recall'], 3)), color_code=c_code)
@@ -373,13 +373,10 @@ class Hyperopt(object):
             dict_tmp.update({x: d_model_infos[key]['metrics'][x] for x in metrics_col})
 
             dict_tmp.update({'bagging': self.top_bagging})
-            print(4)
             df_tmp = pd.DataFrame.from_dict(self.train_model_dict[key]['features_importance'],
                                             orient='index').reset_index().rename(
                 columns={'index': 'feat', 0: 'importance'}).sort_values(by='importance', ascending=False).head(5)
-            print(5)
             serie_tmp = df_tmp['feat'] + ' ' + round(df_tmp['importance'], 5).astype(str)
-            print(6)
             dict_tmp.update(dict(zip(feat_imp_col, serie_tmp.tolist())))
 
             df_local = df_local.append(dict_tmp, ignore_index=True)

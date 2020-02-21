@@ -25,6 +25,7 @@ def category_to_target(df, var, cat):
     # transform variable to string if numerical
     if var in df._get_numeric_data().columns:
         df[var] = df[var].apply(str)
+        cat = str(cat)
 
     # one hot encoding
     target_dummies = pd.get_dummies(df[var])
@@ -38,3 +39,7 @@ def category_to_target(df, var, cat):
     del df_bis[var]
 
     return df_bis, var + '_' + cat
+
+
+
+

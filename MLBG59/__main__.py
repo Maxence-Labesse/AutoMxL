@@ -302,21 +302,24 @@ class AutoML(pd.DataFrame):
                             top_bagging=False, comb_seed=comb_seed)
 
         # Entrainement des modèles
-        color_print('training models')
+        if verbose:
+            color_print('training models')
         hyperopt.fit(df_train, self.target, verbose=verbose)
 
-        color_print('\napplying models')
+        if verbose:
+            color_print('\napplying models')
         # Application des modèles sur X_test :
         dict_res_model = hyperopt.predict(df_test, self.target, delta_auc=0.03, verbose=verbose)
 
         # selection best model
-        color_print('\nbest model selection')
+        if verbose:
+            color_print('\nbest model selection')
         best_model_idx, _ = hyperopt.get_best_model(dict_res_model, metric=metric, delta_auc_th=0.03, verbose=False)
 
         if verbose:
             print_title1('best model : ' + str(best_model_idx))
-            print(metric+' : '+str(round(dict_res_model[best_model_idx]['metrics'][metric],4)))
-            print('AUC : '+str(round(dict_res_model[best_model_idx]['metrics']['Roc_auc'],4)))
+            print(metric + ' : ' + str(round(dict_res_model[best_model_idx]['metrics'][metric], 4)))
+            print('AUC : ' + str(round(dict_res_model[best_model_idx]['metrics']['Roc_auc'], 4)))
 
         df_model_res = hyperopt.model_res_to_df(dict_res_model, sort_metric=metric)
 

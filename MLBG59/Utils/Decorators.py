@@ -1,6 +1,4 @@
 from time import time
-from MLBG59.Utils.Display import print_title1
-from types import CodeType
 
 # Timer
 def timer(func):

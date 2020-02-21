@@ -8,7 +8,7 @@ import unittest
 import pandas as pd
 import sklearn
 
-df_iris_binary = pd.read_csv("iris_binary.csv")
+df_iris_binary = pd.read_csv("tests/iris_binary.csv")
 df_train, df_test = train_test(df_iris_binary, 0.2)
 df_test = df_test.drop('Setosa', axis=1)
 
