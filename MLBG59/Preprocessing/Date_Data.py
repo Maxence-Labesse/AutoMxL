@@ -4,7 +4,6 @@
  - date_to_anc : Transform datetime features to timedelta according to a ref date
 """
 import pandas as pd
-import numpy as np
 from datetime import datetime
 from MLBG59.Utils.Utils import get_type_features
 

@@ -297,7 +297,7 @@ If None, today date</li>
 <li>train and test a model for each combination</li>
 <li>get the best model in respect of a selected metric among valid model</li>
 </ul>
-<p>Available algorithms : Random Forest, XGBOOST (and bagging)</p>
+<p>Available classifiers : Random Forest, XGBOOST (and bagging)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -313,6 +313,7 @@ If None, today date</li>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
 <li><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
+<li><em>list</em> – valid model indexes</li>
 <li><em>int</em> – best model index</li>
 <li><em>DataFrame</em> – Models info and metrics stored in DataFrame</li>
 </ul>

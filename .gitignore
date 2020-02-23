@@ -5,3 +5,5 @@ other/
 test.py
 meta.py
 meta.csv
+dev/
+docstring_test.rst

@@ -9,4 +9,5 @@ Modules :
 
 
 __all__ = ['Get_Info',
-           'Get_Outliers']
+           'Get_Outliers',
+           'Features_Type']

@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Test &mdash; MLBG59 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MLBG59
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">AutoML class</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="autoML.html">AutoML class</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html#explore">Explore</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html#modelisation">Modelisation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MLBG59</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Test</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/docstring_test.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="test">
+<h1>Test<a class="headerlink" href="#test" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-dev.Features_type">
+<span id="features-type"></span><h2>Features_type<a class="headerlink" href="#module-dev.Features_type" title="Permalink to this headline">¶</a></h2>
+<p>Variables type identification function</p>
+<ul class="simple">
+<li>is_date : test if a variable is a date</li>
+<li>is_identifier : test if a variable is an identifier</li>
+<li>is_verbatim : test if a variable is a verbatim</li>
+<li>is_boolean : test if a variable is a boolean</li>
+<li>is_categorical : test if a variable is a categorical one (with more than 2 categories)</li>
+<li>features_from_type : get all</li>
+</ul>
+<dl class="function">
+<dt id="dev.Features_type.features_from_type">
+<code class="descclassname">dev.Features_type.</code><code class="descname">features_from_type</code><span class="sig-paren">(</span><em>df</em>, <em>type</em>, <em>var_list=None</em>, <em>th=0.95</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dev/Features_type.html#features_from_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dev.Features_type.features_from_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get features of a selected type :</p>
+<ul class="simple">
+<li>date : try to apply to_datetime</li>
+<li><dl class="first docutils">
+<dt>identifier :</dt>
+<dd><ul class="first last">
+<li>#(unique values)/#(total values) &gt; threshold (default 0.95)</li>
+<li>AND length is the same for all values (for non NA)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>verbatim :</dt>
+<dd><ul class="first last">
+<li>#(unique values)/#(total values) &gt;= threshold (default 0.95)</li>
+<li>AND length is NOT the same for all values (for non NA)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>boolean : #(distinct values) = 2</li>
+<li>categorical : #(unique values)/#(total values) &lt; threshold (default 0.95)</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>var_list</strong> (<em>list</em>) – variables names</li>
+<li><strong>type</strong> – selected type to get features</li>
+<li><strong>th</strong> (<em>float</em><em> (</em><em>Default : 0.90</em><em>)</em>) – threshold used to identify identifiers/verbatims/categorcial variables</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">identified variables names</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dev.Features_type.is_boolean">
+<code class="descclassname">dev.Features_type.</code><code class="descname">is_boolean</code><span class="sig-paren">(</span><em>df</em>, <em>col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dev/Features_type.html#is_boolean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dev.Features_type.is_boolean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is a boolean.</p>
+<ul class="simple">
+<li>#(distinct values) = 2</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>col</strong> (<em>string</em>) – variable name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – test result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dev.Features_type.is_categorical">
+<code class="descclassname">dev.Features_type.</code><code class="descname">is_categorical</code><span class="sig-paren">(</span><em>df</em>, <em>col</em>, <em>th=0.95</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dev/Features_type.html#is_categorical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dev.Features_type.is_categorical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is a categorical one (with more than 2 categories).</p>
+<ul class="simple">
+<li>#(unique values)/#(total values) &lt; threshold (default 0.95)</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>col</strong> (<em>string</em>) – variable name</li>
+<li><strong>th</strong> (<em>float</em><em> (</em><em>Default : 0.95</em><em>)</em>) – threshold rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – test result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dev.Features_type.is_date">
+<code class="descclassname">dev.Features_type.</code><code class="descname">is_date</code><span class="sig-paren">(</span><em>df</em>, <em>col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dev/Features_type.html#is_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dev.Features_type.is_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is a date.</p>
+<p>Method : try to apply to_datetime</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>col</strong> (<em>string</em>) – variable name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – test result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dev.Features_type.is_identifier">
+<code class="descclassname">dev.Features_type.</code><code class="descname">is_identifier</code><span class="sig-paren">(</span><em>df</em>, <em>col</em>, <em>th=0.95</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dev/Features_type.html#is_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dev.Features_type.is_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is an identifier.</p>
+<ul class="simple">
+<li>#(unique values)/#(total values) &gt; threshold (default 0.95)</li>
+<li>AND length is the same for all values (for non NA)</li>
+<li>AND not date</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>col</strong> (<em>string</em>) – variable name</li>
+<li><strong>th</strong> (<em>float</em><em> (</em><em>Default : 0.95</em><em>)</em>) – threshold rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – test result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="dev.Features_type.is_verbatim">
+<code class="descclassname">dev.Features_type.</code><code class="descname">is_verbatim</code><span class="sig-paren">(</span><em>df</em>, <em>col</em>, <em>th=0.95</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dev/Features_type.html#is_verbatim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dev.Features_type.is_verbatim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is a verbatim.</p>
+<ul class="simple">
+<li>#(unique values)/#(total values) &gt;= threshold (default 0.95)</li>
+<li>AND length is NOT the same for all values (for non NA)</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>col</strong> (<em>string</em>) – variable name</li>
+<li><strong>th</strong> (<em>float</em><em> (</em><em>Default : 0.95</em><em>)</em>) – threshold rate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – test result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Maxence LABESSE
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

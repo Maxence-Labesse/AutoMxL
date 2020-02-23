@@ -5,8 +5,8 @@
 
 # Presentation 
 
-The main purpose of ths package is to provide a Python AutoML class that covers the complete pipeline of a classification project 
-from the raw dataset to a deployable model.
+The main purpose of this package is to provide a Python AutoML class that covers the complete pipeline of a binary classification project 
+from a raw dataset to a deployable model.
 It can be used as well as a functions/classes catalogue to ease and speed-up the Data Scientists repetitive dev tasks.
 
 You can fin the whole code documentation on [Readthedoc documentation](https://mlbg59.readthedocs.io/en/latest/)
@@ -23,19 +23,19 @@ $ pip install MLBG59
 ```
 
 # AutoML tutorial
-AutoML is built as a class inherited frm pandas DataFrame. Except for data import, each step corresponds to a class method that can be 
-called with only default parameters or chosen ones.
+AutoML is built as a class inherited from pandas DataFrame. Except for data import, each step corresponds to a class method that can be 
+called with only default parameters or filled ones.
 
 Note : you can specify verbose=True in each method to get logging informations.
 
 ### Import and target encoding :
 
-If needed, you can find in <span style="color: orange"> Start </span> sub-package functions to facilitate data loading and target encoding.
+If needed, you can find in <span style="color: orange"> Start </span> sub-package functions that facilitate data loading and target encoding.
 ```python
 # import package
 from MLBG59 import *
 
-# import data into DataFrame with delimiter identification for csv and txt files
+# import data into DataFrame with delimiter auto-detection for csv and txt files
 df_raw = import_data('data/bank-additional-full.csv', verbose=False)
 
 # set "yes" category from variable "y" as the classification target.
@@ -48,7 +48,7 @@ auto_df = AutoML(new_df.copy(), target=new_target)
 
 ### Data exploration :
 
-<span style="color: orange">recap</span> method allows to get global informations about the dataset (features types,
+<span style="color: orange">recap</span> method allows you to get global information about the dataset (features types,
 missing values, low variance variables). This information is also stored in object attribute dict "d_features".
 
 ```python
@@ -59,13 +59,13 @@ print(auto_df.d_features.keys())
 ```
 \
 You can also call <span style="color: orange">get_outliers</span> method to perform an outliers analysis on categorical 
-(categories frequency) or numerical features (extrem values). Information is stored in object attributes dict d_num_outliers and d_cat_outliers
+(categories frequency) or numerical features (extrem values). Information is stored in object attributes dict d_num_outliers and d_cat_outliers.
 ```python
 auto_df.get_outliers(verbose=False)
 ```
 
 ### Preprocessing
-<span style="color: orange">preprocess</span> method prepare the data before feeding it to the model :
+<span style="color: orange">preprocess</span> method prepares the data before feeding it to the model :
 
 - remove low variance features
 - transform date features to timedelta
@@ -91,7 +91,7 @@ auto_df.train_predict(verbose=False)
 outputs :
 - dict : {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
 - int : best model index
-- DataFrame : Models info and metrics stored in DataFrame
+- DataFrame : Models information and metrics
 
 
 # function and class catalogue
