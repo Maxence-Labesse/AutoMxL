@@ -102,7 +102,7 @@ def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
         del df_local[col]
         new_var_list.append(var_name)
 
-        if verbose > 0:
+        if verbose:
             print("  >", col + ' -> ' + var_name)
 
     return df_local, new_var_list

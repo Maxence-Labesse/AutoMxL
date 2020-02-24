@@ -23,7 +23,7 @@ def get_features_type(df, var_list=None, th=0.95):
         - AND length is NOT the same for all values (for non NA)
     - boolean : #(distinct values) = 2
     - categorical : #(unique values)/#(total values) < threshold (default 0.95)
-    - numerocal : others
+    - numerical : others
 
     Parameters
     ----------

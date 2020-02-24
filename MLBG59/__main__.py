@@ -26,15 +26,22 @@ class AutoML(pd.DataFrame):
     ----------
     _obj : DataFrame
         Source Dataset
+    target : string
+        target name
     d_features : dict (created by audit method)
 
         {x : list of variables names}
 
-        - x = numerical : numerical features
-        - x = categorical : categorical features
-        - x = date : date features
-        - x = NA : features that contain NA values
-        - x = low_variance : low variance features
+        - date : date features
+        - identifier : identifier features
+        - verbatim : verbatim features
+        - boolean : boolean features
+        - categorical : categorical features
+        - numerical : numerical features
+        - categorical : categorical features
+        - date : date features
+        - NA : features which contains NA values
+        - low_variance : list of the features with low variance
 
     d_num_outliers : dict (created with get_outliers method)
         {feature : [lower_limit,upper_limit]}
@@ -62,9 +69,10 @@ class AutoML(pd.DataFrame):
     def recap(self, verbose=False):
         """get and store global informations about the dataset :
 
-        - Variables type (num, cat, date)
+        - Variables type
         - NA values
         - low variance variables
+
         
         Parameters
         ----------
@@ -77,11 +85,16 @@ class AutoML(pd.DataFrame):
         -------
         dict : self.d_features {x : list of variables names}
 
-        - x = numerical : numerical features
-        - x = categorical : categorical features
-        - x = date : date features
-        - x = NA : features that contain NA values
-        - x = low_variance : list of the features with low variance
+        - date : date features
+        - identifier : identifier features
+        - verbatim : verbatim features
+        - boolean : boolean features
+        - categorical : categorical features
+        - numerical : numerical features
+        - categorical : categorical features
+        - date : date features
+        - NA : features which contains NA values
+        - low_variance : list of the features with low variance
         """
         if verbose:
             print_title1('\nExplore')
@@ -94,8 +107,12 @@ class AutoML(pd.DataFrame):
         if verbose:
             color_print("\nCreated attributes :  d_features (dict) ")
             print("Keys :")
-            print("  -> numerical")
+            print("  -> date")
+            print("  -> identifier")
+            print("  -> verbatim")
+            print("  -> boolean")
             print("  -> categorical")
+            print("  -> numerical")
             print("  -> date")
             print("  -> NA")
             print("  -> low_variance")
@@ -151,9 +168,10 @@ class AutoML(pd.DataFrame):
         """Prepare the data before feeding it to the model :
 
             - remove low variance features
+            - remove identifiers and verbatims features
             - transform date features to timedelta
             - fill missing values
-            - process categorical data
+            - process categorical and boolean data (one hot encoding)
             - replace outliers (optional)
         
         Parameters
@@ -188,6 +206,20 @@ class AutoML(pd.DataFrame):
         # delete removed cols from num_column
         self.d_features['numerical'] = [x for x in self.d_features['numerical'] if
                                         x not in self.d_features['low_variance']]
+
+        ##########################################
+        # Remove identifiers and verbatim features
+        ##########################################
+        if verbose:
+            color_print("Remove identifiers and verbatims features")
+            print('  identifiers  : ', list(self.d_features['identifier']))
+            print('  verbatims  : ', list(self.d_features['verbatim']))
+
+        for typ in ['identifier', 'verbatim']:
+            if self.d_features[typ] is not None:
+                for col in self.d_features[typ]:
+                    if col in df_local.columns.tolist() and col != self.target:
+                        df_local = df_local.drop(col, axis=1)
 
         ####################################################
         # Transform date -> time between date and date_ref
@@ -243,13 +275,20 @@ class AutoML(pd.DataFrame):
         # one hot encoding
         ####################
         if verbose:
-            color_print('Categorical features processing')
+            color_print('Categorical and boolean features processing')
 
-        df_local = dummy_all_var(df_local, var_list=self.d_features['categorical'], prefix_list=None, keep=False,
+        for typ in ['categorical','boolean']:
+            if self.target in self.d_features[typ]:
+                self.d_features[typ].remove(self.target)
+            df_local = dummy_all_var(df_local, var_list=self.d_features[typ], prefix_list=None, keep=False,
                                  verbose=verbose)
 
         self.__dict__.update(df_local.__dict__)
         self.target = target
+
+        if verbose:
+            color_print("\nNew DataFrame size ")
+            print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
 
     """
     --------------------------------------------------------------------------------------------------------------------
@@ -313,7 +352,8 @@ class AutoML(pd.DataFrame):
         # selection best model
         if verbose:
             color_print('\nbest model selection')
-        best_model_idx, l_valid_models = hyperopt.get_best_model(dict_res_model, metric=metric, delta_auc_th=0.03, verbose=False)
+        best_model_idx, l_valid_models = hyperopt.get_best_model(dict_res_model, metric=metric, delta_auc_th=0.03,
+                                                                 verbose=False)
 
         if verbose:
             print_title1('best model : ' + str(best_model_idx))

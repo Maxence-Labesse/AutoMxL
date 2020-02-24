@@ -5,7 +5,6 @@
  - get_all_dates : identify date features
  - low variance features : identify features with low variance
 """
-import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from MLBG59.Explore.Features_Type import *
 from MLBG59.Utils.Display import *
@@ -15,7 +14,13 @@ from MLBG59.Utils.Utils import get_type_features
 def recap(df, verbose=False):
     """Get global information about the dataset
 
-    - Variables type (num, cat, date)
+    - Variables type :
+        - date
+        - identifier
+        - verbatim
+        - boolean
+        - categorical
+        - numerical
     - NA values
     - low variance variables
         
@@ -29,8 +34,13 @@ def recap(df, verbose=False):
     Returns
     -------
     dict
-        {type : variables names list }
+        {x : variables names list }
 
+        - date : date features
+        - identifier : identifier features
+        - verbatim : verbatim features
+        - boolean : boolean features
+        - categorical : categorical features
         - numerical : numerical features
         - categorical : categorical features
         - date : date features
