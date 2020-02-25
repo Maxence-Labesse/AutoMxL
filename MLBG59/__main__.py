@@ -19,8 +19,9 @@ class AutoML(pd.DataFrame):
     - Preprocessing (clean and prepare data)
     - Modelisation (random search)
 
-    Available classifiers : Random Forest and XGBOOST
+    Available classifiers : Random Forest and XGBOOST.
 
+    Note : A method can be applied if the previous one has been applied too.
     
     Parameters 
     ----------
@@ -28,6 +29,8 @@ class AutoML(pd.DataFrame):
         Source Dataset
     target : string
         target name
+    step : string
+        last method applied on object
     d_features : dict (created by audit method)
 
         {x : list of variables names}
@@ -54,6 +57,7 @@ class AutoML(pd.DataFrame):
         # parameters
         self.target = target
         # attributes
+        self.step = None
         self.d_features = None
         self.d_num_outliers = None
         self.d_cat_outliers = None
@@ -67,7 +71,7 @@ class AutoML(pd.DataFrame):
 
     @timer
     def recap(self, verbose=False):
-        """get and store global informations about the dataset :
+        """get and store global information about the dataset :
 
         - Variables type
         - NA values
@@ -102,6 +106,8 @@ class AutoML(pd.DataFrame):
         # call std_audit_dataset function
         self.d_features = recap(
             self, verbose=verbose)
+
+        self.step = 'recap'
 
         # created attributes display
         if verbose:
@@ -144,6 +150,8 @@ class AutoML(pd.DataFrame):
         self.d_num_outliers
             {variable : [lower_limit, upper_limit]}
         """
+        assert self.step == 'recap', 'apply recap method'
+
         if verbose:
             print_title1('\nGet_outliers')
         # cat outliers
@@ -152,6 +160,8 @@ class AutoML(pd.DataFrame):
         # num outliers
         self.d_num_outliers = get_num_outliers(self, var_list=self.d_features['numerical'], xstd=num_xstd,
                                                verbose=verbose)
+
+        self.step = 'get_outliers'
 
         # created attributes display
         if verbose:
@@ -173,6 +183,8 @@ class AutoML(pd.DataFrame):
             - fill missing values
             - process categorical and boolean data (one hot encoding)
             - replace outliers (optional)
+
+        you can enable outliers processing if you applied get_outliers() method
         
         Parameters
         ----------
@@ -180,10 +192,15 @@ class AutoML(pd.DataFrame):
             ref date to compute timedelta.
             If None, today date
         process_outliers : boolean (Default : False)
-              Enable outliers replacement
+              Enable outliers replacement (if get_outliers method applied)
         verbose : boolean (Default False)
             Get logging information
         """
+        if process_outliers:
+            assert self.step == 'get_outliers', 'apply get_outliers method'
+        else:
+            assert self.step in ['recap', 'get_outliers'], 'apply recap (and get_outliers) method'
+
         if verbose:
             print_title1('\nPreprocess')
 
@@ -277,14 +294,15 @@ class AutoML(pd.DataFrame):
         if verbose:
             color_print('Categorical and boolean features processing')
 
-        for typ in ['categorical','boolean']:
+        for typ in ['categorical', 'boolean']:
             if self.target in self.d_features[typ]:
                 self.d_features[typ].remove(self.target)
             df_local = dummy_all_var(df_local, var_list=self.d_features[typ], prefix_list=None, keep=False,
-                                 verbose=verbose)
+                                     verbose=verbose)
 
         self.__dict__.update(df_local.__dict__)
         self.target = target
+        self.step = 'preprocess'
 
         if verbose:
             color_print("\nNew DataFrame size ")
@@ -328,6 +346,8 @@ class AutoML(pd.DataFrame):
         DataFrame
             Models information and metrics stored in DataFrame
         """
+        assert self.step == 'preprocess', 'apply preprocess method'
+
         if verbose:
             print('')
             print_title1('Train predict')

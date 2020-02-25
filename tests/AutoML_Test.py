@@ -44,7 +44,7 @@ class TestAudit(unittest.TestCase):
 
     def test_num_columns(self):
         # numerical features identification
-        self.assertEqual(self.df.d_features['numerical'], ['age', 'euribor3m', 'null_var', 'y_yes'])
+        self.assertEqual(self.df.d_features['numerical'], ['age', 'euribor3m', 'null_var'])
 
     def test_cat_columns(self):
         # categorical features identification

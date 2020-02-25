@@ -39,10 +39,16 @@ def all_to_date(df, var_list=None, verbose=1):
     for col in var_list:
         try:
             if df_local[col].dtype == 'object':
-                df_local[col] = pd.to_datetime(df_local[col], errors='coerce')
+                df_local[col] = pd.to_datetime(df_local[col], errors='raise')
             else:
+                df_smpl = df.loc[~df[col].isna()].copy()
+                df_smpl[col] = pd.to_datetime(df_smpl[col].astype('Int32').astype(str), errors='raise')
                 df_local[col] = pd.to_datetime(df_local[col].astype('Int32').astype(str), errors='coerce')
-        except:
+        except ValueError:
+            pass
+        except OverflowError:
+            pass
+        except TypeError:
             pass
 
     return df_local

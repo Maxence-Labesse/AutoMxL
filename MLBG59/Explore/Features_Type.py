@@ -22,7 +22,11 @@ def get_features_type(df, var_list=None, th=0.95):
         - #(unique values)/#(total values) >= threshold (default 0.95)
         - AND length is NOT the same for all values (for non NA)
     - boolean : #(distinct values) = 2
-    - categorical : #(unique values)/#(total values) < threshold (default 0.95)
+    - categorical :
+        - not a date
+        - #(unique values)/#(total values) < threshold (default 0.95)
+        - AND #(uniques values)>2
+        - AND for num values #(unique values)<30
     - numerical : others
 
     Parameters
@@ -32,7 +36,7 @@ def get_features_type(df, var_list=None, th=0.95):
     var_list : list (Default  : None)
         variable names
     th : float (Default : 0.95)
-        threshold used to identify identifiers/verbatims/categorcial variables
+        threshold used to identify identifiers/verbatims variables
 
     Returns
     -------
@@ -73,7 +77,11 @@ def features_from_type(df, typ, var_list=None, th=0.95):
         - #(unique values)/#(total values) >= threshold (default 0.95)
         - AND length is NOT the same for all values (for non NA)
     - boolean : #(distinct values) = 2
-    - categorical : #(unique values)/#(total values) < threshold (default 0.95)
+    - categorical :
+        - not a date
+        - #(unique values)/#(total values) < threshold (default 0.95)
+        - AND #(uniques values)>2
+        - AND for num values #(unique values)<30
 
     Parameters
     ----------
@@ -91,7 +99,7 @@ def features_from_type(df, typ, var_list=None, th=0.95):
     var_list : list (Default : None)
         variables names
     th : float (Default : 0.95)
-        threshold used to identify identifiers/verbatims/categorcial variables
+        threshold used to identify identifiers/verbatims variables
 
     Returns
     -------
@@ -162,6 +170,7 @@ def is_date(df, col):
             if df_smpl[col].dtype == 'object':
                 df_smpl[col] = pd.to_datetime(df_smpl[col], errors='raise')
             else:
+
                 df_smpl[col] = pd.to_datetime(df_smpl[col].astype('Int32').astype(str), errors='raise')
         except ValueError:
             pass
@@ -316,7 +325,10 @@ def is_boolean(df, col):
 def is_categorical(df, col, th=0.95):
     """Test if a variable is a categorical one (with more than 2 categories).
 
-    - #(unique values)/#(total values) < threshold (default 0.95)
+    - not a date
+    - #(unique values)/#(total values) < threshold (default 0.95
+    - AND #(uniques values)>2
+    - AND for num values #(unique values)<30
 
     Parameters
     ----------
@@ -325,14 +337,13 @@ def is_categorical(df, col, th=0.95):
     col : string
         variable name
     th : float (Default : 0.95)
-        threshold rate
+        threshold
 
     Returns
     -------
     res : boolean
         test result
     """
-    # get variable serie with non NA values
     # get variable serie with non NA values
     if df[col].dtype == 'object':
         full_col = df[col].loc[~df[col].isna()]
@@ -346,9 +357,18 @@ def is_categorical(df, col, th=0.95):
         except TypeError:
             return False
 
+    if is_date(df,col)==True :
+            return False
+
     #
     cat_nb_test = full_col.nunique() > 2
     #
     diff_test = (full_col.nunique() / full_col.count()) < th
+    #
+    nunique_test = df[col].loc[~df[col].isna()].nunique() < 30
 
-    return cat_nb_test * diff_test
+    if df[col].dtype == 'object':
+        return cat_nb_test * diff_test
+
+    else:
+        return cat_nb_test * diff_test * nunique_test

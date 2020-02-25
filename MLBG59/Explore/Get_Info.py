@@ -1,8 +1,6 @@
 """ Global dataset information functions :
 
  - recap : get global information about the dataset (NA, features type, low variance features, ...)
- - is_date : test if a variable is as date
- - get_all_dates : identify date features
  - low variance features : identify features with low variance
 """
 from sklearn.preprocessing import MinMaxScaler
@@ -23,14 +21,14 @@ def recap(df, verbose=False):
         - numerical
     - NA values
     - low variance variables
-        
+
     Parameters
     ----------
     df : DataFrame
         input dataset
     verbose : boolean (Default False)
         Get logging information
-            
+
     Returns
     -------
     dict

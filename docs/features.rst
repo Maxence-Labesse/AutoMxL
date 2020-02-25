@@ -13,8 +13,13 @@ Encode_Target
 Explore
 =======
 Get_Info
-------------------
+--------
 .. automodule:: MLBG59.Explore.Get_Info
+    :members:
+
+Features_Type
+------------------
+.. automodule:: MLBG59.Explore.Features_Type
     :members:
 
 Get Outliers

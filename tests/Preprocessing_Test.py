@@ -1,5 +1,6 @@
 import os
 import sys
+
 cwd = os.getcwd()
 sys.path.insert(0, os.path.dirname(cwd))
 from MLBG59.Preprocessing.Categorical_Data import *
@@ -44,8 +45,7 @@ class Test_Date_preprocessing(unittest.TestCase):
         self.df = pd.DataFrame(data)
         self.df_to_date = all_to_date(self.df, ['Date_nai', 'American_date_nai'], verbose=False)
         self.df_to_anc, self.new_var_list = date_to_anc(self.df_to_date, var_list=['American_date_nai', 'Date_nai'],
-                                                        date_ref='27/10/2010',
-                                                        verbose=0)
+                                                        date_ref='27/10/2010', verbose=False)
 
     def test_all_to_date(self):
         self.assertEqual(np.dtype(self.df_to_date['American_date_nai']), 'datetime64[ns]')
