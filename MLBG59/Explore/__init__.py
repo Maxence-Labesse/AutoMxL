@@ -8,6 +8,6 @@ Modules :
 """
 
 
-__all__ = ['Get_Info',
+__all__ = ['Explore',
            'Get_Outliers',
            'Features_Type']

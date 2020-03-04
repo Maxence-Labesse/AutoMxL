@@ -114,27 +114,16 @@ def features_from_type(df, typ, var_list=None, th=0.95):
     else:
         df_local = df[var_list].copy()
 
-    for col in df_local.columns:
-        # date
-        if typ == 'date':
-            if is_date(df_local, col):
-                l_var.append(col)
-        # identifier
-        elif typ == 'identifier':
-            if is_identifier(df_local, col, th):
-                l_var.append(col)
-        # verbatim
-        elif typ == 'verbatim':
-            if is_verbatim(df_local, col, th):
-                l_var.append(col)
-        # boolean
-        elif typ == 'boolean':
-            if is_boolean(df_local, col):
-                l_var.append(col)
-        # categorical
-        elif typ == 'categorical':
-            if is_categorical(df_local, col, th):
-                l_var.append(col)
+    if typ == 'date' :
+        l_var = [ col for col in df_local.columns if is_date(df_local, col)]
+    elif typ == 'identifier' :
+        l_var = [ col for col in df_local.columns if is_identifier(df_local, col, th)]
+    elif typ == 'verbatim' :
+        l_var = [ col for col in df_local.columns if is_verbatim(df_local, col, th)]
+    elif typ == 'boolean' :
+        l_var = [ col for col in df_local.columns if is_boolean(df_local, col)]
+    elif typ == 'categorical' :
+        l_var = [ col for col in df_local.columns if is_categorical(df_local, col, th)]
 
     return l_var
 
@@ -170,7 +159,6 @@ def is_date(df, col):
             if df_smpl[col].dtype == 'object':
                 df_smpl[col] = pd.to_datetime(df_smpl[col], errors='raise')
             else:
-
                 df_smpl[col] = pd.to_datetime(df_smpl[col].astype('Int32').astype(str), errors='raise')
         except ValueError:
             pass

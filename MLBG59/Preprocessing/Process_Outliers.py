@@ -32,7 +32,7 @@ def replace_category(df, var, categories, replace_with='outliers', verbose=False
     df_local.loc[df_local[var].isin(categories), var] = replace_with
 
     if verbose:
-        print('  > ' + var + ' ' + replace_with + ' ->', categories, )
+        print('  > ' + var + ' ' + categories + ' ->', replace_with)
 
     return df_local
 
@@ -63,6 +63,7 @@ def replace_extreme_values(df, var, lower_th=None, upper_th=None, verbose=False)
     DataFrame
         Modified dataset
     """
+    assert (lower_th is not None or upper_th is not None), 'specify at least one limit value'
     df_local = df.copy()
 
     # replace values with upper_limit and lower_limit

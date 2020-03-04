@@ -4,10 +4,9 @@
  - label encoding : coming soon
 """
 import pandas as pd
-from MLBG59.Utils.Utils import get_type_features
 
 
-def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
+def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=False):
     """Get one hot encoded vector for selected/all categorical features
     
     Parameters
@@ -20,7 +19,7 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
      prefix_list : list (default : None)
         Prefix to add before new features name (prefix+'_'+cat).
         It None, prefix=variable name
-     Keep : boolean (Default = False)
+     keep : boolean (Default = False)
         If True, delete the original feature
      verbose : boolean (Default False)
         Get logging information
@@ -32,7 +31,12 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
     """
     # if var_list = None, get all categorical features
     # else, exclude features from var_list whose type is not categorical
-    var_list = get_type_features(df, 'cat', var_list)
+    l_cat = [col for col in df.columns.tolist() if df[col].dtype == 'object']
+
+    if var_list is None:
+        var_list = l_cat
+    else:
+        var_list = [col for col in var_list if col in l_cat]
 
     df_local = df.copy()
 
@@ -51,7 +55,7 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=1):
         # concat source DataFrame and new features
         df_local = pd.concat((df_local, df_cat), axis=1)
 
-        # if keep = False, delete original features
+        # if keep = False, remove original features
         if keep == False:
             df_local = df_local.drop(col, axis=1)
         if verbose:

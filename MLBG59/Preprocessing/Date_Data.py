@@ -5,10 +5,9 @@
 """
 import pandas as pd
 from datetime import datetime
-from MLBG59.Utils.Utils import get_type_features
 
 
-def all_to_date(df, var_list=None, verbose=1):
+def all_to_date(df, var_list=None, verbose=False):
     """Detect dates from selected/all features and transform them to datetime format.
     
     Parameters
@@ -28,7 +27,11 @@ def all_to_date(df, var_list=None, verbose=1):
     """
     # if var_list = None, get all df features
     # else, exclude features if not in df
-    var_list = get_type_features(df, 'all', var_list)
+    if var_list is None:
+        var_list = df.columns.tolist()
+    else:
+        var_list = [col for col in var_list if col in df.columns.tolist()]
+
     df_local = df.copy()
 
     if verbose:
@@ -59,7 +62,7 @@ def all_to_date(df, var_list=None, verbose=1):
 """
 
 
-def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
+def date_to_anc(df, var_list=None, date_ref=None, verbose=False):
     """Transform selected/all datetime features to timedelta according to a ref date
     
     Parameters
@@ -91,24 +94,24 @@ def date_to_anc(df, var_list=None, date_ref=None, verbose=1):
 
     # if var_list = None, get all datetime features
     # else, exclude features from var_list whose type is not datetime
-    var_list = get_type_features(df, 'date', var_list)
+    l_date = df.dtypes[df.dtypes == 'datetime64[ns]'].index.tolist()
+
+    if var_list is None:
+        var_list = l_date
+    else:
+        var_list = [col for col in var_list if col in l_date]
 
     df_local = df.copy()
 
-    if verbose > 0:
+    # new variables names
+    l_new_var_names = ['anc_' + col for col in var_list]
+    # compute time delta for selected dates variables
+    df_local = df_local.apply(lambda x: (date_ref - x).dt.days / 365 if x.name in var_list else x)
+    # rename columns
+    df_local = df_local.rename(columns=dict(zip(var_list, l_new_var_names)))
+
+    if verbose:
         print('  ** Reference date for timelapse computing : ', date_ref)
+        list(map(lambda x, y: print("  >", x + ' -> ' + y), var_list, l_new_var_names))
 
-    # initialisation
-    new_var_list = []
-
-    for col in var_list:
-        # new feature name
-        var_name = 'anc_' + col
-        df_local[var_name] = (date_ref - df_local[col]).dt.days / 365
-        del df_local[col]
-        new_var_list.append(var_name)
-
-        if verbose:
-            print("  >", col + ' -> ' + var_name)
-
-    return df_local, new_var_list
+    return df_local, l_new_var_names

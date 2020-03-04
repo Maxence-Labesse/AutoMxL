@@ -152,7 +152,7 @@
   <h1>Source code for MLBG59.Explore.Get_Infos</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Dataset Features analysis :</span>
 
-<span class="sd"> - recap : get and store informations related to the dataset (NA, features type, low variance features, ...)</span>
+<span class="sd"> - explore : get and store informations related to the dataset (NA, features type, low variance features, ...)</span>
 <span class="sd"> - is_date : Test if a variable can be considered as date</span>
 <span class="sd"> - get_all_dates : identify all dates features</span>
 <span class="sd"> - low variance features : identify all features with low variance (&lt;threshold)</span>
@@ -163,7 +163,7 @@
 <span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="n">get_type_features</span>
 
 
-<div class="viewcode-block" id="recap"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Infos.recap">[docs]</a><span class="k">def</span> <span class="nf">recap</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="explore"><a class="viewcode-back" href="../../../features.html#MLBG59.Explore.Get_Infos.explore">[docs]</a><span class="k">def</span> <span class="nf">explore</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;get and store global informations about the dataset :</span>
 
 <span class="sd">    - Variables type (num, cat, date)</span>

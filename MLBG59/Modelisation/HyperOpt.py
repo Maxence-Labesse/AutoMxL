@@ -190,7 +190,7 @@ class Hyperopt(object):
                 self.bagging_object[l] = bag
 
             # Model evaluation
-            eval_dict = classifier_evaluate(y_train, y_pred, y_proba, print_level=0)
+            eval_dict = classifier_evaluate(y_train, y_pred, y_proba, verbose=0)
 
             # store
             train_model = {'HP': HP_dict,
@@ -265,7 +265,7 @@ class Hyperopt(object):
                           'y_pred': y_pred}
 
             # compute model metrics
-            eval_dict = classifier_evaluate(y, y_pred, y_proba, print_level=0)
+            eval_dict = classifier_evaluate(y, y_pred, y_proba, verbose=0)
             fpr_train, tpr_train = self.train_model_dict[key]['train_metrics']['fpr tpr']
             eval_dict['delta_auc'] = abs(auc(fpr_train, tpr_train) - eval_dict["Roc_auc"])
 

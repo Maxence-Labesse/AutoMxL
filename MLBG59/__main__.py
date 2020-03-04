@@ -1,6 +1,6 @@
 from MLBG59.Utils.Display import print_title1
 from MLBG59.Utils.Decorators import timer
-from MLBG59.Explore.Get_Info import recap
+from MLBG59.Explore.Explore import explore
 from MLBG59.Explore.Get_Outliers import get_cat_outliers, get_num_outliers
 from MLBG59.Preprocessing.Date_Data import all_to_date, date_to_anc
 from MLBG59.Preprocessing.Missing_Values import fill_numerical, fill_categorical
@@ -104,7 +104,7 @@ class AutoML(pd.DataFrame):
             print_title1('\nExplore')
 
         # call std_audit_dataset function
-        self.d_features = recap(
+        self.d_features = explore(
             self, verbose=verbose)
 
         self.step = 'recap'

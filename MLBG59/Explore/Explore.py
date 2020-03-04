@@ -6,10 +6,9 @@
 from sklearn.preprocessing import MinMaxScaler
 from MLBG59.Explore.Features_Type import *
 from MLBG59.Utils.Display import *
-from MLBG59.Utils.Utils import get_type_features
 
 
-def recap(df, verbose=False):
+def explore(df, verbose=False):
     """Get global information about the dataset
 
     - Variables type :
@@ -47,8 +46,8 @@ def recap(df, verbose=False):
     """
     # dataset dimensions
     if verbose:
-        color_print("Dimensions : ")
-        print("  > row number : ", df.shape[0], "\n  > col number : ", df.shape[1])
+        color_print("Dimensions :")
+        print("  > row number :", df.shape[0], "\n  > col number : ", df.shape[1])
 
     #################
     # features type #
@@ -57,9 +56,10 @@ def recap(df, verbose=False):
 
     if verbose:
         color_print("Features type identification : ")
-        for typ in d_features.keys():
-            print("  > " + typ + " : " + str(len(d_features[typ])) + ' (' + str(
-                round(len(d_features[typ]) / df.shape[1] * 100)) + '%)')
+        list(map(lambda typ :
+                 print("  > " + typ + " : " + str(len(d_features[typ])) + ' (' + str(
+                     round(len(d_features[typ]) / df.shape[1] * 100)) + '%)'),
+                 d_features.keys()))
 
     ######################
     # NA values analysis
@@ -99,7 +99,7 @@ def recap(df, verbose=False):
 """
 
 
-def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=1):
+def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=False):
     """Identify  features with low variance : (< threshold).
     Possible to rescale feature before computing.
 
@@ -121,9 +121,14 @@ def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=
     list
        Names of the variables with low variance
     """
-    # if var_list = None, get all numerical features
-    # else, exclude features from var_list whose type is not numerical
-    var_list = get_type_features(df, 'num', var_list)
+    # if var_list = None, get all num features
+    # else, remove features from var_list whose type is not num
+    l_num = df._get_numeric_data().columns.tolist()
+
+    if var_list is None:
+        var_list = l_num
+    else:
+        var_list = [col for col in var_list if col in l_num]
 
     df_bis = df.copy()
 
@@ -133,7 +138,7 @@ def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=
 
     selected_var = df_bis[var_list].var().loc[df_bis.var() <= threshold]
 
-    if verbose > 0:
+    if verbose:
         # print('features : ',list(var_list))
         if rescale:
             print('  **MinMaxScaler [0,1]')

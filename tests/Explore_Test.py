@@ -20,7 +20,7 @@ df_test = pd.read_csv('df_test.csv')
 class Test_get_infos(unittest.TestCase):
 
     def test_recap(self):
-        d_features = recap(df_test, verbose=False)
+        d_features = explore(df_test, verbose=False)
         # numerical features identification
         self.assertEqual(d_features['numerical'], ['age', 'euribor3m', 'null_var'])
         # boolean features identification
