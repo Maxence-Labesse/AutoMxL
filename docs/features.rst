@@ -12,9 +12,9 @@ Encode_Target
 
 Explore
 =======
-Get_Info
+Explore
 --------
-.. automodule:: MLBG59.Explore.Get_Info
+.. automodule:: MLBG59.Explore.Explore
     :members:
 
 Features_Type

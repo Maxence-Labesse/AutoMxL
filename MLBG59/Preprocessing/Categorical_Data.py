@@ -86,7 +86,7 @@ def get_embedded_cat(df, var_list, target, batchsize, n_epochs, learning_rate, v
         number of epoch for encoder training
     learning_rate : float
         encoder learning rate
-     verbose : boolean (Default False)
+    verbose : boolean (Default False)
         Get logging information
 
     Returns
