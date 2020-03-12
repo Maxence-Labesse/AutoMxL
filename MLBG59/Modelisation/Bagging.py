@@ -8,7 +8,7 @@
 
 """
 from sklearn.ensemble import RandomForestClassifier
-from MLBG59.Utils.Utils import *
+from MLBG59.Modelisation.Utils import *
 import pandas as pd
 
 """

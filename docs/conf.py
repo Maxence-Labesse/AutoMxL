@@ -10,7 +10,7 @@
 
 # If extensions (or modules to document with autodoc) are in another
 # directory, add these directories to sys.path here. If the directory is
-autodoc_mock_imports = ['pandas', 'sklearn', 'xgboost', 'numpy']
+autodoc_mock_imports = ['pandas', 'sklearn', 'xgboost', 'numpy', 'prince', 'torch', 'matplotlib']
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 import sys
@@ -24,9 +24,8 @@ project_root = os.path.dirname(cwd)
 # This lets us ensure that the source package is imported, and that its
 # version is used.
 
-print("project_root : ",project_root)
+print("project_root : ", project_root)
 sys.path.insert(0, project_root)
-
 
 # -- Project information -----------------------------------------------------
 
@@ -38,7 +37,6 @@ author = 'Maxence LABESSE'
 version = ''
 # The full version, including alpha/beta/rc tags
 release = '1.0.0'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -79,7 +77,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -114,7 +111,6 @@ html_static_path = ['_static']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'MLBG59doc'
 
-
 # -- Options for LaTeX output ------------------------------------------------
 
 latex_elements = {
@@ -143,7 +139,6 @@ latex_documents = [
      'Maxence LABESSE', 'manual'),
 ]
 
-
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -152,7 +147,6 @@ man_pages = [
     (master_doc, 'mlbg59', 'MLBG59 Documentation',
      [author], 1)
 ]
-
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -164,7 +158,6 @@ texinfo_documents = [
      author, 'MLBG59', 'One line description of project.',
      'Miscellaneous'),
 ]
-
 
 # -- Options for Epub output -------------------------------------------------
 
@@ -182,6 +175,5 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
-
 
 # -- Extension configuration -------------------------------------------------

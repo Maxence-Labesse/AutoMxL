@@ -16,17 +16,16 @@ import random
 import itertools as it
 # import datetime
 from MLBG59.Modelisation.Bagging import *
-from MLBG59.Utils.Utils import *
+from MLBG59.Modelisation.Utils import *
 from MLBG59.Utils.Display import color_print
 from datetime import datetime
 
 # Defaults HP grid for RF and XGBOOST
 default_RF_grid_param = {
-    'n_estimators': np.random.uniform(low=20, high=200, size=20).astype(int),
+    'n_estimators': np.random.uniform(low=20, high=500, size=20).astype(int),
     'max_features': ['auto', 'log2'],
-    'max_depth': np.random.uniform(low=3, high=10, size=20).astype(int),
-    'min_samples_split': [5, 10]}
-# 'min_samples_leaf': [1, 2, 4]
+    'max_depth': np.random.uniform(low=3, high=15, size=20).astype(int),
+    'min_samples_split': [5, 10, 15, 20]}
 
 default_XGB_grid_param = {
     'n_estimators': np.random.uniform(low=100, high=300, size=20).astype(int),
@@ -70,12 +69,15 @@ class Hyperopt(object):
                  grid_param=None,
                  n_param_comb=10,
                  top_bagging=False,
-                 bagging_param=default_bagging_param,
+                 bagging_param=None,
                  comb_seed=None):
 
         # parameters
         if grid_param is None:
-            grid_param = default_RF_grid_param
+            if classifier == 'RF':
+                grid_param = default_RF_grid_param
+            elif classifier == 'XGBOOST':
+                grid_param = default_XGB_grid_param
         self.classifier = classifier
         self.grid_param = grid_param
         self.n_param_comb = n_param_comb
@@ -137,7 +139,7 @@ class Hyperopt(object):
                                             k=self.n_param_comb)
 
         if verbose:
-            print('\033[34m' + 'Random among grid search:', self.n_param_comb, 'HP combs',
+            print('\033[34m' + 'Random search:', self.n_param_comb, 'HP combs',
                   '\033[0m')
             print('\033[34m' + 'Model : ', self.classifier, '\033[0m')
 

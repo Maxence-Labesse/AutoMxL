@@ -9,5 +9,6 @@ Modules :
 """
 
 __all__ = ['Bagging',
-           'HyperOpt']
+           'HyperOpt',
+           'Utils']
 

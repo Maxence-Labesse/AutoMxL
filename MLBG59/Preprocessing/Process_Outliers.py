@@ -32,7 +32,7 @@ def replace_category(df, var, categories, replace_with='outliers', verbose=False
     df_local.loc[df_local[var].isin(categories), var] = replace_with
 
     if verbose:
-        print('  > ' + var + ' ' + categories + ' ->', replace_with)
+        print('  > ' + var + ' ',categories,' ->', replace_with)
 
     return df_local
 

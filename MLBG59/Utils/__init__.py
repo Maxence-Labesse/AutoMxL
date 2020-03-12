@@ -7,6 +7,6 @@ Modules :
 - Decorators
 
 """
-__all__ = ['Utils',
+__all__ = [
            'Decorators',
            'Display']

@@ -5,8 +5,11 @@ from MLBG59.Explore.Get_Outliers import get_cat_outliers, get_num_outliers
 from MLBG59.Preprocessing.Date_Data import all_to_date, date_to_anc
 from MLBG59.Preprocessing.Missing_Values import fill_numerical, fill_categorical
 from MLBG59.Preprocessing.Process_Outliers import replace_category, replace_extreme_values
-from MLBG59.Preprocessing.Categorical_Data import dummy_all_var
+from MLBG59.Preprocessing.Categorical_Data import dummy_all_var, get_embedded_cat
 from MLBG59.Modelisation.HyperOpt import *
+from MLBG59.Select_Features.Select_Features import select_features
+#
+from MLBG59.config import n_epoch, learning_rate, batch_size
 
 
 class AutoML(pd.DataFrame):
@@ -174,14 +177,14 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def preprocess(self, date_ref=None, process_outliers=False, verbose=False):
+    def preprocess(self, date_ref=None, process_outliers=False, cat_method='one_hot', verbose=False):
         """Prepare the data before feeding it to the model :
 
             - remove low variance features
             - remove identifiers and verbatims features
             - transform date features to timedelta
             - fill missing values
-            - process categorical and boolean data (one hot encoding)
+            - process categorical and boolean data
             - replace outliers (optional)
 
         you can enable outliers processing if you applied get_outliers() method
@@ -192,10 +195,17 @@ class AutoML(pd.DataFrame):
             ref date to compute timedelta.
             If None, today date
         process_outliers : boolean (Default : False)
-              Enable outliers replacement (if get_outliers method applied)
+            Enable outliers replacement (if get_outliers method applied)
+        cat_method : string (Default : 'one_hot')
+            Categorical features encoding method
+
+            - one_hot[
+            - mca (not working)
+
         verbose : boolean (Default False)
             Get logging information
         """
+        assert cat_method in ['one_hot', 'encoder'], 'select valid categorical features encoding method'
         if process_outliers:
             assert self.step == 'get_outliers', 'apply get_outliers method'
         else:
@@ -259,7 +269,7 @@ class AutoML(pd.DataFrame):
         if verbose:
             color_print('Fill NA')
             color_print('  Num:')
-        df_local = fill_numerical(df_local, var_list=self.d_features['numerical'], method='median', top_var_NA=True,
+        df_local = fill_numerical(df_local, var_list=self.d_features['numerical'], method='median', top_var_NA=False,
                                   verbose=verbose)
 
         # cat features
@@ -288,17 +298,33 @@ class AutoML(pd.DataFrame):
                 df_local = replace_category(df_local, var, self.d_cat_outliers[var],
                                             verbose=verbose)
 
-        ####################
-        # one hot encoding
-        ####################
+        #########################
+        # categorical processing
+        #########################
         if verbose:
             color_print('Categorical and boolean features processing')
+            print(' ** method : ' + cat_method)
 
-        for typ in ['categorical', 'boolean']:
-            if self.target in self.d_features[typ]:
-                self.d_features[typ].remove(self.target)
-            df_local = dummy_all_var(df_local, var_list=self.d_features[typ], prefix_list=None, keep=False,
+        cat_col = self.d_features['categorical'] + self.d_features['boolean']
+        if self.target in cat_col:
+            cat_col.remove(self.target)
+
+        if cat_method == 'one_hot':
+            df_local = dummy_all_var(df_local, var_list=cat_col, prefix_list=None, keep=False,
                                      verbose=verbose)
+
+        elif cat_method == 'encoder':
+            print(df_local.columns)
+            df_local, loss, accuracy = get_embedded_cat(df_local, cat_col, target, batch_size, n_epoch, learning_rate,
+                                                        verbose=verbose)
+            print(df_local.columns)
+
+            print("loss : ", loss)
+            print("accuracy :", accuracy)
+
+        elif cat_method == 'mca':
+            pass
+            # df_local, _ = mca(df_local, var_list=cat_col, sample_size=100000, n_iter=30, verbose=verbose)
 
         self.__dict__.update(df_local.__dict__)
         self.target = target
@@ -313,6 +339,34 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
+    def select_features(self, method='pca', verbose=False):
+        """
+
+        Parameters
+        ----------
+        method
+        verbose
+
+        Returns
+        -------
+
+        """
+        assert self.step in ['preprocess'], 'apply preprocess method'
+        target = self.target
+        if verbose:
+            print('')
+            print_title1('Features Selection')
+        df_local = self.copy()
+        df_local = select_features(df=df_local, target=self.target, method=method, verbose=verbose)
+        self.__dict__.update(df_local.__dict__)
+        self.target = target
+        self.step = 'features_selection'
+
+    """
+        --------------------------------------------------------------------------------------------------------------------
+    """
+
+    @timer
     def train_predict(self, clf='XGBOOST', metric='F1', n_comb=10, comb_seed=None, verbose=True):
         """Model hyper-optimisation with random search.
 
@@ -321,7 +375,7 @@ class AutoML(pd.DataFrame):
         - get the best model in respect of a selected metric among valid model
 
         Available classifiers : Random Forest, XGBOOST (and bagging)
-        
+
         Parameters
         ----------
         clf : string (Default : 'XGBOOST')
@@ -334,7 +388,7 @@ class AutoML(pd.DataFrame):
             random combination seed
         verbose : boolean (Default False)
             Get logging information
-            
+
         Returns
         -------
         dict
@@ -346,7 +400,7 @@ class AutoML(pd.DataFrame):
         DataFrame
             Models information and metrics stored in DataFrame
         """
-        assert self.step == 'preprocess', 'apply preprocess method'
+        assert self.step in ['preprocess', 'features_selection'], 'apply preprocess method'
 
         if verbose:
             print('')
@@ -356,7 +410,7 @@ class AutoML(pd.DataFrame):
         df_train, df_test = train_test(self, 0.3)
 
         # Create Hyperopt object
-        hyperopt = Hyperopt(classifier=clf, grid_param=default_XGB_grid_param, n_param_comb=n_comb,
+        hyperopt = Hyperopt(classifier=clf, grid_param=None, n_param_comb=n_comb,
                             top_bagging=False, comb_seed=comb_seed)
 
         # Entrainement des modèles
@@ -375,11 +429,11 @@ class AutoML(pd.DataFrame):
         best_model_idx, l_valid_models = hyperopt.get_best_model(dict_res_model, metric=metric, delta_auc_th=0.03,
                                                                  verbose=False)
 
-        if verbose:
+        df_model_res = hyperopt.model_res_to_df(dict_res_model, sort_metric=metric)
+
+        if best_model_idx is not None:
             print_title1('best model : ' + str(best_model_idx))
             print(metric + ' : ' + str(round(dict_res_model[best_model_idx]['metrics'][metric], 4)))
             print('AUC : ' + str(round(dict_res_model[best_model_idx]['metrics']['Roc_auc'], 4)))
-
-        df_model_res = hyperopt.model_res_to_df(dict_res_model, sort_metric=metric)
 
         return dict_res_model, l_valid_models, best_model_idx, df_model_res
