@@ -73,8 +73,18 @@ auto_df.get_outliers(verbose=False)
 - process categorical data
 - replace outliers (optional)
 
+For categorical encoding, you can choose classical one-hot-encoding method or pytorch nn embedding encoder
 ```python
-auto_df.preprocess(verbose=False)
+auto_df.preprocess(process_outliers=False, cat_method='encoder', verbose=False)
+```
+
+### Features Selection
+<span style="color: orange">select_features</span> method reduce the features dimension to speed up the modelisation execution time 
+(may increase model performance aswell): 
+
+
+```python
+auto_df.select_features(verbose=True)
 ```
 
 ### Modelisation

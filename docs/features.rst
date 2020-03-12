@@ -50,6 +50,11 @@ Process Outliers
 .. automodule:: MLBG59.Preprocessing.Process_Outliers
     :members:
 
+Features Selection
+==================
+.. automodule:: MLBG59.Select_Features.Select_Features
+    :members:
+
 
 Modelisation
 ============

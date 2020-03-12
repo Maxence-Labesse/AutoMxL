@@ -1,4 +1,7 @@
-#
+""" Features selection
+
+
+"""
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
@@ -55,6 +58,7 @@ def select_features(df, target, method='pca', verbose=False):
         # find argmin to get 90% of variance
         n_dim = np.argwhere(np.cumsum(pca.explained_variance_ratio_) > 0.90)[0][0]
 
+    # concat with other dataset features
     if len(l_other) > 0:
         df_pca = pd.concat((df[l_other], X_transform.iloc[:, :n_dim + 1]), axis=1)
     else:

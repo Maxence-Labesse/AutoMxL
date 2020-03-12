@@ -184,7 +184,7 @@ class AutoML(pd.DataFrame):
             - remove identifiers and verbatims features
             - transform date features to timedelta
             - fill missing values
-            - process categorical and boolean data
+            - process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)
             - replace outliers (optional)
 
         you can enable outliers processing if you applied get_outliers() method
@@ -199,8 +199,8 @@ class AutoML(pd.DataFrame):
         cat_method : string (Default : 'one_hot')
             Categorical features encoding method
 
-            - one_hot[
-            - mca (not working)
+            - one_hot
+            - encoder
 
         verbose : boolean (Default False)
             Get logging information

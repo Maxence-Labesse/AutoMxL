@@ -4,6 +4,7 @@ This package contains following sections :
 - Start
 - Explore
 - Preproessing (clearn and process)
+- Select features
 - Modelisation
 
 It can be use aswell as a catalog of functions to ease and speed up repetitive 
@@ -18,6 +19,7 @@ __version__ = "1.0.0"
 from . import Start
 from . import Explore
 from . import Preprocessing
+from . import Select_Features
 from . import Modelisation
 from . import Utils
 from . import __main__

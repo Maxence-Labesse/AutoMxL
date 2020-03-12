@@ -2,7 +2,7 @@
 
  - dummy_all_var : get one hot encoded vector for each category of a categorical features list
  - mca : transform features to mca principal components
- - label encoding : coming soon
+ - label encoding : get embedding representation with NN
 """
 import pandas as pd
 from MLBG59.Preprocessing.Label_Encoder import *

@@ -95,7 +95,6 @@ def date_to_anc(df, var_list=None, date_ref=None, verbose=False):
     # if var_list = None, get all datetime features
     # else, exclude features from var_list whose type is not datetime
     l_date = df.dtypes[df.dtypes == 'datetime64[ns]'].index.tolist()
-
     if var_list is None:
         var_list = l_date
     else:
