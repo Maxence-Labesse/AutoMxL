@@ -94,6 +94,10 @@ Model hyper-optimisation with random search.
 - train and test a model for each combination
 - get the best model in respect of a selected metric among valid model
 
+
+### Methods configuration
+All the methods parameters and hyper-parameters are stored in the file config.py
+
 Available classifiers : Random Forest, XGBOOST (and bagging)
 ```python
 auto_df.train_predict(verbose=False)

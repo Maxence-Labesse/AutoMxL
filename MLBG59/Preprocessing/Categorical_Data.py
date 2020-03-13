@@ -139,8 +139,9 @@ def get_embedded_cat(df, var_list, target, batchsize, n_epochs, learning_rate, v
 
     model = Categorical_Encoder(emb_dims, layer_sizes=[nlayer1, nlayer2], output_size=1)
 
-    fit_model, loss, accuracy = train_label_encoder(df_to_encoder, model, lr=learning_rate, n_epochs=n_epochs, batchsize=batchsize,
-                                    verbose=verbose)
+    fit_model, loss, accuracy = train_label_encoder(df_to_encoder, model, lr=learning_rate, n_epochs=n_epochs,
+                                                    batchsize=batchsize,
+                                                    verbose=verbose)
 
     ############################################
     # Store embedding and get output DataFrame #

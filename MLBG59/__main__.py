@@ -102,6 +102,7 @@ class AutoML(pd.DataFrame):
         - date : date features
         - NA : features which contains NA values
         - low_variance : list of the features with low variance
+
         """
         if verbose:
             print_title1('\nExplore')
@@ -340,16 +341,20 @@ class AutoML(pd.DataFrame):
 
     @timer
     def select_features(self, method='pca', verbose=False):
-        """
+        """Select features to speed up modelisation.
+        (May incresea model performance aswell)
 
+        Available methods : pca
         Parameters
         ----------
-        method
+        method : string (Default : pca)
+            method used to select features
+
         verbose
 
         Returns
         -------
-
+            DataFrame : reduces datasset
         """
         assert self.step in ['preprocess'], 'apply preprocess method'
         target = self.target
