@@ -27,14 +27,14 @@ class Test_Missing_values(unittest.TestCase):
         self.df = pd.DataFrame(data)
 
     def test_fill_numerical(self):
-        df_fill_all_num = fill_numerical(self.df, ['Age', 'Height'], method='zero', top_var_NA=True, verbose=False)
+        df_fill_all_num = fill_numerical(self.df, ['Age', 'Height'], method='zero', track_num_NA=True, verbose=False)
         self.assertIn('top_NA_Height', df_fill_all_num.columns.tolist())
         self.assertIn('top_NA_Age', df_fill_all_num.columns.tolist())
         self.assertEqual(df_fill_all_num.iloc[0]['Height'], 0)
         self.assertEqual(df_fill_all_num.iloc[1]['Age'], 0)
 
     def test_fill_categorical(self):
-        df_fill_all_cat = fill_categorical(self.df, var_list=['Name', 'Sexe'], method='NR', verbose=False)
+        df_fill_all_cat = fill_categorical(self.df, l_var=['Name', 'Sexe'], method='NR', verbose=False)
         self.assertEqual(df_fill_all_cat.iloc[3]['Name'], 'NR')
         self.assertEqual(df_fill_all_cat.iloc[3]['Sexe'], 'NR')
 

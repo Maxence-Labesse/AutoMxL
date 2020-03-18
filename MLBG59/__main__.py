@@ -1,14 +1,13 @@
 from MLBG59.Utils.Display import print_title1
 from MLBG59.Utils.Decorators import timer
 from MLBG59.Explore.Explore import explore
-from MLBG59.Explore.Get_Outliers import get_cat_outliers, get_num_outliers
-from MLBG59.Preprocessing.Date_Data import DateEncoder
-from MLBG59.Preprocessing.Missing_Values import fill_numerical, fill_categorical
-from MLBG59.Preprocessing.Process_Outliers import replace_category, replace_extreme_values
-from MLBG59.Preprocessing.Categorical_Data import CategoricalEncoder
+from MLBG59.Preprocessing.Date import DateEncoder
+from MLBG59.Preprocessing.Missing_Values import NAEncoder
+from MLBG59.Preprocessing.Outliers import OutliersEncoder
+from MLBG59.Preprocessing.Categorical import CategoricalEncoder
 from MLBG59.Modelisation.HyperOpt import *
 from MLBG59.Select_Features.Select_Features import select_features
-#
+
 
 class AutoML(pd.DataFrame):
     """Covers the complete pipeline of a classification project from a raw dataset to a deployable model.
@@ -60,8 +59,6 @@ class AutoML(pd.DataFrame):
         # attributes
         self.step = None
         self.d_features = None
-        self.d_num_outliers = None
-        self.d_cat_outliers = None
 
     def __repr__(self):
         return 'MLBG59 instance'
@@ -157,14 +154,6 @@ class AutoML(pd.DataFrame):
 
         if verbose:
             print_title1('\nGet_outliers')
-        # cat outliers
-        self.d_cat_outliers = get_cat_outliers(self, var_list=self.d_features['categorical'], threshold=cat_freq,
-                                               verbose=verbose)
-        # num outliers
-        self.d_num_outliers = get_num_outliers(self, var_list=self.d_features['numerical'], xstd=num_xstd,
-                                               verbose=verbose)
-
-        self.step = 'get_outliers'
 
         # created attributes display
         if verbose:
@@ -254,54 +243,39 @@ class AutoML(pd.DataFrame):
             strg = "Transform date -> timelapse"
             color_print(strg)
 
-        if len(self.d_features['date'])>0:
+        if len(self.d_features['date']) > 0:
             date_encoder = DateEncoder(method='timedelta')
             date_encoder.fit(df_local, l_var=self.d_features['date'], verbose=verbose)
             df_local = date_encoder.transform(df_local, verbose=verbose)
-        else :
+        else:
             "no features identified as dates"
+
         ##################
         # fill NA values
         ##################
         # num features
         if verbose:
             color_print('Fill NA')
-            color_print('  Num:')
-        df_local = fill_numerical(df_local, var_list=self.d_features['numerical'], method='median', top_var_NA=False,
-                                  verbose=verbose)
 
-        # cat features
-        if verbose:
-            color_print('  Cat:')
-        df_local = fill_categorical(df_local, var_list=self.d_features['categorical'], method='NR', verbose=verbose)
+        NA_encoder = NAEncoder()
+        NA_encoder.fit(df_local, l_var=self.d_features['NA'], verbose=verbose)
+        df_local = NA_encoder.transform(df_local, verbose=verbose)
 
         ####################
         # replace outliers
         ####################
         if process_outliers:
-            # num features
-            if verbose:
-                color_print('Outliers processing')
-                color_print('  Num:')
-            if self.target in self.d_num_outliers:
-                self.d_num_outliers.remove(self.target)
-            for var in self.d_num_outliers.keys():
-                df_local = replace_extreme_values(df_local, var, self.d_num_outliers[var][0],
-                                                  self.d_num_outliers[var][1], verbose=verbose)
-
-            # cat features
-            if verbose:
-                color_print('  Cat:')
-            for var in self.d_cat_outliers.keys():
-                df_local = replace_category(df_local, var, self.d_cat_outliers[var],
-                                            verbose=verbose)
+            out_encoder = OutliersEncoder()
+            print('fit')
+            out_encoder.fit(df_local, l_var=None, verbose=verbose)
+            print('transform')
+            df_local = out_encoder.transform(df_local, verbose=verbose)
 
         #########################
         # categorical processing
         #########################
         if verbose:
             color_print('Categorical and boolean features processing')
-            print(' ** method : ' + cat_method)
 
         cat_col = self.d_features['categorical'] + self.d_features['boolean']
         if self.target in cat_col:
@@ -311,7 +285,6 @@ class AutoML(pd.DataFrame):
             cat_encoder = CategoricalEncoder(method=cat_method)
             cat_encoder.fit(df_local, l_var=cat_col, target=self.target, verbose=verbose)
             df_local = cat_encoder.transform(df_local, verbose=verbose)
-
 
         self.__dict__.update(df_local.__dict__)
         self.target = target

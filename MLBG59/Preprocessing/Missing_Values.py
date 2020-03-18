@@ -26,10 +26,12 @@ class NAEncoder(object):
     def __init__(self,
                  replace_num_with='median',
                  replace_cat_with='NR',
+                 track_num_NA=True
                  ):
 
         self.replace_num_with = replace_num_with
         self.replace_cat_with = replace_cat_with
+        self.track_num_NA = track_num_NA
         self.l_var_cat = []
         self.l_var_num = []
         self.is_fitted = False
@@ -51,15 +53,15 @@ class NAEncoder(object):
         verbose : boolean (Default False)
             Get logging information
         """
-        l_num = [col for col in df.column.tolist() if df[col].dtype != 'object']
-        l_str = [col for col in df.column.tolist() if df[col].dtype == 'object']
+        l_num = [col for col in df.columns.tolist() if df[col].dtype != 'object']
+        l_str = [col for col in df.columns.tolist() if df[col].dtype == 'object']
 
         if l_var is None:
-            self.l_var_cat = l_str
-            self.l_var_num = l_num
+            self.l_var_cat = [col for col in l_str if df[col].isna().sum() > 0]
+            self.l_var_num = [col for col in l_num if df[col].isna().sum() > 0]
         else:
-            self.l_var_cat = [col for col in l_var if col in l_str]
-            self.l_var_num = [col for col in l_var if col in l_num]
+            self.l_var_cat = [col for col in l_var if col in l_str and df[col].isna().sum() > 0]
+            self.l_var_num = [col for col in l_var if col in l_num and df[col].isna().sum() > 0]
 
         if len(self.l_var_cat) > 0 or len(self.l_var_num) > 0:
             self.is_fitted = True
@@ -88,12 +90,12 @@ class NAEncoder(object):
         df_local = df.copy()
 
         if len(self.l_var_cat) > 0:
-            df_local = fill_categorical(df_local, var_list=self.l_var_cat, method=self.replace_cat_with,
+            df_local = fill_categorical(df_local, l_var=self.l_var_cat, method=self.replace_cat_with,
                                         verbose=verbose)
 
         if len(self.l_var_num) > 0:
-            df_local = fill_numerical(df, var_list=self.l_var_num, method=self.replace_num_with, top_var_NA=True,
-                                      verbose=verbose)
+            df_local = fill_numerical(df_local, l_var=self.l_var_num, method=self.replace_num_with,
+                                      track_num_NA=self.track_num_NA, verbose=verbose)
 
         return df_local
 
@@ -125,7 +127,7 @@ class NAEncoder(object):
     """
 
 
-def fill_numerical(df, var_list=None, method='median', top_var_NA=True, verbose=False):
+def fill_numerical(df, l_var=None, method='median', track_num_NA=True, verbose=False):
     """Fill missing values for selected/all numerical features.
     top_var_NA parameter allows to create a variable to keep track of missing values.
 
@@ -135,7 +137,7 @@ def fill_numerical(df, var_list=None, method='median', top_var_NA=True, verbose=
     ----------
     df : DataFrame
         Input dataset
-    var_list : list (Default : None)
+    l_var : list (Default : None)
         names of the features to fill.
         If None, all the numerical features
     method : string (Default : 'median')
@@ -145,7 +147,7 @@ def fill_numerical(df, var_list=None, method='median', top_var_NA=True, verbose=
         - median : replace with median
         - mean : replace with mean
 
-    top_var_NA : boolean (Defaut : True)
+    track_num_NA : boolean (Defaut : True)
         If True, create a boolean column to keep track of missing values
     verbose : boolean (Default False)
         Get logging information
@@ -161,23 +163,23 @@ def fill_numerical(df, var_list=None, method='median', top_var_NA=True, verbose=
     # else, remove features from var_list whose type is not num
     l_num = df._get_numeric_data().columns.tolist()
 
-    if var_list is None:
-        var_list = l_num
+    if l_var is None:
+        l_var = l_num
     else:
-        var_list = [col for col in var_list if col in l_num]
+        l_var = [col for col in l_var if col in l_num]
 
     df_local = df.copy()
 
     # values to fill NA
     if method == 'median':
-        fill_value = df_local[var_list].mean()
+        fill_value = df_local[l_var].mean()
     elif method == 'mean':
-        fill_value = df_local[var_list].mean()
+        fill_value = df_local[l_var].mean()
     elif method == 'zero':
-        fill_value = pd.Series([0] * len(var_list), index=var_list)
+        fill_value = pd.Series([0] * len(l_var), index=l_var)
 
-    for var in var_list:
-        if top_var_NA:
+    for var in l_var:
+        if track_num_NA:
             # keep track of NA values in Top_var_NA
             df_local['top_NA_' + var] = df_local.apply(lambda x: 1 if np.isnan(x[var]) else 0, axis=1)
         # fill NA
@@ -185,7 +187,7 @@ def fill_numerical(df, var_list=None, method='median', top_var_NA=True, verbose=
 
     if verbose:
         print('  > method: ' + method)
-        print('  > filled features:', df[var_list].isna().sum().loc[df[var_list].isna().sum() > 0].index.tolist())
+        print('  > filled features:', df[l_var].isna().sum().loc[df[l_var].isna().sum() > 0].index.tolist())
 
     return df_local
 
@@ -195,14 +197,14 @@ def fill_numerical(df, var_list=None, method='median', top_var_NA=True, verbose=
 """
 
 
-def fill_categorical(df, var_list=None, method='NR', verbose=False):
+def fill_categorical(df, l_var=None, method='NR', verbose=False):
     """Fill missing values for selected/all categorical features.
 
     Parameters
     ----------
     df : DataFrame
         Input dataset
-    var_list : list (Default : None)
+    l_var : list (Default : None)
         list of the features to fill.
         If None, contains all the categorical features
     method : string (Default : 'NR')
@@ -224,10 +226,10 @@ def fill_categorical(df, var_list=None, method='NR', verbose=False):
     # else, remove features from var_list whose type is not categorical
     l_cat = [col for col in df.columns.tolist() if df[col].dtype == 'object']
 
-    if var_list is None:
-        var_list = l_cat
+    if l_var is None:
+        l_var = l_cat
     else:
-        var_list = [col for col in var_list if col in l_cat]
+        l_var = [col for col in l_var if col in l_cat]
 
     df_local = df.copy()
 
@@ -235,11 +237,11 @@ def fill_categorical(df, var_list=None, method='NR', verbose=False):
     if method in ['NR']:
         fill_value = 'NR'
 
-    for var in var_list:
+    for var in l_var:
         df_local[var] = df_local[var].fillna(fill_value)
 
     if verbose:
         print('  > method: ' + method)
-        print('  > filled features:', df[var_list].isna().sum().loc[df[var_list].isna().sum() > 0].index.tolist())
+        print('  > filled features:', df[l_var].isna().sum().loc[df[l_var].isna().sum() > 0].index.tolist())
 
     return df_local

@@ -1,5 +1,6 @@
 import os
 import sys
+
 cwd = os.getcwd()
 sys.path.insert(0, os.path.dirname(cwd))
 from MLBG59.Explore.Get_Info import *
@@ -12,7 +13,6 @@ import sys
 
 cwd = os.getcwd()
 sys.path.insert(0, os.path.dirname(cwd))
-
 
 df_test = pd.read_csv('df_test.csv')
 
@@ -33,7 +33,6 @@ class Test_get_infos(unittest.TestCase):
         self.assertEqual(d_features['NA'], ['job', 'age', 'date_1'])
         # null variance features identification
         self.assertEqual(d_features['low_variance'], ['null_var'])
-
 
     def test_low_variance(self):
         self.assertEqual(low_variance_features(df_test, verbose=False).index.tolist(), ['null_var'])
