@@ -13,8 +13,10 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from matplotlib import pyplot as plt
 from MLBG59.Utils.Display import color_print
+
+
 # parameters config
-from MLBG59.config import n_epoch, learning_rate, batch_size, crit, optim
+# from MLBG59.config import n_epoch, learning_rate, batch_size, crit, optim
 
 
 class Torch_Dataset(Dataset):
@@ -81,7 +83,7 @@ class Torch_Dataset(Dataset):
 """
 
 
-class Categorical_Encoder(nn.Module):
+class Deep_Cat_Encoder(nn.Module):
     """Build categorical encoder
 
         Parameters
@@ -95,7 +97,7 @@ class Categorical_Encoder(nn.Module):
         """
 
     def __init__(self, l_levels, layer_sizes, output_size, layer_dropout=0.1):
-        super(Categorical_Encoder, self).__init__()
+        super(Deep_Cat_Encoder, self).__init__()
 
         # Embedding layers
         self.emb_layers = nn.ModuleList([nn.Embedding(x, y) for x, y in l_levels])
@@ -114,7 +116,8 @@ class Categorical_Encoder(nn.Module):
         nn.init.kaiming_uniform_(self.output_layer.weight.data)
 
         # dropout
-        self.dropout = nn.Dropout(p=layer_dropout)
+        if layer_dropout:
+            self.dropout = nn.Dropout(p=layer_dropout)
 
     """
     -------------------------------------------------------------------------------------------------------------
@@ -134,18 +137,18 @@ class Categorical_Encoder(nn.Module):
         """
 
         # embedding layer
-        if self.n_embs > 0:
+        if self.emb_layer_size > 0:
             x = [emb_layer(cat_data[:, i])
                  for i, emb_layer in enumerate(self.emb_layers)]
             x = torch.cat(x, 1)
 
         # layer 1 (+ dropout)
         x = F.relu(self.linear1(x))
-        if self.layer_dropout is not None: x = self.dropout(x)
+        if self.dropout: x = self.dropout(x)
 
         # layer 2 (+ dropout)
         x = F.relu(self.linear2(x))
-        if self.layer_drouput: x = self.dropout(x)
+        if self.dropout: x = self.dropout(x)
 
         # output layer
         x = self.output_layer(x)
@@ -159,19 +162,19 @@ class Categorical_Encoder(nn.Module):
 """
 
 
-def train_label_encoder(torch_dataset, model, criterion=crit, lr=learning_rate, optimizer=optim, n_epochs=n_epoch,
-                        batchsize=batch_size, verbose=False):
+def train_deep_encoder(torch_dataset, model, optimizer, criterion, lr, n_epochs,
+                       batchsize, verbose=False):
     """Train label encoder for categorical features
 
     Parameters
     ----------
     torch_dataset : Torch_Dataset
         Dataset to feed the NN containing categorical features and target
-    model : Categorical_Encoder
+    model : Deep_Cat_Encoder
         encoder
-    crit : torch.nn criterion
+    crit : string
         model loss to optimize
-    optimizer : torch.optim
+    optimizer : string
         NN optimizer
     n_epochs : int (default = 20)
     batchsize : int
@@ -185,7 +188,7 @@ def train_label_encoder(torch_dataset, model, criterion=crit, lr=learning_rate, 
         float : loss
         float : accuracy
     """
-    assert criterion == 'MSE', 'invalid criterion : select lr'
+    assert criterion == 'MSE', 'invalid criterion : select MSE'
     assert optimizer == 'Adam', "invalid optimizer : select 'Adam'"
 
     # device

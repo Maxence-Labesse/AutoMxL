@@ -39,7 +39,7 @@ class TestAudit(unittest.TestCase):
         # Instantiate autoML object from df_test and target
         cls.df = AutoML(df_test.copy(), target='y_yes')
         # Explore
-        cls.df.recap(verbose=False)
+        cls.df.explore(verbose=False)
 
 
     def test_num_columns(self):
@@ -75,7 +75,7 @@ class TestGet_outliers(unittest.TestCase):
         # instantiate autoML object
         cls.df = AutoML(df_test.copy(), target='y_yes')
         # audit
-        cls.df.recap(verbose=False)
+        cls.df.explore(verbose=False)
         # get outliers
         cls.df.get_outliers(verbose=False)
 
@@ -102,7 +102,7 @@ class TestPreprocess(unittest.TestCase):
         # instantiate autoML object
         cls.df = AutoML(df_test.copy(), target='y_yes')
         # audit
-        cls.df.recap(verbose=False)
+        cls.df.explore(verbose=False)
         # get outliers
         cls.df.get_outliers(verbose=False)
         # clean and preprocess

@@ -41,7 +41,7 @@ def select_features(df, target, method='pca', verbose=False):
     # PCA method
     if method in ['pca', 'no_rescale_pca']:
 
-        if method == 'no_rescale_pca':
+        if method == 'pca':
             scaler = StandardScaler()
             X = scaler.fit_transform(df_num)
         else:

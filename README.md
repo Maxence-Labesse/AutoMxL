@@ -48,11 +48,11 @@ auto_df = AutoML(new_df.copy(), target=new_target)
 
 ### Data exploration :
 
-<span style="color: orange">recap</span> method allows you to get global information about the dataset (features types,
+<span style="color: orange">explore</span> method allows you to get global information about the dataset (features types,
 missing values, low variance variables). This information is also stored in object attribute dict "d_features".
 
 ```python
-auto_df.recap(verbose=False)
+auto_df.explore(verbose=False)
 
 print(auto_df.d_features.keys())
 > output : dict_keys(['numerical', 'date', 'categorical', 'NA', 'low_variance'])
@@ -95,9 +95,6 @@ Model hyper-optimisation with random search.
 - get the best model in respect of a selected metric among valid model
 
 
-### Methods configuration
-All the methods parameters and hyper-parameters are stored in the file config.py
-
 Available classifiers : Random Forest, XGBOOST (and bagging)
 ```python
 auto_df.train_predict(verbose=False)
@@ -107,9 +104,11 @@ outputs :
 - int : best model index
 - DataFrame : Models information and metrics
 
+### Methods configuration
+All the methods parameters and hyper-parameters are stored in the file config.py
 
-# function and class catalogue
-You can find 
+# Catalogue
+TODO
 
 
 # Information

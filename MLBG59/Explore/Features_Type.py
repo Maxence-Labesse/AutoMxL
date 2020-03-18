@@ -11,7 +11,7 @@
 import pandas as pd
 
 
-def get_features_type(df, var_list=None, th=0.95):
+def get_features_type(df, l_var=None, th=0.95):
     """ Get all features per type :
 
     - date : try to apply to_datetime
@@ -33,7 +33,7 @@ def get_features_type(df, var_list=None, th=0.95):
     ----------
     df : DataFrame
         input dataset
-    var_list : list (Default  : None)
+    l_var : list (Default  : None)
         variable names
     th : float (Default : 0.95)
         threshold used to identify identifiers/verbatims variables
@@ -45,15 +45,15 @@ def get_features_type(df, var_list=None, th=0.95):
     """
     d_output = {}
 
-    if var_list is None:
+    if l_var is None:
         df_local = df.copy()
     else:
-        df_local = df[var_list].copy()
+        df_local = df[l_var].copy()
 
     l_col = df_local.columns.tolist()
 
     for typ in ['date', 'identifier', 'verbatim', 'boolean', 'categorical']:
-        d_output[typ] = features_from_type(df_local, typ, var_list=None, th=th)
+        d_output[typ] = features_from_type(df_local, typ, l_var=None, th=th)
         l_col = [x for x in l_col if (x not in d_output[typ])]
 
     d_output['numerical'] = l_col
@@ -66,7 +66,7 @@ def get_features_type(df, var_list=None, th=0.95):
 """
 
 
-def features_from_type(df, typ, var_list=None, th=0.95):
+def features_from_type(df, typ, l_var=None, th=0.95):
     """Get features of a selected type :
 
     - date : try to apply to_datetime
@@ -96,8 +96,8 @@ def features_from_type(df, typ, var_list=None, th=0.95):
         - 'boolean'
         - categorical
         
-    var_list : list (Default : None)
-        variables names
+    l_var : list (Default : None)
+        variables names. If None, all dataset columns
     th : float (Default : 0.95)
         threshold used to identify identifiers/verbatims variables
 
@@ -107,23 +107,22 @@ def features_from_type(df, typ, var_list=None, th=0.95):
         identified variables names
     """
     assert typ in ['date', 'identifier', 'verbatim', 'boolean', 'categorical'], 'Invalid type'
-    l_var = []
 
-    if var_list is None:
+    if l_var is None:
         df_local = df.copy()
     else:
-        df_local = df[var_list].copy()
+        df_local = df[l_var].copy()
 
-    if typ == 'date' :
-        l_var = [ col for col in df_local.columns if is_date(df_local, col)]
-    elif typ == 'identifier' :
-        l_var = [ col for col in df_local.columns if is_identifier(df_local, col, th)]
-    elif typ == 'verbatim' :
-        l_var = [ col for col in df_local.columns if is_verbatim(df_local, col, th)]
-    elif typ == 'boolean' :
-        l_var = [ col for col in df_local.columns if is_boolean(df_local, col)]
-    elif typ == 'categorical' :
-        l_var = [ col for col in df_local.columns if is_categorical(df_local, col, th)]
+    if typ == 'date':
+        l_var = [col for col in df_local.columns if is_date(df_local, col)]
+    elif typ == 'identifier':
+        l_var = [col for col in df_local.columns if is_identifier(df_local, col, th)]
+    elif typ == 'verbatim':
+        l_var = [col for col in df_local.columns if is_verbatim(df_local, col, th)]
+    elif typ == 'boolean':
+        l_var = [col for col in df_local.columns if is_boolean(df_local, col)]
+    elif typ == 'categorical':
+        l_var = [col for col in df_local.columns if is_categorical(df_local, col, th)]
 
     return l_var
 
@@ -150,7 +149,7 @@ def is_date(df, col):
     res : boolean
         test result
     """
-    smpl_size = min(1000, len(df.loc[~df[col].isna()]))
+    smpl_size = min(50, len(df.loc[~df[col].isna()]))
     df_smpl = df.loc[~df[col].isna()].sample(smpl_size).copy()
 
     # if col is numerical/object type, try apply to_datetime
@@ -345,18 +344,18 @@ def is_categorical(df, col, th=0.95):
         except TypeError:
             return False
 
-    if is_date(df,col)==True :
-            return False
+    if is_date(df, col):
+        return False
 
     #
     cat_nb_test = full_col.nunique() > 2
     #
     diff_test = (full_col.nunique() / full_col.count()) < th
     #
-    nunique_test = df[col].loc[~df[col].isna()].nunique() < 30
+    nuniq_test = df[col].loc[~df[col].isna()].nunique() < 30
 
     if df[col].dtype == 'object':
         return cat_nb_test * diff_test
 
     else:
-        return cat_nb_test * diff_test * nunique_test
+        return cat_nb_test * diff_test * nuniq_test

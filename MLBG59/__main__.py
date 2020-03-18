@@ -2,15 +2,13 @@ from MLBG59.Utils.Display import print_title1
 from MLBG59.Utils.Decorators import timer
 from MLBG59.Explore.Explore import explore
 from MLBG59.Explore.Get_Outliers import get_cat_outliers, get_num_outliers
-from MLBG59.Preprocessing.Date_Data import all_to_date, date_to_anc
+from MLBG59.Preprocessing.Date_Data import DateEncoder
 from MLBG59.Preprocessing.Missing_Values import fill_numerical, fill_categorical
 from MLBG59.Preprocessing.Process_Outliers import replace_category, replace_extreme_values
-from MLBG59.Preprocessing.Categorical_Data import dummy_all_var, get_embedded_cat
+from MLBG59.Preprocessing.Categorical_Data import CategoricalEncoder
 from MLBG59.Modelisation.HyperOpt import *
 from MLBG59.Select_Features.Select_Features import select_features
 #
-from MLBG59.config import n_epoch, learning_rate, batch_size
-
 
 class AutoML(pd.DataFrame):
     """Covers the complete pipeline of a classification project from a raw dataset to a deployable model.
@@ -73,7 +71,7 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def recap(self, verbose=False):
+    def explore(self, verbose=False):
         """get and store global information about the dataset :
 
         - Variables type
@@ -105,7 +103,8 @@ class AutoML(pd.DataFrame):
 
         """
         if verbose:
-            print_title1('\nExplore')
+            print('\n')
+            print_title1('Explore')
 
         # call std_audit_dataset function
         self.d_features = explore(
@@ -178,7 +177,7 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def preprocess(self, date_ref=None, process_outliers=False, cat_method='one_hot', verbose=False):
+    def preprocess(self, date_ref=None, process_outliers=False, cat_method='deep_encoder', verbose=False):
         """Prepare the data before feeding it to the model :
 
             - remove low variance features
@@ -201,12 +200,11 @@ class AutoML(pd.DataFrame):
             Categorical features encoding method
 
             - one_hot
-            - encoder
+            - deep_encoder
 
         verbose : boolean (Default False)
             Get logging information
         """
-        assert cat_method in ['one_hot', 'encoder'], 'select valid categorical features encoding method'
         if process_outliers:
             assert self.step == 'get_outliers', 'apply get_outliers method'
         else:
@@ -256,13 +254,12 @@ class AutoML(pd.DataFrame):
             strg = "Transform date -> timelapse"
             color_print(strg)
 
-        # Parse date to datetime
-        df_local = all_to_date(df_local, var_list=self.d_features['date'], verbose=0)
-
-        # compute time between date and date_ref
-        df_local, new_var_list = date_to_anc(df_local, var_list=None, date_ref=date_ref, verbose=verbose)
-        self.d_features['numerical'] = self.d_features['numerical'] + new_var_list
-
+        if len(self.d_features['date'])>0:
+            date_encoder = DateEncoder(method='timedelta')
+            date_encoder.fit(df_local, l_var=self.d_features['date'], verbose=verbose)
+            df_local = date_encoder.transform(df_local, verbose=verbose)
+        else :
+            "no features identified as dates"
         ##################
         # fill NA values
         ##################
@@ -310,22 +307,11 @@ class AutoML(pd.DataFrame):
         if self.target in cat_col:
             cat_col.remove(self.target)
 
-        if cat_method == 'one_hot':
-            df_local = dummy_all_var(df_local, var_list=cat_col, prefix_list=None, keep=False,
-                                     verbose=verbose)
+        if len(cat_col) > 0:
+            cat_encoder = CategoricalEncoder(method=cat_method)
+            cat_encoder.fit(df_local, l_var=cat_col, target=self.target, verbose=verbose)
+            df_local = cat_encoder.transform(df_local, verbose=verbose)
 
-        elif cat_method == 'encoder':
-            print(df_local.columns)
-            df_local, loss, accuracy = get_embedded_cat(df_local, cat_col, target, batch_size, n_epoch, learning_rate,
-                                                        verbose=verbose)
-            print(df_local.columns)
-
-            print("loss : ", loss)
-            print("accuracy :", accuracy)
-
-        elif cat_method == 'mca':
-            pass
-            # df_local, _ = mca(df_local, var_list=cat_col, sample_size=100000, n_iter=30, verbose=verbose)
 
         self.__dict__.update(df_local.__dict__)
         self.target = target

@@ -52,7 +52,7 @@ def explore(df, verbose=False):
     #################
     # features type #
     #################
-    d_features = get_features_type(df, var_list=None, th=0.95)
+    d_features = get_features_type(df, l_var=None, th=0.95)
 
     if verbose:
         color_print("Features type identification : ")

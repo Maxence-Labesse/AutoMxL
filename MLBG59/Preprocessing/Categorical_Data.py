@@ -1,12 +1,163 @@
+from MLBG59.Explore.Features_Type import is_categorical, is_boolean
+
 """ Categorical features processing
 
- - dummy_all_var : get one hot encoded vector for each category of a categorical features list
- - mca : transform features to mca principal components
- - label encoding : get embedding representation with NN
+ - CategoricalEncoder (class) : Encode categorical features
+ - dummy_all_var (func) : get one hot encoded vector for each category of a categorical features list
+ - get_embedded_cat (func) : get embedding representation with NN
+ - mca (func) : TODO
+
 """
 import pandas as pd
-from MLBG59.Preprocessing.Label_Encoder import *
+from MLBG59.Preprocessing.Deep_Encoder import *
 from sklearn.preprocessing import LabelEncoder
+from MLBG59.param_config import batch_size, n_epoch, learning_rate
+
+
+class CategoricalEncoder(object):
+    """Encode categorical features
+
+    Available methods :
+
+    - one hot encoding
+    - Build and train a Neural Network for the creation of embeddings for categorical variables.
+    Default model parameters are stored in param_config.py file
+
+    Parameters
+    ----------
+    method : string (Default : deep_encoder)
+        method used to get categorical encoding
+        Available methods : "one_hot", "deep_encoder"
+    """
+
+    def __init__(self,
+                 method='deep_encoder'
+                 ):
+
+        assert method in ['deep_encoder', 'one_hot'], 'invalid method : select deep_encoder / one_hot'
+        self.method = method
+        self.is_fitted = False
+        self.l_var2encode = []
+        self.l_var_other = []
+        self.target = None
+        self.d_embeddings = {}
+        self.d_int_encoders = {}
+
+    """
+    ----------------------------------------------------------------------------------------------
+    """
+
+    def fit(self, df, l_var=None, target=None, verbose=False):
+        """ Fit encoder on dataset following method
+
+        Parameters
+        ----------
+        df : DataFrame
+            input dataset
+        l_var : list (Default None)
+            names of the variables to encode.
+            If None, all the categorical and boolean features
+        target : string (Default None)
+            name of the target for deep_encoder method
+        verbose : boolean (Default False)
+            Get logging information
+        """
+        # features to encode
+        l_cat = [col for col in df.columns.tolist() if
+                 (is_categorical(df, col) or is_boolean(df, col)) and col != target]
+
+        if l_var is None:
+            self.l_var2encode = l_cat
+        else:
+            self.l_var2encode = [col for col in l_var if col in l_cat]
+
+        df_local = df.copy()
+
+        # features not to encode
+        self.l_var_other = [col for col in df_local.columns.tolist() if col not in self.l_var2encode]
+
+        # target
+        self.target = target
+
+        # one hot encoding method
+        if self.method == 'one_hot':
+            if len(self.l_var2encode) > 0:
+                self.is_fitted = True
+
+        # deep learning embedded representation method
+        elif self.method == 'deep_encoder':
+            self.d_int_encoders, self.d_embeddings = \
+                get_embedded_cat(df_local, self.l_var2encode, target, batch_size, n_epoch, learning_rate,
+                                 verbose=verbose)
+            self.is_fitted = True
+
+        return self
+
+    """
+    ----------------------------------------------------------------------------------------------
+    """
+
+    def transform(self, df, verbose=False):
+        """ transform dataset categorical features using the encoder.
+        Can be done only if encoder has been fitted
+
+        Parameters
+        ----------
+        df : DataFrame
+            dataset to transform
+        verbose : boolean (Default False)
+            Get logging information
+        """
+        assert self.is_fitted, 'fit the encoding first using .fit method'
+
+        df_local = df.copy()
+
+        if self.method == 'one_hot':
+            return dummy_all_var(df_local, var_list=self.l_var2encode, prefix_list=None, keep=False, verbose=verbose)
+
+        elif self.method == 'deep_encoder':
+            for col in self.l_var2encode:
+                df_local[col] = self.d_int_encoders[col].fit_transform(df_local[col])
+
+            # int labes to embedding
+            df_embedded = df_local[self.l_var2encode].copy()
+            for col, d_level in self.d_embeddings.items():
+                for i in range(len(d_level[0])):
+                    # print(d_level)
+                    df_embedded[col + '_' + str(i)] = df_embedded[col].replace({k: v[i] for k, v in d_level.items()})
+                    # (df_embedded[[col, col + '_' + str(i)]].sample(20))
+                df_embedded = df_embedded.drop(col, axis=1)
+
+        return pd.concat([df[self.l_var_other], df_embedded], axis=1)
+
+    """
+    ----------------------------------------------------------------------------------------------
+    """
+
+    def fit_transform(self, df, l_var, target, verbose=False):
+        """fit and transform dataset categorical features
+
+        Parameters
+        ----------
+        df : DataFrame
+            input dataset
+        l_var : list (Default None)
+            names of the variables to encode.
+            If None, all the categorical and boolean features
+        target : string (Default None)
+            name of the target for deep_encoder method
+        verbose : boolean (Default False)
+            Get logging information
+        """
+        self.fit(df, l_var, target, verbose)
+        df = self.transform(df, verbose)
+
+        return df
+
+
+"""
+----------------------------------------------------------------------------------------------
+"""
 
 
 def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=False):
@@ -32,20 +183,11 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=False
     DataFrame
           Modified dataset
     """
-    # if var_list = None, get all categorical features
-    # else, exclude features from var_list whose type is not categorical
-    l_cat = [col for col in df.columns.tolist() if df[col].dtype == 'object']
-
-    if var_list is None:
-        var_list = l_cat
-    else:
-        var_list = [col for col in var_list if col in l_cat]
-
     df_local = df.copy()
 
     for col in var_list:
         # if prefix_list == None, add column name as prefix, else add prefix_list
-        if prefix_list == None:
+        if prefix_list is None:
             pref = col
         else:
             pref = prefix_list[var_list.index(col)]
@@ -56,7 +198,7 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=False
         df_local = pd.concat((df_local, df_cat), axis=1)
 
         # if keep = False, remove original features
-        if keep == False:
+        if not keep:
             df_local = df_local.drop(col, axis=1)
         if verbose:
             print('  > ' + col + ' ->', df_cat.columns.tolist())
@@ -69,7 +211,7 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=False
 """
 
 
-def get_embedded_cat(df, var_list, target, batchsize, n_epochs, learning_rate, verbose=False):
+def get_embedded_cat(df, var_list, target, batchsize, n_epochs, lr, verbose=False):
     """Get embedded representation for categorical features using NN encoder
 
     Parameters
@@ -84,7 +226,7 @@ def get_embedded_cat(df, var_list, target, batchsize, n_epochs, learning_rate, v
         batch size for encoder training
     n_epochs : int
         number of epoch for encoder training
-    learning_rate : float
+    lr : float
         encoder learning rate
     verbose : boolean (Default False)
         Get logging information
@@ -96,26 +238,15 @@ def get_embedded_cat(df, var_list, target, batchsize, n_epochs, learning_rate, v
     ######################
     # Get list to encode #
     ######################
-    # if var_list = None, get all categorical features
-    # else, exclude features from var_list whose type is not categorical
-    l_cat = [col for col in df.columns.tolist() if df[col].dtype == 'object' and col != target]
-
-    if var_list is None:
-        var_list = l_cat
-    else:
-        var_list = [col for col in var_list if col in l_cat]
-
-    l_other = [col for col in df.columns.tolist() if col not in var_list and col != target]
-
     df_local = df[var_list + [target]].copy()
 
     ############################
     # Categories to int labels #
     ############################
-    to_int_encoders = {}
+    d_int_encoders = {}
     for cat_col in var_list:
-        to_int_encoders[cat_col] = LabelEncoder()
-        df_local[cat_col] = to_int_encoders[cat_col].fit_transform(df_local[cat_col])
+        d_int_encoders[cat_col] = LabelEncoder()
+        df_local[cat_col] = d_int_encoders[cat_col].fit_transform(df_local[cat_col])
 
     ###################
     # Get layer sizes #
@@ -137,11 +268,11 @@ def get_embedded_cat(df, var_list, target, batchsize, n_epochs, learning_rate, v
     # Create Torch_Dataset
     df_to_encoder = Torch_Dataset(data=df_local, cat_cols=var_list, output_col=target)
 
-    model = Categorical_Encoder(emb_dims, layer_sizes=[nlayer1, nlayer2], output_size=1)
+    model = Deep_Cat_Encoder(emb_dims, layer_sizes=[nlayer1, nlayer2], output_size=1)
 
-    fit_model, loss, accuracy = train_label_encoder(df_to_encoder, model, lr=learning_rate, n_epochs=n_epochs,
-                                                    batchsize=batchsize,
-                                                    verbose=verbose)
+    fit_model, loss, accuracy = train_deep_encoder(df_to_encoder, model=model, optimizer='Adam', criterion='MSE',
+                                                   lr=lr, n_epochs=n_epochs, batchsize=batchsize,
+                                                   verbose=verbose)
 
     ############################################
     # Store embedding and get output DataFrame #
@@ -152,16 +283,7 @@ def get_embedded_cat(df, var_list, target, batchsize, n_epochs, learning_rate, v
         d_embeddings[var_list[i]] = dict(zip(list(range(len(param.data[:, 0]))), param.data.tolist()))
         i += 1
 
-    # int labes to embedding
-    df_embedded = df_local.copy()
-    for col, d_level in d_embeddings.items():
-        for i in range(len(d_level[0])):
-            # print(d_level)
-            df_embedded[col + '_' + str(i)] = df_embedded[col].replace({k: v[i] for k, v in d_level.items()})
-            # (df_embedded[[col, col + '_' + str(i)]].sample(20))
-        df_embedded = df_embedded.drop(col, axis=1)
-
-    return pd.concat([df[l_other], df_embedded], axis=1), loss, accuracy
+    return d_int_encoders, d_embeddings
 
 
 """

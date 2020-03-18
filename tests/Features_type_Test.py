@@ -58,10 +58,10 @@ class Test_Features_Type(unittest.TestCase):
     # test features_per_type
     def test_features_per_type(self):
         self.assertEqual(features_from_type(self.df_test, typ='date'), ['Date_nai', 'American_date_nai'])
-        self.assertEqual(features_from_type(self.df_test, var_list=['Id_cat', 'Id_num', 'American_date_nai', 'Verb'],
+        self.assertEqual(features_from_type(self.df_test, l_var=['Id_cat', 'Id_num', 'American_date_nai', 'Verb'],
                                             typ='identifier'), ['Id_cat', 'Id_num'])
         self.assertEqual(features_from_type(self.df_test, typ='verbatim'), ['Name', 'Verb'])
         self.assertEqual(features_from_type(self.df_test, typ='boolean'), ['Sexe', 'Is_man_cat', 'Is_man_num'])
         self.assertEqual(
-            features_from_type(self.df_test, var_list=['Eyes', 'Hair', 'American_date_nai'], typ='categorical'),
+            features_from_type(self.df_test, l_var=['Eyes', 'Hair', 'American_date_nai'], typ='categorical'),
             ['Eyes', 'Hair'])
