@@ -77,6 +77,7 @@ class AutoML(pd.DataFrame):
         - NA values
         - low variance variables
 
+        Target variable is not included for exploration
 
         Parameters
         ----------
@@ -163,23 +164,26 @@ class AutoML(pd.DataFrame):
         # check pipe step
         assert self.step in ['recap'], 'apply recap method first'
 
-        if verbose:
-            print_title1('Preprocess')
-
         #######
         # Fit #
         #######
+        if verbose:
+            print_title1('Fit Preprocessing')
+
         # Features Removing 'zero variance / verbatims / identifiers)
-        if verbose: color_print("Features removing (zero variance / verbatims / identifiers)")
+        if verbose:
+            color_print("Features removing (zero variance / verbatims / identifiers)")
 
         l_remove = self.d_features['low_variance'] + self.d_features['verbatim'] + self.d_features['identifier']
 
         if verbose:
             print("  >", len(l_remove), "features to remove")
-            if len(l_remove) > 0: print(l_remove)
+            if len(l_remove) > 0:
+                print(" ", l_remove)
 
         # Transform date -> time between date and date_ref
-        if verbose: color_print("Transform date")
+        if verbose:
+            color_print("Transform date")
 
         date_encoder = DateEncoder(method='timedelta', date_ref=date_ref)
         date_encoder.fit(self, l_var=self.d_features['date'], verbose=verbose)
@@ -202,9 +206,12 @@ class AutoML(pd.DataFrame):
 
         # categorical processing
         if verbose:
-            color_print('Categorical and boolean features processing')
+            color_print('Encode Categorical and boolean')
 
         cat_col = self.d_features['categorical'] + self.d_features['boolean']
+        if self.target is None:
+            cat_method = 'one_hot'
+            color_print('No target -> one_hot encoding !', 31)
         cat_encoder = CategoricalEncoder(method=cat_method)
         cat_encoder.fit(self, l_var=cat_col, target=self.target, verbose=verbose)
 
@@ -213,7 +220,6 @@ class AutoML(pd.DataFrame):
         if out_encoder is not None:
             self.d_preprocess['outlier'] = out_encoder
 
-        # created attributes display
         if verbose:
             color_print("\nCreated attributes :  d_preprocess (dict) ")
             print("Keys :")
@@ -221,7 +227,7 @@ class AutoML(pd.DataFrame):
             print("  -> date")
             print("  -> NA")
             print("  -> categorical")
-            print("  -> outlier (optional")
+            print("  -> outlier (optional)")
 
         # is_fitted
         self.is_fitted = True
@@ -241,7 +247,6 @@ class AutoML(pd.DataFrame):
         self.target = target
         self.step = 'preprocess'
 
-        # verbose
         if verbose:
             color_print("\nNew DataFrame size ")
         print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
@@ -265,7 +270,7 @@ class AutoML(pd.DataFrame):
         DataFrame : Preprocessed dataset
         """
         if verbose:
-            print_title1('Preprocess-transform')
+            print_title1('Apply Preprofessing')
 
         # check pipe step and is_fitted
         assert self.is_fitted, "fit first (please)"
@@ -279,31 +284,40 @@ class AutoML(pd.DataFrame):
 
         if len(self.d_preprocess['remove']) > 0:
             df_local = df_local.drop(self.d_preprocess['remove'], axis=1)
-            print(self.d_preprocess['Remove']
-            Removed
-            features
-            ')
-            else:
-            print(" > No features to remove")
+            print("  >", len(self.d_preprocess['remove']), 'removed features')
+        else:
+            print("  > No features to remove")
 
-            # Transform date -> time between date and date_ref
+        # Transform date -> time between date and date_ref
+        if verbose:
+            color_print("Transform date")
+        df_local = self.d_preprocess['date'].transform(df_local, verbose=verbose)
+
+        # update d_features
+        for col in self.d_features['date']:
+            if col in self.d_features['date']:
+                self.d_features['numerical'].append('anc_' + col)
+                if col in self.d_features['NA']:
+                    self.d_features['NA'].append('anc_' + col)
+                    self.d_preprocess['NA'].l_var_num.append('anc_' + col)
+
+        self.d_features['date'] = []
+
+        # Missing Values
+        if verbose:
+            color_print('Missing values')
+        df_local = self.d_preprocess['NA'].transform(df_local, verbose=verbose)
+
+        # replace outliers
+        if 'outlier' in list(self.d_preprocess.keys()):
             if verbose:
-                color_print("Transform date")
-            df_local = self.d_preprocess['date'].transform(df_local, verbose=verbose)
+                color_print('Outliers')
+            df_local = self.d_preprocess['outlier'].transform(df_local, verbose=verbose)
 
-            # Missing Values
-            if verbose:
-                color_print('Missing values')
-            df_local = self.d_preprocess['NA'].transform(df_local, verbose=verbose)
-
-            # replace outliers
-            if self.d_preprocess['outlier'] is not None:
-                df_local = self.d_preprocess['outlier'].transform(df_local, verbose=verbose)
-
-            # categorical processing
-            if verbose:
-                color_print('Categorical and boolean features processing')
-            df_local = self.d_preprocess['categorical'].transform(df_local, verbose=verbose)
+        # categorical processing
+        if verbose:
+            color_print('Encode categorical and boolean')
+        df_local = self.d_preprocess['categorical'].transform(df_local, verbose=verbose)
 
         return df_local
 
@@ -311,7 +325,6 @@ class AutoML(pd.DataFrame):
     --------------------------------------------------------------------------------------------------------------------
     """
 
-    @timer
     def select_features(self, method='pca', verbose=False):
         """Select features to speed up modelisation.
         (May incresea model performance aswell)

@@ -39,8 +39,6 @@ class DateEncoder(object):
 
         if date_ref is None:
             self.date_ref = datetime.now()
-        else:
-            self.date_ref = datetime.strptime(date_ref, '%d/%m/%Y')
 
     """
     ----------------------------------------------------------------------------------------------
@@ -74,7 +72,7 @@ class DateEncoder(object):
                 print(" **method " + self.method + " / date ref : ", self.date_ref)
             print("  >", len(self.l_var2encode), "features to transform")
             if len(self.l_var2encode) > 0:
-                print(self.l_var2encode)
+                print(" ", self.l_var2encode)
 
     """
     ----------------------------------------------------------------------------------------------
@@ -220,7 +218,10 @@ def date_to_anc(df, l_var=None, date_ref=None, verbose=False):
     if date_ref is None:
         date_ref = datetime.now()
     else:
-        date_ref = datetime.strptime(date_ref, '%d/%m/%Y')
+        if isinstance(date_ref,datetime):
+            pass
+        else :
+            date_ref = datetime.strptime(date_ref, '%d/%m/%Y')
 
     # if var_list = None, get all datetime features
     # else, exclude features from var_list whose type is not datetime

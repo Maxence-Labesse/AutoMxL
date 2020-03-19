@@ -49,24 +49,40 @@ def explore(df, verbose=False):
         color_print("Dimensions :")
         print("  > row number :", df.shape[0], "\n  > col number : ", df.shape[1])
 
+    #########################
+    # Low variance features
+    #########################
+    if verbose:
+        color_print('Low variance features')
+
+    l_low_var = \
+        low_variance_features(df, var_list=df._get_numeric_data().columns.tolist(), threshold=0, rescale=True,
+                              verbose=verbose).index.tolist()
+
+    # categorical features with unique values
+    l_unique = [col for col in df.columns.tolist() if df[col].dtype == 'object' and df[col].nunique(dropna=True) == 1]
+
+    l_low_var = l_low_var + l_unique
+    df_valid = df.drop(l_low_var, axis=1).copy()
+
     #################
     # features type #
     #################
-    d_features = get_features_type(df, l_var=None, th=0.95)
+    d_features = get_features_type(df_valid, l_var=None, th=0.95)
 
     if verbose:
         color_print("Features type identification : ")
-        list(map(lambda typ :
+        list(map(lambda typ:
                  print("  > " + typ + " : " + str(len(d_features[typ])) + ' (' + str(
-                     round(len(d_features[typ]) / df.shape[1] * 100)) + '%)'),
+                     round(len(d_features[typ]) / df_valid.shape[1] * 100)) + '%)'),
                  d_features.keys()))
 
     ######################
     # NA values analysis
     ######################
-    df_col = pd.DataFrame(df.columns.values, columns=['variables'])
-    df_col['Nbr NA'] = df.isna().sum().tolist()
-    df_col['Taux NA'] = df_col['Nbr NA'] / df.shape[0]
+    df_col = pd.DataFrame(df_valid.columns.values, columns=['variables'])
+    df_col['Nbr NA'] = df_valid.isna().sum().tolist()
+    df_col['Taux NA'] = df_col['Nbr NA'] / df_valid.shape[0]
     # features containing NA values
     NA_columns = df_col.loc[df_col['Nbr NA'] > 0].sort_values('Nbr NA', ascending=False).variables.tolist()
     col_des = df_col['Taux NA'].describe()
@@ -77,19 +93,9 @@ def explore(df, verbose=False):
               '\n  >           min : ' + str(round(col_des['min'] * 100, 2)) + '%',
               '\n  >           max : ' + str(round(col_des['max'] * 100, 2)) + '%')
 
-    #########################
-    # Low variance features
-    #########################
-    if verbose:
-        color_print('Low variance features')
-
-    low_var_columns = \
-        low_variance_features(df, var_list=df._get_numeric_data().columns.tolist(), threshold=0, rescale=True,
-                              verbose=verbose).index.tolist()
-
     # store into DataFrame
     d_features['NA'] = NA_columns
-    d_features['low_variance'] = low_var_columns
+    d_features['low_variance'] = l_low_var
 
     return d_features
 

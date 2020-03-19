@@ -80,27 +80,31 @@ class CategoricalEncoder(object):
         # target
         self.target = target
 
-        # one hot encoding method
-        if self.method == 'one_hot':
-            if len(self.l_var2encode) > 0:
-                self.is_fitted = True
+        if len(self.l_var2encode) > 0:
 
-        # deep learning embedded representation method
-        elif self.method == 'deep_encoder':
-            self.d_int_encoders, self.d_embeddings, self.d_metrics = \
-                get_embedded_cat(df_local, self.l_var2encode, target, batch_size, n_epoch, learning_rate,
-                                 verbose=False)
-            self.is_fitted = True
+            if verbose:
+                print(" **method : " + self.method)
+                print("  >", len(self.l_var2encode), "features to encode")
+                if len(self.l_var2encode) > 0:
+                    print(" ", self.l_var2encode)
 
-        # verbose
+            # one hot encoding method
+            if self.method == 'one_hot':
+                pass
+
+                # deep learning embedded representation method
+            elif self.method == 'deep_encoder':
+                self.d_int_encoders, self.d_embeddings, self.d_metrics = \
+                    get_embedded_cat(df_local, self.l_var2encode, target, batch_size, n_epoch, learning_rate,
+                                     verbose=False)
+
+        self.is_fitted = True
+
         if verbose:
-            print(" **method : " + self.method)
-            if self.method == "deep_encoder":
-                print("  NN Loss:",round(self.d_metrics['loss'], 4), "/ Accuracy:",round(self.d_metrics['accuracy'],4))
-                print("  Epoch:",n_epoch,"/ batch:",batch_size, "/ l_rate:", learning_rate)
-            print("  >", len(self.l_var2encode), "features to encode")
-            if len(self.l_var2encode) > 0:
-                print(self.l_var2encode)
+            if self.method == "deep_encoder" and len(self.l_var2encode) > 0:
+                print("  NN Loss:", round(self.d_metrics['loss'], 4), "/ Accuracy:",
+                      round(self.d_metrics['accuracy'], 4))
+                print("  Epoch:", n_epoch, "/ batch:", batch_size, "/ l_rate:", learning_rate)
 
         return self
 
@@ -123,23 +127,33 @@ class CategoricalEncoder(object):
 
         df_local = df.copy()
 
-        if self.method == 'one_hot':
-            return dummy_all_var(df_local, var_list=self.l_var2encode, prefix_list=None, keep=False, verbose=verbose)
+        if len(self.l_var2encode) > 0:
+            if self.method == 'one_hot':
+                return dummy_all_var(df_local, var_list=self.l_var2encode, prefix_list=None, keep=False,
+                                     verbose=verbose)
 
-        elif self.method == 'deep_encoder':
-            for col in self.l_var2encode:
-                df_local[col] = self.d_int_encoders[col].fit_transform(df_local[col])
+            elif self.method == 'deep_encoder':
+                for col in self.l_var2encode:
+                    df_local[col] = self.d_int_encoders[col].fit_transform(df_local[col])
 
-            # int labes to embedding
-            df_embedded = df_local[self.l_var2encode].copy()
-            for col, d_level in self.d_embeddings.items():
-                for i in range(len(d_level[0])):
-                    # print(d_level)
-                    df_embedded[col + '_' + str(i)] = df_embedded[col].replace({k: v[i] for k, v in d_level.items()})
-                    # (df_embedded[[col, col + '_' + str(i)]].sample(20))
-                df_embedded = df_embedded.drop(col, axis=1)
+                # int labes to embedding
+                if verbose:
+                    print(' Deep Encoder Embedding dim:')
+                df_embedded = df_local[self.l_var2encode].copy()
+                for col, d_level in self.d_embeddings.items():
+                    for i in range(len(d_level[0])):
+                        df_embedded[col + '_' + str(i)] = df_embedded[col].replace(
+                            {k: v[i] for k, v in d_level.items()})
+                        # (df_embedded[[col, col + '_' + str(i)]].sample(20))
+                    df_embedded = df_embedded.drop(col, axis=1)
+                    if verbose:
+                        print("  > " + col + ":", len(d_level[0]))
 
-        return pd.concat([df[self.l_var_other], df_embedded], axis=1)
+                return pd.concat([df[self.l_var_other], df_embedded], axis=1)
+
+        else:
+            print(" No variable to encode")
+            return df_local
 
     """
     ----------------------------------------------------------------------------------------------

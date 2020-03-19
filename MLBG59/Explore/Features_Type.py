@@ -53,7 +53,7 @@ def get_features_type(df, l_var=None, th=0.95):
     l_col = df_local.columns.tolist()
 
     for typ in ['date', 'identifier', 'verbatim', 'boolean', 'categorical']:
-        d_output[typ] = features_from_type(df_local, typ, l_var=None, th=th)
+        d_output[typ] = features_from_type(df_local, typ, l_var=l_col, th=th)
         l_col = [x for x in l_col if (x not in d_output[typ])]
 
     d_output['numerical'] = l_col
@@ -301,7 +301,7 @@ def is_boolean(df, col):
         except TypeError:
             return False
 
-    return full_col.nunique() == 2
+    return full_col.nunique() == 2 and len(full_col)>2
 
 
 """

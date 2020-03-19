@@ -101,7 +101,7 @@ class NAEncoder(object):
                                       track_num_NA=self.track_num_NA, verbose=verbose)
 
         if len(self.l_var_cat) + len(self.l_var_num) == 0:
-            print("no transformation to apply")
+            print("  > no transformation to apply")
 
         return df_local
 

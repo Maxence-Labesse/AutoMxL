@@ -24,5 +24,4 @@ setup(
     ],
     packages=["MLBG59"],
     include_package_data=True, install_requires=['pandas', 'scikit-learn', 'xgboost', 'numpy', 'torch','matplotlib']
-    # install_requires=["XGBOOST"],
 )

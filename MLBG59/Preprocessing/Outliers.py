@@ -55,8 +55,8 @@ class OutliersEncoder(object):
             self.l_var_cat = [col for col in l_str]
             self.l_var_num = [col for col in l_num]
         else:
-            self.l_var_cat = [col for col in l_var if col in l_str]
-            self.l_var_num = [col for col in l_var if col in l_num]
+            self.l_var_cat = [col for col in l_var if col in l_str and df[col].nunique()>2]
+            self.l_var_num = [col for col in l_var if col in l_num and df[col].nunique()>2]
 
         if len(self.l_var_cat) > 0:
             self.d_cat_outliers = get_cat_outliers(df, l_var=self.l_var_cat, threshold=self.cat_threshold,
@@ -71,11 +71,11 @@ class OutliersEncoder(object):
         if verbose:
             print(" **method cat: frequency<" + str(self.cat_threshold)
                   + " / num:( x: |x - mean| > " + str(self.num_xstd) + "* var)")
-            print("  >", len(self.l_var_cat) + len(self.l_var_num), "features with outliers")
-            if len(self.l_var_cat) > 0:
-                print("  - cat", self.l_var_cat)
-            if len(self.l_var_num) > 0:
-                print("  - num", self.l_var_num)
+            print("  >", len(self.d_cat_outliers.keys()) + len(self.d_num_outliers.keys()), "features with outliers")
+            if len(self.d_cat_outliers.keys()) > 0:
+                print("  - cat", list(self.d_cat_outliers.keys()))
+            if len(self.d_num_outliers.keys()) > 0:
+                print("  - num", list(self.d_num_outliers.keys()))
 
     """
     ----------------------------------------------------------------------------------------------
@@ -95,17 +95,20 @@ class OutliersEncoder(object):
         assert self.is_fitted, 'fit the encoding first using .fit method'
         df_local = df.copy()
 
-        if len(self.l_var_cat) > 0:
-            color_print('cat features outliers replacement')
+        if len(list(self.d_cat_outliers.keys())) > 0:
+            print(" - cat aggregated values:")
             for col in self.d_cat_outliers.keys():
                 df_local = replace_category(df_local, col, self.d_cat_outliers[col], replace_with='outliers',
                                             verbose=verbose)
 
-        if len(self.l_var_num) > 0:
-            color_print('num features outliers replacement')
+        if len(list(self.d_num_outliers.keys())) > 0:
+            print(" - num values replaces:")
             for col in self.d_num_outliers.keys():
                 df_local = replace_extreme_values(df_local, col, self.d_num_outliers[col][0],
                                                   self.d_num_outliers[col][1], verbose=verbose)
+
+        if len(list(self.d_cat_outliers.keys())) + len(list(self.d_num_outliers.keys())) == 0:
+            print("  > no outlier to replace")
 
         return df_local
 
@@ -280,7 +283,7 @@ def replace_category(df, var, categories, replace_with='outliers', verbose=False
     df_local.loc[df_local[var].isin(categories), var] = replace_with
 
     if verbose:
-        print('  > ' + var + ' ', categories, ' ->', replace_with)
+        print('  > ' + var + ' ', categories)
 
     return df_local
 
@@ -321,7 +324,7 @@ def replace_extreme_values(df, var, lower_th=None, upper_th=None, verbose=False)
         df_local.loc[df_local[var] < lower_th, var] = lower_th
 
     if verbose:
-        print('  > ' + var + ' values replaced : < ' + str(round(lower_th, 4)) + ' or > ' + str(
+        print('  > ' + var + ' < ' + str(round(lower_th, 4)) + ' or > ' + str(
             round(upper_th, 4)))
 
     return df_local
