@@ -100,7 +100,7 @@ class NAEncoder(object):
             df_local = fill_numerical(df_local, l_var=self.l_var_num, method=self.replace_num_with,
                                       track_num_NA=self.track_num_NA, verbose=verbose)
 
-        if len(self.l_var_cat) + len(self.l_var_num) == 0:
+        if len(self.l_var_cat) + len(self.l_var_num) == 0 and verbose:
             print("  > no transformation to apply")
 
         return df_local

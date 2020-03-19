@@ -74,14 +74,10 @@ class CategoricalEncoder(object):
 
         df_local = df.copy()
 
-        # features not to encode
-        self.l_var_other = [col for col in df_local.columns.tolist() if col not in self.l_var2encode]
-
         # target
         self.target = target
 
         if len(self.l_var2encode) > 0:
-
             if verbose:
                 print(" **method : " + self.method)
                 print("  >", len(self.l_var2encode), "features to encode")
@@ -133,6 +129,9 @@ class CategoricalEncoder(object):
                                      verbose=verbose)
 
             elif self.method == 'deep_encoder':
+                # features not to encode
+                self.l_var_other = [col for col in df_local.columns.tolist() if col not in self.l_var2encode]
+
                 for col in self.l_var2encode:
                     df_local[col] = self.d_int_encoders[col].fit_transform(df_local[col])
 

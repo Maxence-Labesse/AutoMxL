@@ -101,7 +101,7 @@ class DateEncoder(object):
             if self.method == 'timedelta':
                 df_local, _ = date_to_anc(df_local, l_var=self.l_var2encode, date_ref=self.date_ref, verbose=verbose)
 
-        else:
+        elif verbose:
             print("  > No date to transform")
 
         return df_local

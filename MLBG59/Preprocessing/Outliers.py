@@ -96,13 +96,15 @@ class OutliersEncoder(object):
         df_local = df.copy()
 
         if len(list(self.d_cat_outliers.keys())) > 0:
-            print(" - cat aggregated values:")
+            if verbose :
+                print(" - cat aggregated values:")
             for col in self.d_cat_outliers.keys():
                 df_local = replace_category(df_local, col, self.d_cat_outliers[col], replace_with='outliers',
                                             verbose=verbose)
 
         if len(list(self.d_num_outliers.keys())) > 0:
-            print(" - num values replaces:")
+            if verbose:
+                print(" - num values replaces:")
             for col in self.d_num_outliers.keys():
                 df_local = replace_extreme_values(df_local, col, self.d_num_outliers[col][0],
                                                   self.d_num_outliers[col][1], verbose=verbose)

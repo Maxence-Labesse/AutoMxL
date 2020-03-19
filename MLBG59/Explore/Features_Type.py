@@ -1,69 +1,13 @@
 """Variables type identification function
 
-- get_features_type : get all features per type
-- features_from_type : get all features for a selected type
-- is_date : test if a variable is a date
-- is_identifier : test if a variable is an identifier
-- is_verbatim : test if a variable is a verbatim
-- is_boolean : test if a variable is a boolean
-- is_categorical : test if a variable is a categorical one (with more than 2 categories)
+- features_from_type (func): get all features for a selected type
+- is_date (func): test if a variable is a date
+- is_identifier (func): test if a variable is an identifier
+- is_verbatim (func): test if a variable is a verbatim
+- is_boolean (func): test if a variable is a boolean
+- is_categorical (func): test if a variable is a categorical one (with more than 2 categories)
 """
 import pandas as pd
-
-
-def get_features_type(df, l_var=None, th=0.95):
-    """ Get all features per type :
-
-    - date : try to apply to_datetime
-    - identifier :
-        - #(unique values)/#(total values) > threshold (default 0.95)
-        - AND length is the same for all values (for non NA)
-    - verbatim :
-        - #(unique values)/#(total values) >= threshold (default 0.95)
-        - AND length is NOT the same for all values (for non NA)
-    - boolean : #(distinct values) = 2
-    - categorical :
-        - not a date
-        - #(unique values)/#(total values) < threshold (default 0.95)
-        - AND #(uniques values)>2
-        - AND for num values #(unique values)<30
-    - numerical : others
-
-    Parameters
-    ----------
-    df : DataFrame
-        input dataset
-    l_var : list (Default  : None)
-        variable names
-    th : float (Default : 0.95)
-        threshold used to identify identifiers/verbatims variables
-
-    Returns
-    -------
-    dict
-        { type : variables name list}
-    """
-    d_output = {}
-
-    if l_var is None:
-        df_local = df.copy()
-    else:
-        df_local = df[l_var].copy()
-
-    l_col = df_local.columns.tolist()
-
-    for typ in ['date', 'identifier', 'verbatim', 'boolean', 'categorical']:
-        d_output[typ] = features_from_type(df_local, typ, l_var=l_col, th=th)
-        l_col = [x for x in l_col if (x not in d_output[typ])]
-
-    d_output['numerical'] = l_col
-
-    return d_output
-
-
-"""
--------------------------------------------------------------------------------------------------------------------------
-"""
 
 
 def features_from_type(df, typ, l_var=None, th=0.95):
@@ -301,7 +245,7 @@ def is_boolean(df, col):
         except TypeError:
             return False
 
-    return full_col.nunique() == 2 and len(full_col)>2
+    return full_col.nunique() == 2 and len(full_col) > 2
 
 
 """

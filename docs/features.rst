@@ -22,11 +22,6 @@ Features_Type
 .. automodule:: MLBG59.Explore.Features_Type
     :members:
 
-Get Outliers
--------------
-.. automodule:: MLBG59.Explore.Get_Outliers
-    :members:
-
 
 Preprocessing
 =============
@@ -37,17 +32,17 @@ Missing_Values
 
 Categorical Data
 ----------------
-.. automodule:: MLBG59.Preprocessing.Categorical_Data
+.. automodule:: MLBG59.Preprocessing.Categorical
     :members:
 
 Date Data
 --------------------------------------
-.. automodule:: MLBG59.Preprocessing.Date_Data
+.. automodule:: MLBG59.Preprocessing.Date
     :members:
 
 Process Outliers
 -----------------
-.. automodule:: MLBG59.Preprocessing.Process_Outliers
+.. automodule:: MLBG59.Preprocessing.Outliers
     :members:
 
 Features Selection

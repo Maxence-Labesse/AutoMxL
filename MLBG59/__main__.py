@@ -249,13 +249,12 @@ class AutoML(pd.DataFrame):
 
         if verbose:
             color_print("\nNew DataFrame size ")
-        print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
+            print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
 
     """
     --------------------------------------------------------------------------------------------------------------------
     """
 
-    @timer
     def appply_preprocess(self, df, verbose=False):
         """Apply preprocessing
 
@@ -284,9 +283,11 @@ class AutoML(pd.DataFrame):
 
         if len(self.d_preprocess['remove']) > 0:
             df_local = df_local.drop(self.d_preprocess['remove'], axis=1)
-            print("  >", len(self.d_preprocess['remove']), 'removed features')
+            if verbose :
+                print("  >", len(self.d_preprocess['remove']), 'removed features')
         else:
-            print("  > No features to remove")
+            if verbose:
+                print("  > No features to remove")
 
         # Transform date -> time between date and date_ref
         if verbose:
@@ -342,6 +343,7 @@ class AutoML(pd.DataFrame):
             DataFrame : reduced datasset
         """
         assert self.step in ['preprocess'], 'apply preprocess method'
+
         target = self.target
         if verbose:
             print('')

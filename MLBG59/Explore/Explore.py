@@ -1,7 +1,8 @@
 """ Global dataset information functions :
 
- - recap : get global information about the dataset (NA, features type, low variance features, ...)
- - low variance features : identify features with low variance
+ - explore (func): Identify variables types and gives global information about the dataset (NA, low variance features)
+ - low variance features (func): identify features with low variance
+ - - get_features_type (func): get all features per type
 """
 from sklearn.preprocessing import MinMaxScaler
 from MLBG59.Explore.Features_Type import *
@@ -9,7 +10,7 @@ from MLBG59.Utils.Display import *
 
 
 def explore(df, verbose=False):
-    """Get global information about the dataset
+    """Identify variables types and gives global information about the dataset
 
     - Variables type :
         - date
@@ -18,8 +19,10 @@ def explore(df, verbose=False):
         - boolean
         - categorical
         - numerical
-    - NA values
-    - low variance variables
+    - variables containing NA values
+    - low variance and unique values variables
+
+    See get_features_type function doc for type identification heuristics
 
     Parameters
     ----------
@@ -105,8 +108,63 @@ def explore(df, verbose=False):
 """
 
 
+def get_features_type(df, l_var=None, th=0.95):
+    """ Get all features per type :
+
+    - date : try to apply to_datetime
+    - identifier :
+        - #(unique values)/#(total values) > threshold (default 0.95)
+        - AND length is the same for all values (for non NA)
+    - verbatim :
+        - #(unique values)/#(total values) >= threshold (default 0.95)
+        - AND length is NOT the same for all values (for non NA)
+    - boolean : #(distinct values) = 2
+    - categorical :
+        - not a date
+        - #(unique values)/#(total values) < threshold (default 0.95)
+        - AND #(uniques values)>2
+        - AND for num values #(unique values)<30
+    - numerical : others
+
+    Parameters
+    ----------
+    df : DataFrame
+        input dataset
+    l_var : list (Default  : None)
+        variable names
+    th : float (Default : 0.95)
+        threshold used to identify identifiers/verbatims variables
+
+    Returns
+    -------
+    dict
+        { type : variables name list}
+    """
+    d_output = {}
+
+    if l_var is None:
+        df_local = df.copy()
+    else:
+        df_local = df[l_var].copy()
+
+    l_col = df_local.columns.tolist()
+
+    for typ in ['date', 'identifier', 'verbatim', 'boolean', 'categorical']:
+        d_output[typ] = features_from_type(df_local, typ, l_var=l_col, th=th)
+        l_col = [x for x in l_col if (x not in d_output[typ])]
+
+    d_output['numerical'] = l_col
+
+    return d_output
+
+
+"""
+-------------------------------------------------------------------------------------------------------------------------
+"""
+
+
 def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=False):
-    """Identify  features with low variance : (< threshold).
+    """Identify numerical features with low variance : (< threshold).
     Possible to rescale feature before computing.
 
     Parameters
@@ -114,7 +172,8 @@ def low_variance_features(df, var_list=None, threshold=0, rescale=True, verbose=
      df : DataFrame
         input DataFrame
      var_list : list (default : None)
-        names of the variables to test variance
+        names of the variables to check variance
+        if None : all the numerical features
      threshold : float (default : 0)
         variance threshold
      rescale : bool (default : true)

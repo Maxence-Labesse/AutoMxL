@@ -60,7 +60,8 @@ def select_features(df, target, method='pca', verbose=False):
 
     # concat with other dataset features
     if len(l_other) > 0:
-        df_pca = pd.concat((df[l_other], X_transform.iloc[:, :n_dim + 1]), axis=1)
+
+        df_pca = pd.concat((df[l_other].reset_index(drop=True), X_transform.iloc[:, :n_dim + 1]), axis=1)
     else:
         df_pca = X_transform.iloc[:, :n_dim + 1]
 
