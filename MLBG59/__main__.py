@@ -359,7 +359,7 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def train_predict(self, clf='XGBOOST', metric='F1', n_comb=10, comb_seed=None, verbose=True):
+    def train_predict(self, clf='XGBOOST', metric='F1', top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
         """Model hyper-optimisation with random search.
 
         - Create random hyper-parameters combinations from HP grid
@@ -374,6 +374,8 @@ class AutoML(pd.DataFrame):
             classifier used for modelisation
         metric : string (Default : 'F1')
             objective metric
+        top_bagging : boolean (Default : False)
+            enable Bagging
         n_comb : int (Default : 10)
             HP combination number
         comb_seed : int (Default : None)
@@ -403,7 +405,7 @@ class AutoML(pd.DataFrame):
 
         # Create Hyperopt object
         hyperopt = Hyperopt(classifier=clf, grid_param=None, n_param_comb=n_comb,
-                            top_bagging=False, comb_seed=comb_seed)
+                            top_bagging=top_bagging, comb_seed=comb_seed)
 
         # Entrainement des modèles
         if verbose:

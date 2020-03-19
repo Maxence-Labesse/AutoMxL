@@ -1,10 +1,7 @@
 """ Bagging algorithm class. Methods :
 
-- get_params : get bagging object parameters
-- fit : create bagging samples from a DataFrame and fit the model on each sample
-- predict : apply models fitted on sample to a  dataset
-- feature_importance : get features importance of the model
-
+- Bagging (class) : generate new training more balanced and train model for each
+- Bagging_sample (func) : generate bagging sample
 
 """
 from sklearn.ensemble import RandomForestClassifier
@@ -14,7 +11,7 @@ import pandas as pd
 """
 Default bagging parameters
 """
-default_bagging_param = {'niter': 5,
+default_bagging_param = {'n_sample': 5,
                          'pos_sample_size': 1.0,
                          'replace': False}
 
@@ -199,7 +196,7 @@ class Bagging(object):
 
 
 def Bagging_sample(df, target, pos_target_nb, replace=False):
-    """Create a DataFrame sample with selected number of target=1
+    """Generate a DataFrame sample with selected number of target=1
         
     Parameters
     ----------

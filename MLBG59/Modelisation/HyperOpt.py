@@ -1,15 +1,8 @@
 """ Hyperopt class :
 Model hyper-optimisation with random search
 
-Available algorithms : Random Forest, XGBOOST (and bagging)
+- Hyperopt (class) : Model hyper-optimisation with random search
 
-Methods :
-
-- get_params : get Hyperopt object parameters
-- train : fit a model for each HP combination
-- predict : apply the models
-- get_best_model : identify the best model in respect of a metric
-- model_res_to_df : store models summary in DataFrame
 """
 import xgboost
 import random
@@ -30,7 +23,7 @@ default_RF_grid_param = {
 default_XGB_grid_param = {
     'n_estimators': np.random.uniform(low=100, high=300, size=20).astype(int),
     'max_features': ['auto', 'log2'],
-    'max_depth': np.random.uniform(low=3, high=10, size=20).astype(int),
+    'max_depth': np.random.uniform(low=2, high=10, size=20).astype(int),
     'min_samples_split': [5, 10, 15],
     'min_samples_leaf': [1, 2, 4, 8],
     'learning_rate': [0.0001, 0.0003, 0.0006, 0.0009, 0.001, 0.003, 0.006, 0.009, 0.01, 0.03, 0.06, 0.09, 0.1, 0.3,
@@ -70,7 +63,7 @@ class Hyperopt(object):
                  grid_param=None,
                  n_param_comb=10,
                  top_bagging=False,
-                 bagging_param=None,
+                 bagging_param=default_bagging_param,
                  comb_seed=None):
 
         # parameters
@@ -261,7 +254,7 @@ class Hyperopt(object):
             elif self.top_bagging == True:
 
                 # classification probs and votes
-                y_proba, y_pred = self.dict_bagging[key].predict(X)
+                y_proba, y_pred = self.bagging_object[key].predict(X)
 
                 # store
             dict_model = {'y_proba': y_proba,

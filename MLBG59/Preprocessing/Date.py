@@ -218,9 +218,9 @@ def date_to_anc(df, l_var=None, date_ref=None, verbose=False):
     if date_ref is None:
         date_ref = datetime.now()
     else:
-        if isinstance(date_ref,datetime):
+        if isinstance(date_ref, datetime):
             pass
-        else :
+        else:
             date_ref = datetime.strptime(date_ref, '%d/%m/%Y')
 
     # if var_list = None, get all datetime features
