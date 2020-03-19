@@ -22,8 +22,8 @@ class AutoML(pd.DataFrame):
     Available classifiers : Random Forest and XGBOOST.
 
     Note : A method can be applied if the previous one has been applied too.
-    
-    Parameters 
+
+    Parameters
     ----------
     _obj : DataFrame
         Source Dataset
@@ -52,13 +52,15 @@ class AutoML(pd.DataFrame):
         {feature : outliers categories list}
     """
 
-    def __init__(self, *args, target=None):
-        super(AutoML, self).__init__(*args)
+    def __init__(self, *args, target=None, **kwargs):
+        super(AutoML, self).__init__(*args, **kwargs)
         # parameters
         self.target = target
         # attributes
-        self.step = None
+        self.step = 'None'
         self.d_features = None
+        self.d_preprocess = None
+        self.is_fitted = False
 
     def __repr__(self):
         return 'MLBG59 instance'
@@ -75,14 +77,12 @@ class AutoML(pd.DataFrame):
         - NA values
         - low variance variables
 
-        
+
         Parameters
         ----------
-        target : string (Default : None)
-              target name
         verbose : boolean (Default False)
             Get logging information
-            
+
         Returns
         -------
         dict : self.d_features {x : list of variables names}
@@ -100,12 +100,15 @@ class AutoML(pd.DataFrame):
 
         """
         if verbose:
-            print('\n')
             print_title1('Explore')
+
+        df_local = self.copy()
+        if self.target is not None:
+            df_local = df_local.drop(self.target, axis=1)
 
         # call std_audit_dataset function
         self.d_features = explore(
-            self, verbose=verbose)
+            df_local, verbose=verbose)
 
         self.step = 'recap'
 
@@ -128,45 +131,8 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def get_outliers(self, num_xstd=4, cat_freq=0.05, verbose=False):
-        """Identify cat and num features that contain outlier
-
-        * num : x outlier <=> abs(x - mean) > num_xstd * var
-        * cat : Modalities with frequency <x% (Default 5%)
-        
-        Parameters
-        ----------
-        num_xstd : int (Default : 3)
-            Variance gap coefficient
-        cat_freq : float (Default : 0.05)
-            Minimum modality frequency
-        verbose : boolean (Default False)
-            Get logging information
-
-        Returns
-        -------
-        self.d_cat_outliers
-            {variable : list of categories considered as outliers}
-        self.d_num_outliers
-            {variable : [lower_limit, upper_limit]}
-        """
-        assert self.step == 'recap', 'apply recap method'
-
-        if verbose:
-            print_title1('\nGet_outliers')
-
-        # created attributes display
-        if verbose:
-            color_print("\nCreated attributes : ")
-            print("  -> d_num_outliers")
-            print("  -> d_cat_outliers")
-
-    """
-    --------------------------------------------------------------------------------------------------------------------
-    """
-
-    @timer
-    def preprocess(self, date_ref=None, process_outliers=False, cat_method='deep_encoder', verbose=False):
+    def preprocess(self, date_ref=None, process_outliers=False,
+                   cat_method='deep_encoder', verbose=False):
         """Prepare the data before feeding it to the model :
 
             - remove low variance features
@@ -176,10 +142,10 @@ class AutoML(pd.DataFrame):
             - process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)
             - replace outliers (optional)
 
-        you can enable outliers processing if you applied get_outliers() method
-        
         Parameters
         ----------
+        fit_transform : pass
+            pass
         date_ref : string '%d/%m/%y' (Default : None)
             ref date to compute timedelta.
             If None, today date
@@ -194,105 +160,152 @@ class AutoML(pd.DataFrame):
         verbose : boolean (Default False)
             Get logging information
         """
-        if process_outliers:
-            assert self.step == 'get_outliers', 'apply get_outliers method'
-        else:
-            assert self.step in ['recap', 'get_outliers'], 'apply recap (and get_outliers) method'
+        # check pipe step
+        assert self.step in ['recap'], 'apply recap method first'
 
         if verbose:
-            print_title1('\nPreprocess')
+            print_title1('Preprocess')
 
-        target = self.target
+        #######
+        # Fit #
+        #######
+        # Features Removing 'zero variance / verbatims / identifiers)
+        if verbose: color_print("Features removing (zero variance / verbatims / identifiers)")
 
-        ######################################
-        # Remove features with null variance
-        ######################################
+        l_remove = self.d_features['low_variance'] + self.d_features['verbatim'] + self.d_features['identifier']
+
         if verbose:
-            color_print("Remove features with null variance")
-            print('  features : ', list(self.d_features['low_variance']))
+            print("  >", len(l_remove), "features to remove")
+            if len(l_remove) > 0: print(l_remove)
 
-        df_local = self.copy()
-
-        if self.d_features['low_variance'] is not None:
-            for col in self.d_features['low_variance']:
-                if col in df_local.columns.tolist() and col != self.target:
-                    df_local = df_local.drop(col, axis=1)
-
-        # delete removed cols from num_column
-        self.d_features['numerical'] = [x for x in self.d_features['numerical'] if
-                                        x not in self.d_features['low_variance']]
-
-        ##########################################
-        # Remove identifiers and verbatim features
-        ##########################################
-        if verbose:
-            color_print("Remove identifiers and verbatims features")
-            print('  identifiers  : ', list(self.d_features['identifier']))
-            print('  verbatims  : ', list(self.d_features['verbatim']))
-
-        for typ in ['identifier', 'verbatim']:
-            if self.d_features[typ] is not None:
-                for col in self.d_features[typ]:
-                    if col in df_local.columns.tolist() and col != self.target:
-                        df_local = df_local.drop(col, axis=1)
-
-        ####################################################
         # Transform date -> time between date and date_ref
-        ####################################################
-        if verbose:
-            strg = "Transform date -> timelapse"
-            color_print(strg)
+        if verbose: color_print("Transform date")
 
-        if len(self.d_features['date']) > 0:
-            date_encoder = DateEncoder(method='timedelta')
-            date_encoder.fit(df_local, l_var=self.d_features['date'], verbose=verbose)
-            df_local = date_encoder.transform(df_local, verbose=verbose)
-        else:
-            "no features identified as dates"
+        date_encoder = DateEncoder(method='timedelta', date_ref=date_ref)
+        date_encoder.fit(self, l_var=self.d_features['date'], verbose=verbose)
 
-        ##################
-        # fill NA values
-        ##################
-        # num features
+        # Missing Values
         if verbose:
-            color_print('Fill NA')
+            color_print('Missing values')
 
         NA_encoder = NAEncoder()
-        NA_encoder.fit(df_local, l_var=self.d_features['NA'], verbose=verbose)
-        df_local = NA_encoder.transform(df_local, verbose=verbose)
+        NA_encoder.fit(self, l_var=self.d_features['NA'], verbose=verbose)
 
-        ####################
         # replace outliers
-        ####################
         if process_outliers:
+            if verbose:
+                color_print('Outliers')
             out_encoder = OutliersEncoder()
-            print('fit')
-            out_encoder.fit(df_local, l_var=None, verbose=verbose)
-            print('transform')
-            df_local = out_encoder.transform(df_local, verbose=verbose)
+            out_encoder.fit(self, l_var=None, verbose=verbose)
+        else:
+            out_encoder = None
 
-        #########################
         # categorical processing
-        #########################
         if verbose:
             color_print('Categorical and boolean features processing')
 
         cat_col = self.d_features['categorical'] + self.d_features['boolean']
-        if self.target in cat_col:
-            cat_col.remove(self.target)
+        cat_encoder = CategoricalEncoder(method=cat_method)
+        cat_encoder.fit(self, l_var=cat_col, target=self.target, verbose=verbose)
 
-        if len(cat_col) > 0:
-            cat_encoder = CategoricalEncoder(method=cat_method)
-            cat_encoder.fit(df_local, l_var=cat_col, target=self.target, verbose=verbose)
-            df_local = cat_encoder.transform(df_local, verbose=verbose)
+        # store preprocessing params
+        self.d_preprocess = {'remove': l_remove, 'date': date_encoder, 'NA': NA_encoder, 'categorical': cat_encoder}
+        if out_encoder is not None:
+            self.d_preprocess['outlier'] = out_encoder
 
+        # created attributes display
+        if verbose:
+            color_print("\nCreated attributes :  d_preprocess (dict) ")
+            print("Keys :")
+            print("  -> remove")
+            print("  -> date")
+            print("  -> NA")
+            print("  -> categorical")
+            print("  -> outlier (optional")
+
+        # is_fitted
+        self.is_fitted = True
+
+        #############
+        # Transform #
+        #############
+        df_local = self.copy()
+        # store target
+        target = self.target
+
+        # apply preprocessing
+        df_local = self.appply_preprocess(df_local, verbose=verbose)
+
+        # update self
         self.__dict__.update(df_local.__dict__)
         self.target = target
         self.step = 'preprocess'
 
+        # verbose
         if verbose:
             color_print("\nNew DataFrame size ")
-            print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
+        print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
+
+    """
+    --------------------------------------------------------------------------------------------------------------------
+    """
+
+    @timer
+    def appply_preprocess(self, df, verbose=False):
+        """Apply preprocessing
+
+        Parameters
+        ----------
+        df : DataFrame
+            dataset to apply preprocessing on
+        verbose : boolean (Default False)
+            Get logging information
+        Returns
+        -------
+        DataFrame : Preprocessed dataset
+        """
+        if verbose:
+            print_title1('Preprocess-transform')
+
+        # check pipe step and is_fitted
+        assert self.is_fitted, "fit first (please)"
+
+        #
+        df_local = df.copy()
+
+        # Remove features with zero variance / verbatims and identifiers
+        if verbose:
+            color_print("Remove features (zero variance, verbatims and identifiers")
+
+        if len(self.d_preprocess['remove']) > 0:
+            df_local = df_local.drop(self.d_preprocess['remove'], axis=1)
+            print(self.d_preprocess['Remove']
+            Removed
+            features
+            ')
+            else:
+            print(" > No features to remove")
+
+            # Transform date -> time between date and date_ref
+            if verbose:
+                color_print("Transform date")
+            df_local = self.d_preprocess['date'].transform(df_local, verbose=verbose)
+
+            # Missing Values
+            if verbose:
+                color_print('Missing values')
+            df_local = self.d_preprocess['NA'].transform(df_local, verbose=verbose)
+
+            # replace outliers
+            if self.d_preprocess['outlier'] is not None:
+                df_local = self.d_preprocess['outlier'].transform(df_local, verbose=verbose)
+
+            # categorical processing
+            if verbose:
+                color_print('Categorical and boolean features processing')
+            df_local = self.d_preprocess['categorical'].transform(df_local, verbose=verbose)
+
+        return df_local
 
     """
     --------------------------------------------------------------------------------------------------------------------
@@ -308,12 +321,12 @@ class AutoML(pd.DataFrame):
         ----------
         method : string (Default : pca)
             method used to select features
-
-        verbose
+        verbose : boolean (Default False)
+            Get logging information
 
         Returns
         -------
-            DataFrame : reduces datasset
+            DataFrame : reduced datasset
         """
         assert self.step in ['preprocess'], 'apply preprocess method'
         target = self.target

@@ -10,8 +10,8 @@ Default values for
 # Preprocessing #
 #################
 # categorical encoder
-batch_size = 256
-n_epoch = 1
+batch_size = 124
+n_epoch = 15
 learning_rate = 0.001
 crit = 'MSE'
 optim = 'Adam'

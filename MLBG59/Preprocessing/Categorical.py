@@ -42,6 +42,7 @@ class CategoricalEncoder(object):
         self.target = None
         self.d_embeddings = {}
         self.d_int_encoders = {}
+        self.d_metrics = {}
 
     """
     ----------------------------------------------------------------------------------------------
@@ -86,10 +87,20 @@ class CategoricalEncoder(object):
 
         # deep learning embedded representation method
         elif self.method == 'deep_encoder':
-            self.d_int_encoders, self.d_embeddings = \
+            self.d_int_encoders, self.d_embeddings, self.d_metrics = \
                 get_embedded_cat(df_local, self.l_var2encode, target, batch_size, n_epoch, learning_rate,
-                                 verbose=verbose)
+                                 verbose=False)
             self.is_fitted = True
+
+        # verbose
+        if verbose:
+            print(" **method : " + self.method)
+            if self.method == "deep_encoder":
+                print("  NN Loss:",round(self.d_metrics['loss'], 4), "/ Accuracy:",round(self.d_metrics['accuracy'],4))
+                print("  Epoch:",n_epoch,"/ batch:",batch_size, "/ l_rate:", learning_rate)
+            print("  >", len(self.l_var2encode), "features to encode")
+            if len(self.l_var2encode) > 0:
+                print(self.l_var2encode)
 
         return self
 
@@ -274,6 +285,8 @@ def get_embedded_cat(df, var_list, target, batchsize, n_epochs, lr, verbose=Fals
                                                    lr=lr, n_epochs=n_epochs, batchsize=batchsize,
                                                    verbose=verbose)
 
+    d_metrics = {'loss': loss, 'accuracy': accuracy}
+
     ############################################
     # Store embedding and get output DataFrame #
     ############################################
@@ -283,7 +296,7 @@ def get_embedded_cat(df, var_list, target, batchsize, n_epochs, lr, verbose=Fals
         d_embeddings[var_list[i]] = dict(zip(list(range(len(param.data[:, 0]))), param.data.tolist()))
         i += 1
 
-    return d_int_encoders, d_embeddings
+    return d_int_encoders, d_embeddings, d_metrics
 
 
 """

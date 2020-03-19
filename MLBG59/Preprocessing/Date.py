@@ -25,16 +25,22 @@ class DateEncoder(object):
         Date to compute timedelta.
         If None, today date
     """
+
     def __init__(self,
                  method='timedelta',
                  date_ref=None,
                  ):
 
         assert method in ['timedelta'], "invalid method : select timedelta"
+
         self.method = method
-        self.date_ref = date_ref
         self.is_fitted = False
         self.l_var2encode = []
+
+        if date_ref is None:
+            self.date_ref = datetime.now()
+        else:
+            self.date_ref = datetime.strptime(date_ref, '%d/%m/%Y')
 
     """
     ----------------------------------------------------------------------------------------------
@@ -60,12 +66,15 @@ class DateEncoder(object):
         else:
             self.l_var2encode = [col for col in l_var if col in l_date_var]
 
-        if len(self.l_var2encode) > 0:
-            self.is_fitted = True
-            if verbose:
-                print("features to encode: ", self.l_var2encode)
-        else:
-            print("0 features identified as dates")
+        self.is_fitted = True
+
+        # verbose
+        if verbose:
+            if self.method == 'timedelta':
+                print(" **method " + self.method + " / date ref : ", self.date_ref)
+            print("  >", len(self.l_var2encode), "features to transform")
+            if len(self.l_var2encode) > 0:
+                print(self.l_var2encode)
 
     """
     ----------------------------------------------------------------------------------------------
@@ -86,14 +95,18 @@ class DateEncoder(object):
 
         df_local = df.copy()
 
-        # transform features to datetime
-        df_local = all_to_date(df_local, l_var=self.l_var2encode, verbose=verbose)
+        if len(self.l_var2encode) > 0:
+            # transform features to datetime
+            df_local = all_to_date(df_local, l_var=self.l_var2encode, verbose=verbose)
 
-        # method timedelta
-        if self.method == 'timedelta':
-            df_local, _ = date_to_anc(df_local, l_var=self.l_var2encode, date_ref=self.date_ref, verbose=verbose)
+            # method timedelta
+            if self.method == 'timedelta':
+                df_local, _ = date_to_anc(df_local, l_var=self.l_var2encode, date_ref=self.date_ref, verbose=verbose)
 
-            return df_local
+        else:
+            print("  > No date to transform")
+
+        return df_local
 
     """
     ----------------------------------------------------------------------------------------------

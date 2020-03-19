@@ -63,13 +63,16 @@ class NAEncoder(object):
             self.l_var_cat = [col for col in l_var if col in l_str and df[col].isna().sum() > 0]
             self.l_var_num = [col for col in l_var if col in l_num and df[col].isna().sum() > 0]
 
-        if len(self.l_var_cat) > 0 or len(self.l_var_num) > 0:
-            self.is_fitted = True
+        self.is_fitted = True
 
+        # verbose
         if verbose:
-            print("features to encode")
-            print("cat :", self.l_var_cat)
-            print("num :", self.l_var_num)
+            print(" **method cat:", self.replace_cat_with, " / num:", self.replace_num_with)
+            print("  >", len(self.l_var_cat) + len(self.l_var_num), "features to fill")
+            if len(self.l_var_cat) > 0:
+                print("  - cat", self.l_var_cat)
+            if len(self.l_var_num) > 0:
+                print("  - num", self.l_var_num)
 
     """
     ----------------------------------------------------------------------------------------------
@@ -96,6 +99,9 @@ class NAEncoder(object):
         if len(self.l_var_num) > 0:
             df_local = fill_numerical(df_local, l_var=self.l_var_num, method=self.replace_num_with,
                                       track_num_NA=self.track_num_NA, verbose=verbose)
+
+        if len(self.l_var_cat) + len(self.l_var_num) == 0:
+            print("no transformation to apply")
 
         return df_local
 

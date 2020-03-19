@@ -228,12 +228,12 @@ def train_deep_encoder(torch_dataset, model, optimizer, criterion, lr, n_epochs,
         if verbose:
             color_print("Epoch " + str(ep))
             print("loss : ", loss.item())
-            print("accurdy : ", accuracy.item() / y.shape[0])
+            print("accuracy : ", accuracy.item() / y.shape[0])
 
-            # Backward Pass and Optimization
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+        # Backward Pass and Optimization
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
     # plot
     if verbose:
@@ -244,4 +244,4 @@ def train_deep_encoder(torch_dataset, model, optimizer, criterion, lr, n_epochs,
         plt.title('Accuracy')
         plt.show()
 
-    return model, loss, accuracy
+    return model, l_loss[-1], l_accuracy[-1]

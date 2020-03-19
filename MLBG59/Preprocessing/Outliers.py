@@ -19,7 +19,7 @@ class OutliersEncoder(object):
     """
 
     def __init__(self,
-                 cat_threshold=0.05,
+                 cat_threshold=0.02,
                  num_xstd=4
                  ):
 
@@ -60,13 +60,22 @@ class OutliersEncoder(object):
 
         if len(self.l_var_cat) > 0:
             self.d_cat_outliers = get_cat_outliers(df, l_var=self.l_var_cat, threshold=self.cat_threshold,
-                                                   verbose=verbose)
+                                                   verbose=False)
 
         if len(self.l_var_num) > 0:
-            self.d_num_outliers = get_num_outliers(df, l_var=self.l_var_num, xstd=self.num_xstd, verbose=verbose)
+            self.d_num_outliers = get_num_outliers(df, l_var=self.l_var_num, xstd=self.num_xstd, verbose=False)
 
-        if len(self.d_cat_outliers.keys()) > 0 or len(self.d_num_outliers.keys()) > 0:
-            self.is_fitted = True
+        self.is_fitted = True
+
+        # verbose
+        if verbose:
+            print(" **method cat: frequency<" + str(self.cat_threshold)
+                  + " / num:( x: |x - mean| > " + str(self.num_xstd) + "* var)")
+            print("  >", len(self.l_var_cat) + len(self.l_var_num), "features with outliers")
+            if len(self.l_var_cat) > 0:
+                print("  - cat", self.l_var_cat)
+            if len(self.l_var_num) > 0:
+                print("  - num", self.l_var_num)
 
     """
     ----------------------------------------------------------------------------------------------
@@ -306,12 +315,9 @@ def replace_extreme_values(df, var, lower_th=None, upper_th=None, verbose=False)
     df_local = df.copy()
 
     # replace values with upper_limit and lower_limit
-    print(var)
     if upper_th is not None:
-        print(upper_th)
         df_local.loc[df_local[var] > upper_th, var] = upper_th
     if lower_th is not None:
-        print(lower_th)
         df_local.loc[df_local[var] < lower_th, var] = lower_th
 
     if verbose:
