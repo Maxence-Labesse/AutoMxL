@@ -283,7 +283,7 @@ class AutoML(pd.DataFrame):
 
         if len(self.d_preprocess['remove']) > 0:
             df_local = df_local.drop(self.d_preprocess['remove'], axis=1)
-            if verbose :
+            if verbose:
                 print("  >", len(self.d_preprocess['remove']), 'removed features')
         else:
             if verbose:
@@ -429,5 +429,7 @@ class AutoML(pd.DataFrame):
             print_title1('best model : ' + str(best_model_idx))
             print(metric + ' : ' + str(round(dict_res_model[best_model_idx]['metrics'][metric], 4)))
             print('AUC : ' + str(round(dict_res_model[best_model_idx]['metrics']['Roc_auc'], 4)))
+            if round(dict_res_model[best_model_idx]['metrics'][metric],4) == 1.0:
+                color_print("Là tu te dis : c'était pas qu'un physique finalement", 32)
 
         return dict_res_model, l_valid_models, best_model_idx, df_model_res

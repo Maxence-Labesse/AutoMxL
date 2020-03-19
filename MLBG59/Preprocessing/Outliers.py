@@ -12,9 +12,17 @@ from MLBG59.Utils.Display import *
 
 
 class OutliersEncoder(object):
-    """
+    """Identify et replace outliers for categorical dang numerical features
+
+    - num : x outlier <=> abs(x - mean) > xstd * var
+    - cat : x outlier category <=> with frequency <x% (Default 5%)
+
     Parameters
     ----------
+    cat_threshold : float (default 0.02)
+        Minimum modality frequency
+     num_xstd : int (Default : 3)
+        Variance gap coef
 
     """
 
@@ -44,27 +52,32 @@ class OutliersEncoder(object):
             input dataset
         l_var : list
             features to encode.
-            If None, all features identified as dates (see Features_Type module)
+            If None, all features
         verbose : boolean (Default False)
             Get logging information
         """
+        # get num and cat features
         l_num = [col for col in df.columns.tolist() if df[col].dtype != 'object']
         l_str = [col for col in df.columns.tolist() if df[col].dtype == 'object']
 
+        # get valid values (not boolean)
         if l_var is None:
-            self.l_var_cat = [col for col in l_str]
-            self.l_var_num = [col for col in l_num]
+            self.l_var_cat = [col for col in l_str if df[col].nunique() > 2]
+            self.l_var_num = [col for col in l_num if df[col].nunique() > 2]
         else:
-            self.l_var_cat = [col for col in l_var if col in l_str and df[col].nunique()>2]
-            self.l_var_num = [col for col in l_var if col in l_num and df[col].nunique()>2]
+            self.l_var_cat = [col for col in l_var if col in l_str and df[col].nunique() > 2]
+            self.l_var_num = [col for col in l_var if col in l_num and df[col].nunique() > 2]
 
+        # cat outliers
         if len(self.l_var_cat) > 0:
             self.d_cat_outliers = get_cat_outliers(df, l_var=self.l_var_cat, threshold=self.cat_threshold,
                                                    verbose=False)
 
+        # num outliers
         if len(self.l_var_num) > 0:
             self.d_num_outliers = get_num_outliers(df, l_var=self.l_var_num, xstd=self.num_xstd, verbose=False)
 
+        # Fitted !
         self.is_fitted = True
 
         # verbose
@@ -82,7 +95,7 @@ class OutliersEncoder(object):
     """
 
     def transform(self, df, verbose=False):
-        """Transform dataset categorical features using the encoder.
+        """Transform dataset  features using the encoder.
         Can be done only if encoder has been fitted
 
         Parameters
@@ -95,13 +108,15 @@ class OutliersEncoder(object):
         assert self.is_fitted, 'fit the encoding first using .fit method'
         df_local = df.copy()
 
+        # cat features
         if len(list(self.d_cat_outliers.keys())) > 0:
-            if verbose :
+            if verbose:
                 print(" - cat aggregated values:")
             for col in self.d_cat_outliers.keys():
                 df_local = replace_category(df_local, col, self.d_cat_outliers[col], replace_with='outliers',
                                             verbose=verbose)
 
+        # num features
         if len(list(self.d_num_outliers.keys())) > 0:
             if verbose:
                 print(" - num values replaces:")
@@ -109,6 +124,7 @@ class OutliersEncoder(object):
                 df_local = replace_extreme_values(df_local, col, self.d_num_outliers[col][0],
                                                   self.d_num_outliers[col][1], verbose=verbose)
 
+        # if no features with outliers
         if len(list(self.d_cat_outliers.keys())) + len(list(self.d_num_outliers.keys())) == 0:
             print("  > no outlier to replace")
 
@@ -132,7 +148,9 @@ class OutliersEncoder(object):
             Get logging information
         """
         df_local = df.copy()
+        # fit
         self.fit(df_local, l_var=l_var, verbose=verbose)
+        # transform
         df_local = self.transform(df_local, verbose=verbose)
 
         return df_local

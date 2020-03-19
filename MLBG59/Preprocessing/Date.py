@@ -18,7 +18,7 @@ class DateEncoder(object):
 
     Parameters
     ----------
-    method : string (Default : deep_encoder)
+    method : string (Default : timedelta)
         method used to encode dates
         Available methods : "timedelta"
     date_ref : string '%d/%m/%y' (Default : None)
@@ -28,15 +28,14 @@ class DateEncoder(object):
 
     def __init__(self,
                  method='timedelta',
-                 date_ref=None,
-                 ):
+                 date_ref=None,):
 
         assert method in ['timedelta'], "invalid method : select timedelta"
 
         self.method = method
         self.is_fitted = False
         self.l_var2encode = []
-
+        # if date_ref not filled, set to today's date
         if date_ref is None:
             self.date_ref = datetime.now()
 
@@ -53,23 +52,27 @@ class DateEncoder(object):
             input dataset
         l_var : list
             features to encode.
-            If None, all features identified as dates (see Features_Type module)
+            If None, contains all features identified as dates (see Features_Type module)
         verbose : boolean (Default False)
             Get logging information
         """
+        # get date features
         l_date_var = features_from_type(df, typ='date', l_var=None)
 
+        # list of features to encode (in l_var and l_date_var)
         if l_var is None:
             self.l_var2encode = l_date_var
         else:
             self.l_var2encode = [col for col in l_var if col in l_date_var]
 
+        # Fitted !!!!
         self.is_fitted = True
 
         # verbose
         if verbose:
             if self.method == 'timedelta':
                 print(" **method " + self.method + " / date ref : ", self.date_ref)
+
             print("  >", len(self.l_var2encode), "features to transform")
             if len(self.l_var2encode) > 0:
                 print(" ", self.l_var2encode)
@@ -93,6 +96,7 @@ class DateEncoder(object):
 
         df_local = df.copy()
 
+        # if list of features to encode not empty
         if len(self.l_var2encode) > 0:
             # transform features to datetime
             df_local = all_to_date(df_local, l_var=self.l_var2encode, verbose=verbose)
@@ -101,6 +105,7 @@ class DateEncoder(object):
             if self.method == 'timedelta':
                 df_local, _ = date_to_anc(df_local, l_var=self.l_var2encode, date_ref=self.date_ref, verbose=verbose)
 
+        # if no features to transform
         elif verbose:
             print("  > No date to transform")
 
@@ -124,7 +129,9 @@ class DateEncoder(object):
             Get logging information
         """
         df_local = df.copy()
+        # fit
         self.fit(df_local, l_var=l_var, verbose=verbose)
+        # transform
         df_local = self.transform(df_local, verbose=verbose)
 
         return df_local
