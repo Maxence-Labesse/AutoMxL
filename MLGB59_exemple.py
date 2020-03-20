@@ -10,7 +10,7 @@ df, target = category_to_target(df_raw, "y", "yes")
 new_df, target = category_to_target(df_raw, var=df, cat=target)
 
 # instantiate AutoML object
-auto_df = AutoML(new_df.copy(), target=target)
+auto_df = AML(new_df.copy(), target=target)
 
 # explore data
 auto_df.explore(verbose=True)

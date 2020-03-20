@@ -1,5 +1,6 @@
 """ Features selection
 
+- select_features (func) : features selection following method
 
 """
 from sklearn.decomposition import PCA
@@ -9,7 +10,7 @@ import numpy as np
 
 
 def select_features(df, target, method='pca', verbose=False):
-    """features selection from selected method
+    """features selection following  method
 
     - pca : use pca to reduce dataset dimensions
     - no_rescale_pca : use pca without rescaling data
@@ -65,6 +66,7 @@ def select_features(df, target, method='pca', verbose=False):
     else:
         df_pca = X_transform.iloc[:, :n_dim + 1]
 
+    # verbose
     if verbose:
         print("Numerical Dimensions reduction : " + str(len(l_num)) + " - > " + str(n_dim + 1))
         print("explained inertia : " + str(round(np.cumsum(pca.explained_variance_ratio_)[n_dim], 4)))

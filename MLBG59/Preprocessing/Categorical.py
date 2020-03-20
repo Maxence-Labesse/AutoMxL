@@ -21,6 +21,7 @@ class CategoricalEncoder(object):
 
     - one hot encoding
     - deep_encoder : Build and train a Neural Network for the creation of embeddings for categorical variables.
+    (https://www.fast.ai/2018/04/29/categorical-embeddings/)
 
     Default NN model parameters are stored in param_config.py file
 

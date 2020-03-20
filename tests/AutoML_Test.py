@@ -2,7 +2,7 @@ import os
 import sys
 cwd = os.getcwd()
 sys.path.insert(0, os.path.dirname(cwd))
-from MLBG59.__main__ import AutoML
+from MLBG59.__main__ import AML
 import unittest
 import pandas as pd
 import numpy as np
@@ -16,7 +16,7 @@ class TestInit(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Init"""
-        cls.df = AutoML(df_test.copy(), target='y_yes')
+        cls.df = AML(df_test.copy(), target='y_yes')
 
     # Test autoML object instantiation from DataFrame
     def test_df_is_not_none(self):
@@ -37,7 +37,7 @@ class TestAudit(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Instantiate autoML object from df_test and target
-        cls.df = AutoML(df_test.copy(), target='y_yes')
+        cls.df = AML(df_test.copy(), target='y_yes')
         # Explore
         cls.df.explore(verbose=False)
 
@@ -73,7 +73,7 @@ class TestGet_outliers(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # instantiate autoML object
-        cls.df = AutoML(df_test.copy(), target='y_yes')
+        cls.df = AML(df_test.copy(), target='y_yes')
         # audit
         cls.df.explore(verbose=False)
         # get outliers
@@ -100,7 +100,7 @@ class TestPreprocess(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # instantiate autoML object
-        cls.df = AutoML(df_test.copy(), target='y_yes')
+        cls.df = AML(df_test.copy(), target='y_yes')
         # audit
         cls.df.explore(verbose=False)
         # get outliers

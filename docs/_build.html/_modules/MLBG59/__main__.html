@@ -162,7 +162,7 @@
 
 
 <div class="viewcode-block" id="AutoML"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AutoML">[docs]</a><span class="k">class</span> <span class="nc">AutoML</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Covers the complete pipeline of a classification project from the raw dataset to a deployable model.</span>
+    <span class="sd">&quot;&quot;&quot;Covers the complete pipeline of a classification project from the raw dataset to a deployable train_model.</span>
 
 <span class="sd">    AutoML is Built as a class inherited from pandas DataFrame for which each step correponds to a class method that</span>
 <span class="sd">    can be called with only default parameters or chosen ones.</span>
@@ -299,7 +299,7 @@
 
     <span class="nd">@timer</span>
     <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Prepare the data before feeding it to the model :</span>
+        <span class="sd">&quot;&quot;&quot;Prepare the data before feeding it to the train_model :</span>
 
 <span class="sd">            - remove low variance features</span>
 <span class="sd">            - transform date features to timedelta</span>
@@ -411,12 +411,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@timer</span>
-    <span class="k">def</span> <span class="nf">train_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Model hyper-optimisation with random search.</span>
+    <span class="k">def</span> <span class="nf">train_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;train_model hyper-optimisation with random search.</span>
 
 <span class="sd">        - Creates random hyper-parameters combinations from HP grid</span>
-<span class="sd">        - train and test a model for each combination</span>
-<span class="sd">        - get the best model in respect of a selected metric among valid model</span>
+<span class="sd">        - train and test a train_model for each combination</span>
+<span class="sd">        - get the best train_model in respect of a selected metric among valid train_model</span>
 
 <span class="sd">        Available classifiers : Random Forest, XGBOOST (and bagging)</span>
 <span class="sd">        </span>
@@ -436,11 +436,11 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
-<span class="sd">            {model_index : {&#39;HP&#39;, &#39;probas&#39;, &#39;model&#39;, &#39;features_importance&#39;, &#39;train_metrics&#39;, &#39;metrics&#39;, &#39;output&#39;}</span>
+<span class="sd">            {model_index : {&#39;HP&#39;, &#39;probas&#39;, &#39;train_model&#39;, &#39;features_importance&#39;, &#39;train_metrics&#39;, &#39;metrics&#39;, &#39;output&#39;}</span>
 <span class="sd">        list</span>
-<span class="sd">            valid model indexes</span>
+<span class="sd">            valid train_model indexes</span>
 <span class="sd">        int</span>
-<span class="sd">            best model index</span>
+<span class="sd">            best train_model index</span>
 <span class="sd">        DataFrame</span>
 <span class="sd">            Models info and metrics stored in DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -465,13 +465,13 @@
         <span class="c1"># Application des modèles sur X_test :</span>
         <span class="n">dict_res_model</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
-        <span class="c1"># selection best model</span>
+        <span class="c1"># selection best train_model</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">best model selection&#39;</span><span class="p">)</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">best train_model selection&#39;</span><span class="p">)</span>
         <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">l_valid_models</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">get_best_model</span><span class="p">(</span><span class="n">dict_res_model</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">delta_auc_th</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;best model : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">best_model_idx</span><span class="p">))</span>
+            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;best train_model : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">best_model_idx</span><span class="p">))</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">metric</span> <span class="o">+</span> <span class="s1">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">dict_res_model</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AUC : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">dict_res_model</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="s1">&#39;Roc_auc&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
 

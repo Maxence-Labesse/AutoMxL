@@ -69,18 +69,17 @@ class Hyperopt(object):
         # parameters
         if grid_param is None:
             if classifier == 'RF':
-                grid_param = default_RF_grid_param
+                self.grid_param = default_RF_grid_param
             elif classifier == 'XGBOOST':
-                grid_param = default_XGB_grid_param
+                self.grid_param = default_XGB_grid_param
         self.classifier = classifier
-        self.grid_param = grid_param
         self.n_param_comb = n_param_comb
         self.top_bagging = top_bagging
         self.bagging_param = bagging_param
         self.comb_seed = comb_seed
         # attributes
         self.train_model_dict = None
-        self.bagging_object = None
+        self.d_bagging = {}
 
     """
     -------------------------------------------------------------------------------------------------------------
@@ -139,7 +138,6 @@ class Hyperopt(object):
 
         # init train_model_dict
         self.train_model_dict = {}
-        self.bagging_object = {}
 
         # for each HP combination :
         for l in range(len(sample_combinations)):
@@ -183,7 +181,7 @@ class Hyperopt(object):
                 # classification probas
                 y_proba, y_pred = bag.predict(df_train.drop(target, axis=1))
 
-                self.bagging_object[l] = bag
+                self.d_bagging[l] = bag
 
             # Model evaluation
             eval_dict = classifier_evaluate(y_train, y_pred, y_proba, verbose=0)
@@ -242,7 +240,7 @@ class Hyperopt(object):
             t_ini_model = datetime.now()
 
             # Without bagging
-            if self.top_bagging == False:
+            if not self.top_bagging:
 
                 # classification probas
                 y_proba = modl.predict_proba(X)[:, 1]
@@ -251,10 +249,10 @@ class Hyperopt(object):
                 y_pred = modl.predict(X)
 
             # With bagging
-            elif self.top_bagging == True:
+            elif self.top_bagging:
 
                 # classification probs and votes
-                y_proba, y_pred = self.bagging_object[key].predict(X)
+                y_proba, y_pred = self.d_bagging[key].predict(X)
 
                 # store
             dict_model = {'y_proba': y_proba,

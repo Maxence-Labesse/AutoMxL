@@ -153,9 +153,9 @@
 <span></span><span class="sd">&quot;&quot;&quot; Bagging algorithm class. Methods :</span>
 
 <span class="sd">- get_params : get bagging object parameters</span>
-<span class="sd">- fit : create bagging samples from a DataFrame and fit the model on each sample</span>
+<span class="sd">- fit : create bagging samples from a DataFrame and fit the train_model on each sample</span>
 <span class="sd">- predict : apply models fitted on sample to a  dataset</span>
-<span class="sd">- feature_importance : get features importance of the model</span>
+<span class="sd">- feature_importance : get features importance of the train_model</span>
 
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -175,15 +175,15 @@
     <span class="sd">&quot;&quot;&quot;Meta-algo designed to improve the stability and accuracy of ML classif/regression algos</span>
 <span class="sd">    or to face an &quot;imbalanced target distribution&quot; issue.</span>
 <span class="sd">    </span>
-<span class="sd">    Bagging generates m new training sets more balanced. Then, a model is fitted on each</span>
+<span class="sd">    Bagging generates m new training sets more balanced. Then, a train_model is fitted on each</span>
 <span class="sd">    sample and outputs are combined by averaging (for regression) or voting (for classification).</span>
 
 <span class="sd">    Available classifiers : Random Forest and XGBOOST</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    clf : Model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)</span>
-<span class="sd">        Model fitted on the samples</span>
+<span class="sd">    clf : train_model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)</span>
+<span class="sd">        train_model fitted on the samples</span>
 <span class="sd">    n_sample : int (Default : 5)</span>
 <span class="sd">        number a samples</span>
 <span class="sd">    pos_sample_size : int/float (Default : 1.0)</span>
@@ -234,7 +234,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Bagging.fit"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create bagging samples from a DataFrame and fit the model (self.clf) on each sample</span>
+        <span class="sd">&quot;&quot;&quot;Create bagging samples from a DataFrame and fit the train_model (self.clf) on each sample</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -266,10 +266,10 @@
             <span class="n">y_train_bag</span> <span class="o">=</span> <span class="n">X_train_bag</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">X_train_bag</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
 
-            <span class="c1"># Create and store model</span>
+            <span class="c1"># Create and store train_model</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span>
 
-            <span class="c1"># fit model for each sample</span>
+            <span class="c1"># fit train_model for each sample</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_bag</span><span class="p">,</span> <span class="n">y_train_bag</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -285,7 +285,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        df : DataFrame</span>
-<span class="sd">            Dataset to apply the model</span>
+<span class="sd">            Dataset to apply the train_model</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -299,7 +299,7 @@
 
         <span class="c1"># for each fitted models</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">niter</span><span class="p">):</span>
-            <span class="c1"># apply the model on test set</span>
+            <span class="c1"># apply the train_model on test set</span>
             <span class="n">y_prob_rf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
             <span class="c1"># probabilities storage in matrix</span>
             <span class="n">mat_prob</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_prob_rf</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
@@ -316,7 +316,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Bagging.feature_importance"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.feature_importance">[docs]</a>    <span class="k">def</span> <span class="nf">feature_importance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get features importance of the model by averaging importance of models fitted on the samples</span>
+        <span class="sd">&quot;&quot;&quot;Get features importance of the train_model by averaging importance of models fitted on the samples</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>

@@ -152,7 +152,7 @@
   <h1>Source code for MLBG59.Modelisation.Classifiers</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Classifiers utils functions :</span>
 
-<span class="sd">- features_importance_select : select top features according to model importance</span>
+<span class="sd">- features_importance_select : select top features according to train_model importance</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="features_importance_select"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Classifiers.features_importance_select">[docs]</a><span class="k">def</span> <span class="nf">features_importance_select</span><span class="p">(</span><span class="n">eval_dict</span><span class="p">,</span> <span class="n">treshold</span><span class="p">):</span>
@@ -161,7 +161,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    eval_dict : dict</span>
-<span class="sd">        Model evaluation dict</span>
+<span class="sd">        train_model evaluation dict</span>
 <span class="sd">    threshold : int/float</span>
 
 <span class="sd">        - if int : number of top important features to get</span>

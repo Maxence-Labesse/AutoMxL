@@ -9,9 +9,10 @@ import numpy as np
 
 
 class NAEncoder(object):
-    """ Encoder that replaces missing values
+    """ Missing values filling
 
     Available methods to replace missing values
+
     - num : metdian/mean/zero
     - cat : 'NR'
 
@@ -49,13 +50,15 @@ class NAEncoder(object):
             input dataset
         l_var : list
             features to encode.
-            If None, all features identified as dates (see Features_Type module)
+            If None, all features
         verbose : boolean (Default False)
             Get logging information
         """
+        # get num and categorical columns
         l_num = [col for col in df.columns.tolist() if df[col].dtype != 'object']
         l_str = [col for col in df.columns.tolist() if df[col].dtype == 'object']
 
+        # get list of valid features (containing NA)
         if l_var is None:
             self.l_var_cat = [col for col in l_str if df[col].isna().sum() > 0]
             self.l_var_num = [col for col in l_num if df[col].isna().sum() > 0]
@@ -63,6 +66,7 @@ class NAEncoder(object):
             self.l_var_cat = [col for col in l_var if col in l_str and df[col].isna().sum() > 0]
             self.l_var_num = [col for col in l_var if col in l_num and df[col].isna().sum() > 0]
 
+        # Fitted !
         self.is_fitted = True
 
         # verbose
@@ -90,16 +94,20 @@ class NAEncoder(object):
             Get logging information
         """
         assert self.is_fitted, 'fit the encoding first using .fit method'
+
         df_local = df.copy()
 
+        # categorical features filling
         if len(self.l_var_cat) > 0:
             df_local = fill_categorical(df_local, l_var=self.l_var_cat, method=self.replace_cat_with,
                                         verbose=verbose)
 
+        # numerical features filling
         if len(self.l_var_num) > 0:
             df_local = fill_numerical(df_local, l_var=self.l_var_num, method=self.replace_num_with,
                                       track_num_NA=self.track_num_NA, verbose=verbose)
 
+        # if no feature to fill
         if len(self.l_var_cat) + len(self.l_var_num) == 0 and verbose:
             print("  > no transformation to apply")
 
@@ -123,7 +131,9 @@ class NAEncoder(object):
             Get logging information
         """
         df_local = df.copy()
+        # fit
         self.fit(df_local, l_var=l_var, verbose=verbose)
+        # transform
         df_local = self.transform(df_local, verbose=verbose)
 
         return df_local

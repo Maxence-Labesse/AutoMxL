@@ -11,7 +11,7 @@ The purpose of this project is to provide a Python library that automate the dif
 - Load
 - Audit
 - Preprocess
-- Model
+- train_model
 
 It can be used aswell as a catalog of functions to ease and speed up repetitive Data Scientists tasks
 

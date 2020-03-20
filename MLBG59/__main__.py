@@ -1,3 +1,5 @@
+from abc import ABC
+
 from MLBG59.Utils.Display import print_title1
 from MLBG59.Utils.Decorators import timer
 from MLBG59.Explore.Explore import explore
@@ -9,19 +11,23 @@ from MLBG59.Modelisation.HyperOpt import *
 from MLBG59.Select_Features.Select_Features import select_features
 
 
-class AutoML(pd.DataFrame):
+class AML(pd.DataFrame, ABC):
     """Covers the complete pipeline of a classification project from a raw dataset to a deployable model.
 
-    AutoML is built as a class inherited from pandas DataFrame. Each step corresponds to a class method that
-    can be called with default or filled parameters.
+    AutoML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to a class
+    method that can be called with default or filled parameters.
 
-    - Data exploration (dataset information and outliers analysis)
-    - Preprocessing (clean and prepare data)
-    - Modelisation (random search)
+    - Epxlore: dataset exploration and features types identification
+    - Preprocess: clean and prepare data (optional : outliers processing).
+    - Preprocess_apply : allow to apply fitted preprocessing to a dataset
+    - Select_Features: features selection (optional)
+    - Model (random search)
+    - Model_apply : allow to apply fitted model to a dataset
 
-    Available classifiers : Random Forest and XGBOOST.
+    Notes :
 
-    Note : A method can be applied if the previous one has been applied too.
+    - A method requires that the former one has been applied
+    - Target has to be binary (multi-class incoming) and encoded as int (1/0)
 
     Parameters
     ----------
@@ -35,25 +41,28 @@ class AutoML(pd.DataFrame):
 
         {x : list of variables names}
 
-        - date : date features
-        - identifier : identifier features
-        - verbatim : verbatim features
-        - boolean : boolean features
-        - categorical : categorical features
-        - numerical : numerical features
-        - categorical : categorical features
-        - date : date features
-        - NA : features which contains NA values
-        - low_variance : list of the features with low variance
+        - date: date features
+        - identifier: identifier features
+        - verbatim: verbatim features
+        - boolean: boolean features
+        - categorical: categorical features
+        - numerical: numerical features
+        - categorical: categorical features
+        - date: date features
+        - NA: features which contains NA values
+        - low_variance: list of the features with low variance and unique values
 
-    d_num_outliers : dict (created with get_outliers method)
-        {feature : [lower_limit,upper_limit]}
-    d_cat_outliers : dict (created with get_outliers method)
-        {feature : outliers categories list}
-    """
+    d_preprocess : dict (created with preprocess method)
+
+        - remove: list of the features to remove
+        - date: fitted DateEncoder object
+        - NA: Fitted NAEncoder object
+        - categorical: Fitted CategoricalEncoder object
+        - outlier: Fitted OutlierEncoder object
+  """
 
     def __init__(self, *args, target=None, **kwargs):
-        super(AutoML, self).__init__(*args, **kwargs)
+        super(AML, self).__init__(*args, **kwargs)
         # parameters
         self.target = target
         # attributes
@@ -61,6 +70,10 @@ class AutoML(pd.DataFrame):
         self.d_features = None
         self.d_preprocess = None
         self.is_fitted = False
+
+    """
+    --------------------------------------------------------------------------------------------------------------------
+    """
 
     def __repr__(self):
         return 'MLBG59 instance'
@@ -75,7 +88,7 @@ class AutoML(pd.DataFrame):
 
         - Variables type
         - NA values
-        - low variance variables
+        - low variance and unique values variables
 
         Target variable is not included for exploration
 
@@ -83,22 +96,6 @@ class AutoML(pd.DataFrame):
         ----------
         verbose : boolean (Default False)
             Get logging information
-
-        Returns
-        -------
-        dict : self.d_features {x : list of variables names}
-
-        - date : date features
-        - identifier : identifier features
-        - verbatim : verbatim features
-        - boolean : boolean features
-        - categorical : categorical features
-        - numerical : numerical features
-        - categorical : categorical features
-        - date : date features
-        - NA : features which contains NA values
-        - low_variance : list of the features with low variance
-
         """
         if verbose:
             print_title1('Explore')
@@ -143,23 +140,25 @@ class AutoML(pd.DataFrame):
             - process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)
             - replace outliers (optional)
 
+        Available categorical encoding methods :
+
+        -
+
         Parameters
         ----------
-        fit_transform : pass
-            pass
         date_ref : string '%d/%m/%y' (Default : None)
-            ref date to compute timedelta.
+            ref date to compute date features timedelta.
             If None, today date
         process_outliers : boolean (Default : False)
-            Enable outliers replacement (if get_outliers method applied)
-        cat_method : string (Default : 'one_hot')
+            Enable outliers replacement
+                verbose : boolean (Default False)
+            Get logging information
+        cat_method : string (Default : 'deep_encoder')
             Categorical features encoding method
 
-            - one_hot
-            - deep_encoder
 
-        verbose : boolean (Default False)
-            Get logging information
+
+
         """
         # check pipe step
         assert self.step in ['recap'], 'apply recap method first'
@@ -209,9 +208,12 @@ class AutoML(pd.DataFrame):
             color_print('Encode Categorical and boolean')
 
         cat_col = self.d_features['categorical'] + self.d_features['boolean']
+        # apply one-hot encoding if target not filled in class parameters
         if self.target is None:
             cat_method = 'one_hot'
             color_print('No target -> one_hot encoding !', 31)
+
+        # get embedding
         cat_encoder = CategoricalEncoder(method=cat_method)
         cat_encoder.fit(self, l_var=cat_col, target=self.target, verbose=verbose)
 
@@ -227,7 +229,7 @@ class AutoML(pd.DataFrame):
             print("  -> date")
             print("  -> NA")
             print("  -> categorical")
-            print("  -> outlier (optional)")
+            print("  -> outlier (optional)\n")
 
         # is_fitted
         self.is_fitted = True
@@ -240,7 +242,7 @@ class AutoML(pd.DataFrame):
         target = self.target
 
         # apply preprocessing
-        df_local = self.appply_preprocess(df_local, verbose=verbose)
+        df_local = self.preprocess_apply(df_local, verbose=verbose)
 
         # update self
         self.__dict__.update(df_local.__dict__)
@@ -255,8 +257,9 @@ class AutoML(pd.DataFrame):
     --------------------------------------------------------------------------------------------------------------------
     """
 
-    def appply_preprocess(self, df, verbose=False):
-        """Apply preprocessing
+    def preprocess_apply(self, df, verbose=False):
+        """Apply preprocessing.
+        Requires preprocess method to have been applied (so that all encoder are fitted)
 
         Parameters
         ----------
@@ -359,7 +362,7 @@ class AutoML(pd.DataFrame):
     """
 
     @timer
-    def train_predict(self, clf='XGBOOST', metric='F1', top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
+    def train_model(self, clf='XGBOOST', metric='F1', top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
         """Model hyper-optimisation with random search.
 
         - Create random hyper-parameters combinations from HP grid
@@ -407,29 +410,39 @@ class AutoML(pd.DataFrame):
         hyperopt = Hyperopt(classifier=clf, grid_param=None, n_param_comb=n_comb,
                             top_bagging=top_bagging, comb_seed=comb_seed)
 
-        # Entrainement des modèles
+        # fit model on train set
         if verbose:
             color_print('training models')
+
         hyperopt.fit(df_train, self.target, verbose=verbose)
 
+        # Apply model on test set
         if verbose:
             color_print('\napplying models')
-        # Application des modèles sur X_test :
-        dict_res_model = hyperopt.predict(df_test, self.target, delta_auc=0.03, verbose=verbose)
 
-        # selection best model
+        d_fitted_models = hyperopt.predict(df_test, self.target, delta_auc=0.03, verbose=verbose)
+
+        # model selection
         if verbose:
             color_print('\nbest model selection')
-        best_model_idx, l_valid_models = hyperopt.get_best_model(dict_res_model, metric=metric, delta_auc_th=0.03,
+        best_model_idx, l_valid_models = hyperopt.get_best_model(d_fitted_models, metric=metric, delta_auc_th=0.03,
                                                                  verbose=False)
 
-        df_model_res = hyperopt.model_res_to_df(dict_res_model, sort_metric=metric)
+        df_model_res = hyperopt.model_res_to_df(d_fitted_models, sort_metric=metric)
 
         if best_model_idx is not None:
             print_title1('best model : ' + str(best_model_idx))
-            print(metric + ' : ' + str(round(dict_res_model[best_model_idx]['metrics'][metric], 4)))
-            print('AUC : ' + str(round(dict_res_model[best_model_idx]['metrics']['Roc_auc'], 4)))
-            if round(dict_res_model[best_model_idx]['metrics'][metric],4) == 1.0:
+            print(metric + ' : ' + str(round(d_fitted_models[best_model_idx]['metrics'][metric], 4)))
+            print('AUC : ' + str(round(d_fitted_models[best_model_idx]['metrics']['Roc_auc'], 4)))
+            if round(d_fitted_models[best_model_idx]['metrics'][metric], 4) == 1.0:
                 color_print("Là tu te dis : c'était pas qu'un physique finalement", 32)
 
-        return dict_res_model, l_valid_models, best_model_idx, df_model_res
+        return d_fitted_models, l_valid_models, best_model_idx, df_model_res
+
+    """
+    ------------------------------------------------------------------------------------------------------------------------
+    """
+
+    @timer
+    def predict(self, df, verbose):
+        pass

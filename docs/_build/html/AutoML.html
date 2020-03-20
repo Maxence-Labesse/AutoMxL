@@ -158,7 +158,7 @@
 <dl class="class">
 <dt id="MLBG59.__main__.AutoML">
 <em class="property">class </em><code class="descclassname">MLBG59.__main__.</code><code class="descname">AutoML</code><span class="sig-paren">(</span><em>*args</em>, <em>target=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AutoML"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AutoML" title="Permalink to this definition">¶</a></dt>
-<dd><p>Covers the complete pipeline of a classification project from the raw dataset to a deployable model.</p>
+<dd><p>Covers the complete pipeline of a classification project from the raw dataset to a deployable train_model.</p>
 <p>AutoML is Built as a class inherited from pandas DataFrame for which each step correponds to a class method that
 can be called with only default parameters or chosen ones.</p>
 <ul class="simple">
@@ -222,7 +222,7 @@ can be called with only default parameters or chosen ones.</p>
 <dl class="method">
 <dt id="MLBG59.__main__.AutoML.preprocess">
 <code class="descname">preprocess</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AutoML.preprocess" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepare the data before feeding it to the model :</p>
+<dd><p>Prepare the data before feeding it to the train_model :</p>
 <blockquote>
 <div><ul class="simple">
 <li>remove low variance features</li>
@@ -289,13 +289,13 @@ If None, today date</li>
 </dd></dl>
 
 <dl class="method">
-<dt id="MLBG59.__main__.AutoML.train_predict">
-<code class="descname">train_predict</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AutoML.train_predict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Model hyper-optimisation with random search.</p>
+<dt id="MLBG59.__main__.AutoML.train_model">
+<code class="descname">train_model</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AutoML.train_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>train_model hyper-optimisation with random search.</p>
 <ul class="simple">
 <li>Creates random hyper-parameters combinations from HP grid</li>
-<li>train and test a model for each combination</li>
-<li>get the best model in respect of a selected metric among valid model</li>
+<li>train and test a train_model for each combination</li>
+<li>get the best train_model in respect of a selected metric among valid train_model</li>
 </ul>
 <p>Available classifiers : Random Forest, XGBOOST (and bagging)</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -312,9 +312,9 @@ If None, today date</li>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
-<li><em>list</em> – valid model indexes</li>
-<li><em>int</em> – best model index</li>
+<li><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘train_model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
+<li><em>list</em> – valid train_model indexes</li>
+<li><em>int</em> – best train_model index</li>
 <li><em>DataFrame</em> – Models info and metrics stored in DataFrame</li>
 </ul>
 </p>

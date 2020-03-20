@@ -97,7 +97,7 @@ Model hyper-optimisation with random search.
 
 Available classifiers : Random Forest, XGBOOST (and bagging)
 ```python
-auto_df.train_predict(verbose=False)
+auto_df.train_model(verbose=False)
 ```
 outputs :
 - dict : {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}

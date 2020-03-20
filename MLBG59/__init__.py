@@ -23,7 +23,7 @@ from . import Select_Features
 from . import Modelisation
 from . import Utils
 from . import __main__
-from .__main__ import AutoML
+from .__main__ import AML
 from .Start.Load import *
 from .Start.Encode_Target import *
 
