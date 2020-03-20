@@ -1,5 +1,6 @@
 import os
 import sys
+
 cwd = os.getcwd()
 sys.path.insert(0, os.path.dirname(cwd))
 import unittest

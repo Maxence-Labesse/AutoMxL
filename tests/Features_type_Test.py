@@ -1,10 +1,5 @@
-import os
-import sys
 import unittest
 import numpy as np
-
-cwd = os.getcwd()
-sys.path.insert(0, os.path.dirname(cwd))
 from MLBG59.Explore.Features_Type import *
 
 data = {'Name': ['Tom', 'Nick', 'Krish', np.nan, 'John'],

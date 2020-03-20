@@ -92,6 +92,8 @@ class AML(pd.DataFrame, ABC):
 
         Target variable is not included for exploration
 
+        Note : if you wish tu modify some identifiers features, you can directly modify d_features attribute
+
         Parameters
         ----------
         verbose : boolean (Default False)
@@ -435,7 +437,7 @@ class AML(pd.DataFrame, ABC):
             print(metric + ' : ' + str(round(d_fitted_models[best_model_idx]['metrics'][metric], 4)))
             print('AUC : ' + str(round(d_fitted_models[best_model_idx]['metrics']['Roc_auc'], 4)))
             if round(d_fitted_models[best_model_idx]['metrics'][metric], 4) == 1.0:
-                color_print("Là tu te dis : c'était pas qu'un physique finalement", 32)
+                color_print("C'était pas qu'un physique finalement hein ?", 32)
 
         return d_fitted_models, l_valid_models, best_model_idx, df_model_res
 
