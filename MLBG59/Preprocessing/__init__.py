@@ -11,10 +11,9 @@ Modules :
 
 """
 
-__all__ = ['Categorical_Data',
-           'Date_Data',
-           'Label_Encoder',
+__all__ = ['Categorical',
+           'Date',
+           'Deep_Encoder',
            'Missing_Values',
-           'Process_Outliers',
-           'Scaling']
+           'Outliers']
 

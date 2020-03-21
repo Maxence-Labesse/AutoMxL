@@ -116,8 +116,6 @@ TODO
 - 1.0.0 : First proper release 
 
 #### Next steps
-- Categorical features processing : Label encoding
-- Features selection section
 - Regression and multi-class classification
 
 #### Licence

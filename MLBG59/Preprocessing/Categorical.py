@@ -17,7 +17,7 @@ from MLBG59.param_config import batch_size, n_epoch, learning_rate
 class CategoricalEncoder(object):
     """Encode categorical features
 
-    Available methods :
+    Available encoding methods :
 
     - one hot encoding
     - deep_encoder : Build and train a Neural Network for the creation of embeddings for categorical variables.
@@ -210,7 +210,7 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=False
         If None, all the num features
      prefix_list : list (default : None)
         Prefix to add before new features name (prefix+'_'+cat).
-        It None, prefix=variable name
+        If None, prefix=variable name
      keep : boolean (Default = False)
         If True, delete the original feature
      verbose : boolean (Default False)

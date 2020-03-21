@@ -1,37 +1,68 @@
-import os
-import sys
-
-cwd = os.getcwd()
-sys.path.insert(0, os.path.dirname(cwd))
 import unittest
 import pandas as pd
 from MLBG59.Start.Load import get_delimiter, import_data
-from MLBG59.Start.Encode_Target import category_to_target
+from MLBG59.Start.Encode_Target import category_to_target, range_to_target
 
-file = 'df_test.csv'
+# test config
+file = 'tests/df_test.csv'
 var = 'job'
 cat = 'admin.'
+df_test = pd.read_csv('tests/df_test.csv')
+df_test_bis = pd.read_csv('tests/df_test_bis.csv')
+raw_target = 'Height'
 
 
 class Test_Load(unittest.TestCase):
+    """
+    Encode module
+    """
 
     def test_get_delimiter(self):
+        """test get_delimiter function"""
+        # identify delimiter
         self.assertEqual(get_delimiter(file), ',')
 
     def test_import_data(self):
-        self.assertIsNotNone(type(import_data(file=file, verbose=False)), pd.DataFrame)
+        """test import_data function"""
+        # DataFrame created
+        self.assertEqual(type(import_data(file=file, verbose=False)), pd.DataFrame)
+
+
+"""
+------------------------------------------------------------------------------------------------
+"""
+
+
+class Test_Encode_Target(unittest.TestCase):
+    """
+    Encode_Target module
+    """
 
     def test_cat_to_target(self):
-        df_test = pd.read_csv('df_test.csv')
-        df_test_mod, new_var = category_to_target(df_test, var, cat)
-
-        #
+        """cat_to_target function"""
+        df_test_cat_target, new_var = category_to_target(df_test, var, cat)
+        # test new target name
         self.assertEqual(new_var, var + '_' + cat)
-        # new var is created in new dataset
-        self.assertIn(new_var, df_test_mod.columns.tolist())
-        # old var is removed from new dataset
-        self.assertNotIn(var, df_test_mod.columns.tolist())
-        # old var is still in old dataset
-        self.assertIn(var, df_test.columns.tolist())
+        # new target in new dataset
+        self.assertIn(new_var, df_test_cat_target.columns.tolist())
+        # old target removed from new dataset
+        self.assertNotIn(var, df_test_cat_target.columns.tolist())
         # volumetry test
-        self.assertEqual(df_test[var].value_counts()[cat], df_test_mod[new_var].sum())
+        self.assertEqual(df_test[var].value_counts()[cat], df_test_cat_target[new_var].sum())
+
+    def test_range_to_target(self):
+        """range_to_target function"""
+        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, lower=180, upper=185, verbose=False)
+        # new target in new dataset
+        self.assertIn(new_var, df_range_target.columns.tolist())
+        # old target removed from new dataset
+        self.assertNotIn(raw_target, df_range_target.columns.tolist())
+        # lower and upper filled
+        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, lower=180, upper=185, verbose=False)
+        self.assertEqual(df_range_target[new_var].tolist(), [0, 0, 1, 0, 1, 1])
+        # only lower filled
+        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, lower=180, verbose=False)
+        self.assertEqual(df_range_target[new_var].tolist(), [0, 0, 1, 1, 1, 1])
+        # only upper filled
+        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, upper=185, verbose=False)
+        self.assertEqual(df_range_target[new_var].tolist(), [0, 1, 1, 0, 1, 1])

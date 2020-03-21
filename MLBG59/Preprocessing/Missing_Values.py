@@ -30,6 +30,8 @@ class NAEncoder(object):
                  track_num_NA=True
                  ):
 
+        assert replace_num_with in ['median', 'mean', 'zero'], 'invalid method, select median/mean/zero'
+        assert replace_cat_with in ['NR'], 'invalid method, select NR'
         self.replace_num_with = replace_num_with
         self.replace_cat_with = replace_cat_with
         self.track_num_NA = track_num_NA

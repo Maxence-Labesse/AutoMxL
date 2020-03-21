@@ -142,9 +142,6 @@ class AML(pd.DataFrame, ABC):
             - process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)
             - replace outliers (optional)
 
-        Available categorical encoding methods :
-
-        -
 
         Parameters
         ----------
@@ -163,7 +160,8 @@ class AML(pd.DataFrame, ABC):
 
         """
         # check pipe step
-        assert self.step in ['recap'], 'apply recap method first'
+        assert self.step in ['recap'], 'apply explore method first'
+        assert not self.is_fitted, 'preprocessing encoders already fitted'
 
         #######
         # Fit #

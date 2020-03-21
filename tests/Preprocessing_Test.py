@@ -1,30 +1,20 @@
-import os
-import sys
-
-cwd = os.getcwd()
-sys.path.insert(0, os.path.dirname(cwd))
-from MLBG59.Preprocessing.Categorical_Data import *
-from MLBG59.Preprocessing.Date_Data import *
-from MLBG59.Preprocessing.Process_Outliers import *
+from MLBG59.Preprocessing.Categorical import *
+from MLBG59.Preprocessing.Date import *
+from MLBG59.Preprocessing.Outliers import *
 from MLBG59.Preprocessing.Missing_Values import *
 import unittest
 import pandas as pd
 import numpy as np
 
-data = {'Name': ['Tom', 'Nick', 'Krish', np.nan],
-        'Age': [20, np.nan, np.nan, 18],
-        'Height': [np.nan, 170, 180, 190],
-        'Eyes': ['blue', 'red', 'red', 'blue'],
-        'Sexe': ['M', 'M', 'M', np.nan],
-        'Hair': ['brown', 'brown', 'brown', 'blond'],
-        'Date_nai': ['27/10/2010', np.nan, '04/03/2019', '05/08/1988'],
-        'American_date_nai': [20101027, np.nan, 20190304, 19880805]}
+df_test_bis = pd.read_csv('tests/df_test_bis.csv')
 
 
 class Test_Missing_values(unittest.TestCase):
-
+    """
+    Test Missing_Values modules
+    """
     def setUp(self):
-        self.df = pd.DataFrame(data)
+        self.df = df_test_bis.copy()
 
     def test_fill_numerical(self):
         df_fill_all_num = fill_numerical(self.df, ['Age', 'Height'], method='zero', track_num_NA=True, verbose=False)
@@ -38,11 +28,16 @@ class Test_Missing_values(unittest.TestCase):
         self.assertEqual(df_fill_all_cat.iloc[3]['Name'], 'NR')
         self.assertEqual(df_fill_all_cat.iloc[3]['Sexe'], 'NR')
 
+    def test_NAEncoder(self):
+        pass
 
-class Test_Date_preprocessing(unittest.TestCase):
 
+class Test_Date(unittest.TestCase):
+    """
+    Test Date Module
+    """
     def setUp(self):
-        self.df = pd.DataFrame(data)
+        self.df = df_test_bis.copy()
         self.df_to_date = all_to_date(self.df, ['Date_nai', 'American_date_nai'], verbose=False)
         self.df_to_anc, self.new_var_list = date_to_anc(self.df_to_date, l_var=['American_date_nai', 'Date_nai'],
                                                         date_ref='27/10/2010', verbose=False)
@@ -62,9 +57,11 @@ class Test_Date_preprocessing(unittest.TestCase):
 
 
 class Test_Categorical(unittest.TestCase):
-
+    """
+    Test Categorical module
+    """
     def setUp(self):
-        self.df = pd.DataFrame(data)
+        self.df = df_test_bis.copy()
         self.df_dummy = dummy_all_var(self.df, var_list=['Eyes', 'Sexe'], prefix_list=None, keep=False, verbose=False)
         self.df_dummy_pref = dummy_all_var(self.df, var_list=['Eyes', 'Sexe'], prefix_list=['Ey', 'Sx'], keep=True,
                                            verbose=False)
@@ -74,8 +71,8 @@ class Test_Categorical(unittest.TestCase):
         self.assertIn('Eyes_red', self.df_dummy.columns)
         self.assertNotIn('Eyes', self.df_dummy.columns)
         self.assertNotIn('Sexe', self.df_dummy.columns)
-        self.assertEqual(self.df_dummy['Eyes_blue'].tolist(), [1, 0, 0, 1])
-        self.assertEqual(self.df_dummy['Sexe_M'].tolist(), [1, 1, 1, 0])
+        self.assertEqual(self.df_dummy['Eyes_blue'].tolist(), [1, 0, 0, 1, 0, 1])
+        self.assertEqual(self.df_dummy['Sexe_M'].tolist(), [1, 1, 1, 0, 0, 1])
         self.assertIn('Ey_blue', self.df_dummy_pref.columns)
         self.assertIn('Sx_M', self.df_dummy_pref.columns)
         self.assertIn('Eyes', self.df_dummy_pref.columns)
@@ -85,14 +82,16 @@ class Test_Categorical(unittest.TestCase):
 class Test_Outliers(unittest.TestCase):
 
     def setUp(self):
-        self.df = pd.DataFrame(data)
+        self.df = df_test_bis.copy()
         self.df_process_cat = replace_category(self.df, 'Hair', ['blond'], verbose=False)
         self.df_process_cat = replace_category(self.df_process_cat, 'Name', ['Tom', 'Nick'], verbose=False)
 
     def test_process_cat_outliers(self):
-        self.assertEqual(self.df_process_cat['Name'].tolist(), ['outliers', 'outliers', 'Krish', np.nan])
-        self.assertEqual(self.df_process_cat['Hair'].tolist(), ['brown', 'brown', 'brown', 'outliers'])
+        self.assertEqual(self.df_process_cat['Name'].tolist(),
+                         ['outliers', 'outliers', 'Krish', np.nan, 'John', 'Jack'])
+        self.assertEqual(self.df_process_cat['Hair'].tolist(),
+                         ['brown', 'brown', 'dark', 'outliers', 'outliers', 'outliers'])
 
     def test_process_num_outliers(self):
         df_outlier_proc = replace_extreme_values(self.df, 'Height', 175, 185)
-        self.assertEqual(df_outlier_proc['Height'].tolist()[1:], [175.0, 180.0, 185.0])
+        self.assertEqual(df_outlier_proc['Height'].tolist()[1:], [175.0, 180.0, 185.0, 185.0, 185.0])
