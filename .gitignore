@@ -3,7 +3,6 @@ __pycache__
 data/
 other/
 test.py
-meta.py
 meta.csv
 #MLBG59_exemple.py
 dev/

@@ -33,17 +33,16 @@ class Test_Missing_values(unittest.TestCase):
         """ NAEncoder class"""
         NA_encoder1 = NAEncoder(replace_num_with='median', replace_cat_with='NR', track_num_NA=True)
         NA_encoder1.fit(df, l_var=['Name', 'Age'])
-        #df_NA1 = NAEncoder.transform(df, )
+        # df_NA1 = NAEncoder.transform(df, )
         NA_encoder2 = NAEncoder(replace_num_with='zero', replace_cat_with='NR', track_num_NA=False)
 
         # raw features contain NA
-        s_NA = df.isna().sum()[df.isna().sum()>0]
+        s_NA = df.isna().sum()[df.isna().sum() > 0]
         self.assertEqual(s_NA.index, ['Name', 'Id_cat', 'Id_num', 'Verb', 'Age', 'Height', 'Sexe', 'Date_nai',
-       'American_date_nai'])
+                                      'American_date_nai'])
         # modified features
 
         # modified values
-
 
 #
 # """

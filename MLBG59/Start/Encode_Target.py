@@ -48,7 +48,7 @@ def category_to_target(df, var, cat):
 """
 
 
-def range_to_target(df, var, lower=None, upper=None, verbose=False):
+def range_to_target(df, var, min=None, max=None, verbose=False):
     """Create a target variable (1/0) from a selected range
 
     Parameters
@@ -57,10 +57,10 @@ def range_to_target(df, var, lower=None, upper=None, verbose=False):
         input dataset
     var : string
         variable containing the target range
-    lower : float
+    min : float
         lower limit.
         If None, no lower limit
-    upper : float
+    max : float
         upper limit.
         If None, no upper limit
     verbose : boolean (Default False)
@@ -71,7 +71,7 @@ def range_to_target(df, var, lower=None, upper=None, verbose=False):
     DataFrame : modified dataset
     string : new target name (var+'_'+lower+'_'+upper)
     """
-    assert lower is not None or upper is not None, 'fill at least one limit parameter (lower,upper)'
+    assert min is not None or max is not None, 'fill at least one limit parameter (lower,upper)'
 
     df_local = df.copy()
 
@@ -80,16 +80,16 @@ def range_to_target(df, var, lower=None, upper=None, verbose=False):
         df_local[var] = pd.to_numeric(df_local[var], errors='coerce')
 
     # handle None limits : replace by infinity
-    if lower is None:
-        lower = -float("inf")
-    if upper is None:
-        upper = float("inf")
+    if min is None:
+        min = -float("inf")
+    if max is None:
+        max = float("inf")
 
     # define target name, using lower and upper values
-    target_name = var + '_' + str(lower) + '_' + str(upper)
+    target_name = var + '_' + str(min) + '_' + str(max)
 
     # encode target
-    df_local[target_name] = np.where((df_local[var] >= lower) & (df_local[var] <= upper), 1, 0)
+    df_local[target_name] = np.where((df_local[var] >= min) & (df_local[var] <= max), 1, 0)
 
     if verbose:
         print("Created target : ", target_name)

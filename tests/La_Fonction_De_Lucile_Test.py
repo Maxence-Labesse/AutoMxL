@@ -17,7 +17,8 @@ class Test_Range_To_Target(unittest.TestCase):
         """
         On test le bon remplacement de la variable cible
         """
-        df_range_target, new_var = range_to_target(df, var=raw_target, lower=180, upper=185, verbose=False)
+        df_range_target, new_var = range_to_target(df, var=raw_target, min=180, max=185, verbose=False)
+
         # nouvelle target dans le nouveau dataset
         self.assertIn(new_var, df_range_target.columns.tolist())
         # ancienne target n'est plus dans le nouveau dataset
@@ -28,13 +29,11 @@ class Test_Range_To_Target(unittest.TestCase):
         Test des valeurs de la variable nouvelle variable cible
         """
         # si lower et upper renseignés
-        df_range_target, new_var = range_to_target(df, var=raw_target, lower=180, upper=185, verbose=False)
+        df_range_target, new_var = range_to_target(df, var=raw_target, min=180, max=185, verbose=False)
         self.assertEqual(df_range_target[new_var].tolist(), [0, 0, 1, 0, 1, 1])
         # si lower renseigné uniquement
-        df_range_target, new_var = range_to_target(df, var=raw_target, lower=180, verbose=False)
+        df_range_target, new_var = range_to_target(df, var=raw_target, min=180, verbose=False)
         self.assertEqual(df_range_target[new_var].tolist(), [0, 0, 1, 1, 1, 1])
         # si upper renseigné uniquement
-        df_range_target, new_var = range_to_target(df, var=raw_target, upper=185, verbose=False)
+        df_range_target, new_var = range_to_target(df, var=raw_target, max=185, verbose=False)
         self.assertEqual(df_range_target[new_var].tolist(), [0, 1, 1, 0, 1, 1])
-
-

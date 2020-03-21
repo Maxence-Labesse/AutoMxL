@@ -52,17 +52,16 @@ class Test_Encode_Target(unittest.TestCase):
 
     def test_range_to_target(self):
         """range_to_target function"""
-        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, lower=180, upper=185, verbose=False)
+        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, min=180, max=185, verbose=False)
         # new target in new dataset
         self.assertIn(new_var, df_range_target.columns.tolist())
         # old target removed from new dataset
         self.assertNotIn(raw_target, df_range_target.columns.tolist())
         # lower and upper filled
-        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, lower=180, upper=185, verbose=False)
         self.assertEqual(df_range_target[new_var].tolist(), [0, 0, 1, 0, 1, 1])
         # only lower filled
-        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, lower=180, verbose=False)
+        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, min=180, verbose=False)
         self.assertEqual(df_range_target[new_var].tolist(), [0, 0, 1, 1, 1, 1])
         # only upper filled
-        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, upper=185, verbose=False)
+        df_range_target, new_var = range_to_target(df_test_bis, var=raw_target, max=185, verbose=False)
         self.assertEqual(df_range_target[new_var].tolist(), [0, 1, 1, 0, 1, 1])
