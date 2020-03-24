@@ -107,6 +107,7 @@ class FeatSelector(object):
         DataFrame : modified dataset
         """
         assert self.is_fitted, 'fit the encoding first using .fit method'
+        print(df.columns.tolist())
 
         l_var_other = [col for col in df.columns.tolist() if col not in self.l_select_var]
         df_local = df[self.l_select_var].copy()

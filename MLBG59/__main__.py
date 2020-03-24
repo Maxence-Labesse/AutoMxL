@@ -8,7 +8,7 @@ from MLBG59.Preprocessing.Missing_Values import NAEncoder
 from MLBG59.Preprocessing.Outliers import OutliersEncoder
 from MLBG59.Preprocessing.Categorical import CategoricalEncoder
 from MLBG59.Modelisation.HyperOpt import *
-from MLBG59.Select_Features.Select_Features import select_features
+from MLBG59.Select_Features.Select_Features import select_features, FeatSelector
 
 
 class AML(pd.DataFrame, ABC):
@@ -70,7 +70,9 @@ class AML(pd.DataFrame, ABC):
         self.step = 'None'
         self.d_features = None
         self.d_preprocess = None
-        self.is_fitted = False
+        self.features_selector = None
+        self.is_fitted_preprocessing = False
+        self.is_fitted_selector = False
 
     """
     --------------------------------------------------------------------------------------------------------------------
@@ -159,7 +161,7 @@ class AML(pd.DataFrame, ABC):
         """
         # check pipe step
         assert self.step in ['recap'], 'apply explore method first'
-        assert not self.is_fitted, 'preprocessing encoders already fitted'
+        assert not self.is_fitted_preprocessing, 'preprocessing encoders already fitted'
 
         ###############################
         # Fit and apply preprocessing #
@@ -176,7 +178,7 @@ class AML(pd.DataFrame, ABC):
 
         l_remove = self.d_features['low_variance'] + self.d_features['verbatim'] + self.d_features['identifier']
         if len(l_remove) > 0:
-            df_local = df_local.drop(self.d_preprocess['remove'], axis=1)
+            df_local = df_local.drop(l_remove, axis=1)
 
         if verbose:
             print("  >", len(l_remove), "features to remove")
@@ -204,7 +206,7 @@ class AML(pd.DataFrame, ABC):
             if verbose:
                 color_print('Outliers')
             out_encoder = OutliersEncoder()
-            out_encoder.fit(self, l_var=None, verbose=False)
+            out_encoder.fit(df_local, l_var=None, verbose=False)
             df_local = out_encoder.transform(df_local, verbose=verbose)
         else:
             out_encoder = None
@@ -239,7 +241,7 @@ class AML(pd.DataFrame, ABC):
             print("  -> outlier (optional)")
 
         # is_fitted
-        self.is_fitted = True
+        self.is_fitted_preprocessing = True
 
         # update self
         self.__dict__.update(df_local.__dict__)
@@ -249,101 +251,6 @@ class AML(pd.DataFrame, ABC):
         if verbose:
             color_print("New DataFrame size ")
             print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
-        """
-        # check pipe step
-        assert self.step in ['recap'], 'apply explore method first'
-        assert not self.is_fitted, 'preprocessing encoders already fitted'
-
-        #######
-        # Fit #
-        #######
-        if verbose:
-            print_title1('Fit Preprocessing')
-
-        # Features Removing 'zero variance / verbatims / identifiers)
-        if verbose:
-            color_print("Features removing (zero variance / verbatims / identifiers)")
-
-        l_remove = self.d_features['low_variance'] + self.d_features['verbatim'] + self.d_features['identifier']
-
-        if verbose:
-            print("  >", len(l_remove), "features to remove")
-            if len(l_remove) > 0:
-                print(" ", l_remove)
-
-        # Transform date -> time between date and date_ref
-        if verbose:
-            color_print("Transform date")
-
-        date_encoder = DateEncoder(method='timedelta', date_ref=date_ref)
-        date_encoder.fit(self, l_var=self.d_features['date'], verbose=verbose)
-
-        # Missing Values
-        if verbose:
-            color_print('Missing values')
-
-        NA_encoder = NAEncoder()
-        NA_encoder.fit(self, l_var=self.d_features['NA'], verbose=verbose)
-
-        # replace outliers
-        if process_outliers:
-            if verbose:
-                color_print('Outliers')
-            out_encoder = OutliersEncoder()
-            out_encoder.fit(self, l_var=None, verbose=verbose)
-        else:
-            out_encoder = None
-
-        # categorical processing
-        if verbose:
-            color_print('Encode Categorical and boolean')
-
-        cat_col = self.d_features['categorical'] + self.d_features['boolean']
-        # apply one-hot encoding if target not filled in class parameters
-        if self.target is None:
-            cat_method = 'one_hot'
-            color_print('No target -> one_hot encoding !', 31)
-
-        # get embedding
-        cat_encoder = CategoricalEncoder(method=cat_method)
-        cat_encoder.fit(self, l_var=cat_col, target=self.target, verbose=verbose)
-
-        # store preprocessing params
-        self.d_preprocess = {'remove': l_remove, 'date': date_encoder, 'NA': NA_encoder, 'categorical': cat_encoder}
-        if out_encoder is not None:
-            self.d_preprocess['outlier'] = out_encoder
-
-        if verbose:
-            color_print("\nCreated attributes :  d_preprocess (dict) ")
-            print("Keys :")
-            print("  -> remove")
-            print("  -> date")
-            print("  -> NA")
-            print("  -> categorical")
-            print("  -> outlier (optional)\n")
-
-        # is_fitted
-        self.is_fitted = True
-
-        #############
-        # Transform #
-        #############
-        df_local = self.copy()
-        # store target
-        target = self.target
-
-        # apply preprocessing
-        df_local = self.preprocess_apply(df_local, verbose=verbose)
-
-        # update self
-        self.__dict__.update(df_local.__dict__)
-        self.target = target
-        self.step = 'preprocess'
-
-        if verbose:
-            color_print("\nNew DataFrame size ")
-            print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
-        """
 
     """
     --------------------------------------------------------------------------------------------------------------------
@@ -364,10 +271,10 @@ class AML(pd.DataFrame, ABC):
         DataFrame : Preprocessed dataset
         """
         if verbose:
-            print_title1('Apply Preprofessing')
+            print_title1('Apply Preprocessing')
 
         # check pipe step and is_fitted
-        assert self.is_fitted, "fit first (please)"
+        assert self.is_fitted_preprocessing, "fit first (please)"
 
         #
         df_local = df.copy()
@@ -388,16 +295,6 @@ class AML(pd.DataFrame, ABC):
         if verbose:
             color_print("Transform date")
         df_local = self.d_preprocess['date'].transform(df_local, verbose=verbose)
-
-        # update d_features
-        for col in self.d_features['date']:
-            if col in self.d_features['date']:
-                self.d_features['numerical'].append('anc_' + col)
-                if col in self.d_features['NA']:
-                    self.d_features['NA'].append('anc_' + col)
-                    self.d_preprocess['NA'].l_var_num.append('anc_' + col)
-
-        self.d_features['date'] = []
 
         # Missing Values
         if verbose:
@@ -422,32 +319,77 @@ class AML(pd.DataFrame, ABC):
     """
 
     def select_features(self, method='pca', verbose=False):
-        """Select features to speed up modelisation.
-        (May incresea model performance aswell)
+        """Apply preprocessing.
+        Requires preprocess method to have been applied (so that all encoder are fitted)
 
-        Available methods : pca
         Parameters
         ----------
-        method : string (Default : pca)
-            method used to select features
+        df : DataFrame
+            dataset to apply preprocessing on
         verbose : boolean (Default False)
             Get logging information
-
         Returns
         -------
-            DataFrame : reduced datasset
+        DataFrame : Preprocessed dataset
         """
-        assert self.step in ['preprocess'], 'apply preprocess method'
+        assert self.step in ['select_features'], 'apply preprocess method'
 
         target = self.target
+
         if verbose:
             print('')
             print_title1('Features Selection')
+
         df_local = self.copy()
-        df_local = select_features(df=df_local, target=self.target, method=method, verbose=verbose)
+
+        l_select_var = [col for col in df_local.columns.tolist() if col != self.target]
+
+        # df_local = select_features(df=df_local, target=self.target, method=method, verbose=verbose)
+
+        features_selector = FeatSelector(method=method)
+        features_selector.fit(df_local, l_var=l_select_var, verbose=verbose)
+        df_local = features_selector.transform(df_local, verbose=verbose)
+
         self.__dict__.update(df_local.__dict__)
         self.target = target
+        self.features_selector = features_selector
         self.step = 'features_selection'
+
+    """
+        --------------------------------------------------------------------------------------------------------------------
+    """
+
+    def select_features_apply(self, method='pca', verbose=False):
+        """Apply features selection.
+         Requires Select_Features method to have been applied
+
+         Parameters
+         ----------
+         df : DataFrame
+             dataset to apply selection on
+         verbose : boolean (Default False)
+             Get logging information
+         Returns
+         -------
+         DataFrame : Preprocessed dataset
+         """
+        # check pipe step and is_fitted
+        assert self.is_fitted_selector, "fit first (please)"
+
+        if verbose:
+            print_title1('Apply Preprofessing')
+
+        target = self.target
+
+        if verbose:
+            print('')
+            print_title1('Features Selection')
+
+        df_local = self.copy()
+
+        df_local = self.features_selector.transform(df_local, verbose=verbose)
+
+        return df_local
 
     """
         --------------------------------------------------------------------------------------------------------------------
@@ -536,5 +478,5 @@ class AML(pd.DataFrame, ABC):
     """
 
     @timer
-    def predict(self, df, verbose):
+    def train(self, df, verbose):
         pass

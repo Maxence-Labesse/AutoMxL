@@ -12,7 +12,6 @@ from time import time
 from MLBG59.Utils.Decorators import timer
 
 
-@timer
 def features_from_type(df, typ, l_var=None, th=0.95):
     """Get features of a selected type :
 
@@ -54,7 +53,6 @@ def features_from_type(df, typ, l_var=None, th=0.95):
         identified variables names
     """
     assert typ in ['date', 'identifier', 'verbatim', 'boolean', 'categorical'], 'Invalid type'
-    print(typ)
 
     if l_var is None:
         df_local = df.copy()
@@ -119,47 +117,6 @@ def is_date(df, col):
     return smpl.dtype == 'datetime64[ns]'
 
 
-def is_date_save(df, col):
-    """Test if a variable is a date.
-
-    Method : try to apply to_datetime
-
-    Parameters
-    ----------
-    df : DataFrame
-        input dataset
-    col : string
-        variable name
-
-    Returns
-    -------
-    res : boolean
-        test result
-    """
-    before = time()
-    smpl_size = min(10, len(df.loc[~df[col].isna()]))
-    print(time() - before)
-    df_smpl = df.loc[~df[col].isna()].sample(smpl_size).copy()
-    print(time() - before)
-    # if col is numerical/object type, try apply to_datetime
-    if df[col].dtype != 'datetime64[ns]':
-        try:
-            if df_smpl[col].dtype == 'object':
-                df_smpl[col] = pd.to_datetime(df_smpl[col], errors='raise')
-                print(time() - before)
-            else:
-                df_smpl[col] = pd.to_datetime(df_smpl[col].astype('Int32').astype(str), errors='raise')
-                print(time() - before)
-        except ValueError:
-            pass
-        except OverflowError:
-            pass
-        except TypeError:
-            pass
-    # if col is datetime type, res = True
-    return df_smpl[col].dtype == 'datetime64[ns]'
-
-
 """
 -------------------------------------------------------------------------------------------------------------------------
 """
@@ -210,54 +167,6 @@ def is_identifier(df, col, th=0.95):
             return False
     else:
         return False
-
-
-def is_identifier_save(df, col, th=0.95):
-    """Test if a variable is an identifier.
-
-    - #(unique values)/#(total values) > threshold (default 0.95)
-    - AND length is the same for all values (for non NA)
-    - AND not date
-
-    Parameters
-    ----------
-    df : DataFrame
-        input dataset
-    col : string
-        variable name
-    th : float (Default : 0.95)
-        threshold rate
-
-    Returns
-    -------
-    res : boolean
-        test result
-    """
-    # get variable serie with non NA values
-    if df[col].dtype == 'object':
-        full_col = df[col].loc[~df[col].isna()]
-    else:
-        try:
-            full_col = df[col].loc[~df[col].isna()].astype('Int32').astype(str)
-        except ValueError:
-            return False
-        except OverflowError:
-            return False
-        except TypeError:
-            return False
-
-    # test if all (non NA) values have the same length
-    length_test = full_col.apply(lambda x: len(x)).nunique() == 1
-    # test if #(v unique values)/#(v,total,values) >= threshold (default 0.95)
-    diff_test = full_col.nunique() / full_col.count() >= th
-    # test if not a date if other tests are True
-    if length_test * diff_test:
-        date_test = not is_date(df, col)
-
-        return length_test * diff_test * date_test
-
-    # True is both tests are respected
-    return length_test * diff_test
 
 
 """
@@ -371,7 +280,7 @@ def is_categorical(df, col, th=0.95):
             if df[col].dtype == 'object':
                 return True
             else:
-                if full_col.nunique() < 30:
+                if full_col.nunique() < 5:
                     return True
                 else:
                     return False
@@ -379,51 +288,3 @@ def is_categorical(df, col, th=0.95):
             return False
     else:
         return False
-
-
-def is_categorical_old(df, col, th=0.95):
-    """Test if a variable is a categorical one (with more than 2 categories).
-
-    - not a date
-    - #(unique values)/#(total values) < threshold (default 0.95
-    - AND #(uniques values)>2
-    - AND for num values #(unique values)<30
-
-    Parameters
-    ----------
-    df : DataFrame
-        input dataset
-    col : string
-        variable name
-    th : float (Default : 0.95)
-        threshold
-
-    Returns
-    -------
-    res : boolean
-        test result
-    """
-    # get variable serie with non NA values
-    if df[col].dtype == 'object':
-        full_col = df[col].loc[~df[col].isna()]
-    else:
-        try:
-            full_col = df[col].loc[~df[col].isna()].astype('Int32').astype(str)
-        except ValueError:
-            return False
-        except OverflowError:
-            return False
-        except TypeError:
-            return False
-
-    cat_nb_test = full_col.nunique() > 2
-
-    diff_test = (full_col.nunique() / full_col.count()) < th
-    #
-    nuniq_test = df[col].loc[~df[col].isna()].nunique() < 30
-
-    if df[col].dtype == 'object':
-        return cat_nb_test * diff_test
-
-    else:
-        return cat_nb_test * diff_test * nuniq_test
