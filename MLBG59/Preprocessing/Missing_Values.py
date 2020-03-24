@@ -3,6 +3,7 @@
  - NAEncoder (class): encoder that replaces missing values
  - fill_numerical (func): replace missing values for numerical features
  - fill_categorical (func): replace missing values for categorical features
+ - get_NA_features (func): get features containing NA values
 """
 import pandas as pd
 import numpy as np
@@ -119,7 +120,7 @@ class NAEncoder(object):
     ----------------------------------------------------------------------------------------------
     """
 
-    def fit_transform(self, df, l_var, verbose=False):
+    def fit_transform(self, df, l_var=None, verbose=False):
         """fit and transform dataset with encoder
 
         Parameters
@@ -263,3 +264,18 @@ def fill_categorical(df, l_var=None, method='NR', verbose=False):
         print('  > filled features:', df[l_var].isna().sum().loc[df[l_var].isna().sum() > 0].index.tolist())
 
     return df_local
+
+
+def get_NA_features(df):
+    """identify features containing NA values
+
+    Parameters
+    ----------
+    df : DataFrame
+        input dataset
+
+    Returns
+    -------
+    list : features containing missing values
+    """
+    return df.isna().sum()[df.isna().sum() > 0].index.tolist()

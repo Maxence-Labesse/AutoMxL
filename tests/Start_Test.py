@@ -12,7 +12,7 @@ df_test_bis = pd.read_csv('tests/df_test_bis.csv')
 raw_target = 'Height'
 
 
-class Test_Load(unittest.TestCase):
+class TestLoad(unittest.TestCase):
     """
     Encode module
     """
@@ -33,7 +33,7 @@ class Test_Load(unittest.TestCase):
 """
 
 
-class Test_Encode_Target(unittest.TestCase):
+class TestEncodeTarget(unittest.TestCase):
     """
     Encode_Target module
     """

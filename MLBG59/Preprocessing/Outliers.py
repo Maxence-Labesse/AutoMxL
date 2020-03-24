@@ -68,6 +68,7 @@ class OutliersEncoder(object):
             self.l_var_cat = [col for col in l_var if col in l_str and df[col].nunique() > 2]
             self.l_var_num = [col for col in l_var if col in l_num and df[col].nunique() > 2]
 
+
         # cat outliers
         if len(self.l_var_cat) > 0:
             self.d_cat_outliers = get_cat_outliers(df, l_var=self.l_var_cat, threshold=self.cat_threshold,
@@ -134,7 +135,7 @@ class OutliersEncoder(object):
     ----------------------------------------------------------------------------------------------
     """
 
-    def fit_transform(self, df, l_var, verbose):
+    def fit_transform(self, df, l_var=None, verbose=False):
         """Fit and transform dataset with encoder
 
         Parameters
@@ -149,7 +150,7 @@ class OutliersEncoder(object):
         """
         df_local = df.copy()
         # fit
-        self.fit(df_local, l_var=l_var, verbose=verbose)
+        self.fit(df_local, l_var=l_var, verbose=False)
         # transform
         df_local = self.transform(df_local, verbose=verbose)
 

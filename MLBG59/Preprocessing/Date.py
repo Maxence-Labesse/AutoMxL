@@ -38,6 +38,8 @@ class DateEncoder(object):
         # if date_ref not filled, set to today's date
         if date_ref is None:
             self.date_ref = datetime.now()
+        else:
+            self.date_ref = date_ref
 
     """
     ----------------------------------------------------------------------------------------------

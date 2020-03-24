@@ -66,6 +66,9 @@ class CategoricalEncoder(object):
         verbose : boolean (Default False)
             Get logging information
         """
+        if self.method == 'deep_encoder':
+            assert target is not None, 'fill target parameter to use deep encoder'
+
         # get categorical and boolean features (see Features_Type module doc)
         l_cat = [col for col in df.columns.tolist() if
                  (is_categorical(df, col) or is_boolean(df, col)) and col != target]
@@ -98,7 +101,7 @@ class CategoricalEncoder(object):
             print("  >", len(self.l_var2encode), "features to encode")
             if len(self.l_var2encode) > 0:
                 print(" ", self.l_var2encode)
-            if self.method == "deep_encoder" and len(self.l_var2encode) > 0:
+            if (self.method == "deep_encoder") and len(self.l_var2encode) > 0:
                 print("  NN Loss:", round(self.d_metrics['loss'], 4), "/ Accuracy:",
                       round(self.d_metrics['accuracy'], 4))
                 print("  Epoch:", n_epoch, "/ batch:", batch_size, "/ l_rate:", learning_rate)
@@ -117,6 +120,10 @@ class CategoricalEncoder(object):
             dataset to transform
         verbose : boolean (Default False)
             Get logging information
+
+        Returns
+        -------
+        DataFrame : modified dataset
         """
         assert self.is_fitted, 'fit the encoding first using .fit method'
 
@@ -170,7 +177,7 @@ class CategoricalEncoder(object):
     ----------------------------------------------------------------------------------------------
     """
 
-    def fit_transform(self, df, l_var, target, verbose=False):
+    def fit_transform(self, df, l_var=None, target=None, verbose=False):
         """fit and transform dataset categorical features
 
         Parameters
@@ -184,6 +191,10 @@ class CategoricalEncoder(object):
             name of the target for deep_encoder method
         verbose : boolean (Default False)
             Get logging information
+
+        Returns
+        -------
+        DataFrame : modified dataset
         """
         df_local = df.copy()
         # fit

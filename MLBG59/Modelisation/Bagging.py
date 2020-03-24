@@ -218,7 +218,7 @@ def Bagging_sample(df, target, pos_target_nb, replace=False):
     df_pos = df.loc[(df[target] == 1)]
     df_neg = df.loc[(df[target] == 0)]
 
-    n_size = min(3*pos_target_nb, df_neg.shape[0])
+    n_size = min(3 * pos_target_nb, df_neg.shape[0])
 
     # sample creation
     df_bag = pd.concat(

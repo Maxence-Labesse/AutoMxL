@@ -7,7 +7,7 @@ df_test = pd.read_csv('tests/df_test.csv')
 df_test_bis = pd.read_csv('tests/df_test_bis.csv')
 
 
-class Test_Explore(unittest.TestCase):
+class TestExplore(unittest.TestCase):
     """
     Explore module
     """
@@ -58,7 +58,7 @@ class Test_Explore(unittest.TestCase):
 """
 
 
-class Test_Features_Type(unittest.TestCase):
+class TestFeaturesType(unittest.TestCase):
     """
     Features_Type module
     """

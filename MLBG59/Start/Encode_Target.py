@@ -59,10 +59,10 @@ def range_to_target(df, var, min=None, max=None, verbose=False):
         variable containing the target range
     min : float
         lower limit.
-        If None, no lower limit
+        If None, no min
     max : float
         upper limit.
-        If None, no upper limit
+        If None, no max
     verbose : boolean (Default False)
         Get logging information
 
@@ -99,3 +99,4 @@ def range_to_target(df, var, min=None, max=None, verbose=False):
     del df_local[var]
 
     return df_local, target_name
+

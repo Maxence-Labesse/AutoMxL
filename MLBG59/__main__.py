@@ -63,6 +63,7 @@ class AML(pd.DataFrame, ABC):
 
     def __init__(self, *args, target=None, **kwargs):
         super(AML, self).__init__(*args, **kwargs)
+        assert target != 'target', 'target name cannot be "target"'
         # parameters
         self.target = target
         # attributes
@@ -92,7 +93,7 @@ class AML(pd.DataFrame, ABC):
 
         Target variable is not included for exploration
 
-        Note : if you wish tu modify some identifiers features, you can directly modify d_features attribute
+        Note : if you wish tu modify some features types, you can directly modify d_features attribute
 
         Parameters
         ----------
@@ -155,9 +156,99 @@ class AML(pd.DataFrame, ABC):
         cat_method : string (Default : 'deep_encoder')
             Categorical features encoding method
 
+        """
+        # check pipe step
+        assert self.step in ['recap'], 'apply explore method first'
+        assert not self.is_fitted, 'preprocessing encoders already fitted'
 
+        ###############################
+        # Fit and apply preprocessing #
+        ###############################
+        if verbose:
+            print_title1('Fit and apply preprocessing')
 
+        target = self.target
+        df_local = self.copy()
 
+        # Features Removing 'zero variance / verbatims / identifiers)
+        if verbose:
+            color_print("Features removing (zero variance / verbatims / identifiers)")
+
+        l_remove = self.d_features['low_variance'] + self.d_features['verbatim'] + self.d_features['identifier']
+        if len(l_remove) > 0:
+            df_local = df_local.drop(self.d_preprocess['remove'], axis=1)
+
+        if verbose:
+            print("  >", len(l_remove), "features to remove")
+            if len(l_remove) > 0:
+                print(" ", l_remove)
+
+        # Transform date -> time between date and date_ref
+        if verbose:
+            color_print("Transform date")
+
+        date_encoder = DateEncoder(method='timedelta', date_ref=date_ref)
+        date_encoder.fit(self, l_var=self.d_features['date'], verbose=False)
+        df_local = date_encoder.transform(df_local, verbose=verbose)
+
+        # Missing Values
+        if verbose:
+            color_print('Missing values')
+
+        NA_encoder = NAEncoder()
+        NA_encoder.fit(self, l_var=self.d_features['NA'], verbose=False)
+        df_local = NA_encoder.transform(df_local, verbose=verbose)
+
+        # replace outliers
+        if process_outliers:
+            if verbose:
+                color_print('Outliers')
+            out_encoder = OutliersEncoder()
+            out_encoder.fit(self, l_var=None, verbose=False)
+            df_local = out_encoder.transform(df_local, verbose=verbose)
+        else:
+            out_encoder = None
+
+        # categorical processing
+        if verbose:
+            color_print('Encode Categorical and boolean')
+
+        cat_col = self.d_features['categorical'] + self.d_features['boolean']
+        # apply one-hot encoding if target not filled in class parameters
+        if self.target is None:
+            cat_method = 'one_hot'
+            color_print('No target -> one_hot encoding !', 31)
+
+        # get embedding
+        cat_encoder = CategoricalEncoder(method=cat_method)
+        cat_encoder.fit(self, l_var=cat_col, target=self.target, verbose=verbose)
+        df_local = cat_encoder.transform(df_local, verbose=verbose)
+
+        # store preprocessing params
+        self.d_preprocess = {'remove': l_remove, 'date': date_encoder, 'NA': NA_encoder, 'categorical': cat_encoder}
+        if out_encoder is not None:
+            self.d_preprocess['outlier'] = out_encoder
+
+        if verbose:
+            color_print("\nCreated attributes :  d_preprocess (dict) ")
+            print("Keys :")
+            print("  -> remove")
+            print("  -> date")
+            print("  -> NA")
+            print("  -> categorical")
+            print("  -> outlier (optional)")
+
+        # is_fitted
+        self.is_fitted = True
+
+        # update self
+        self.__dict__.update(df_local.__dict__)
+        self.target = target
+        self.step = 'preprocess'
+
+        if verbose:
+            color_print("New DataFrame size ")
+            print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
         """
         # check pipe step
         assert self.step in ['recap'], 'apply explore method first'
@@ -252,6 +343,7 @@ class AML(pd.DataFrame, ABC):
         if verbose:
             color_print("\nNew DataFrame size ")
             print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
+        """
 
     """
     --------------------------------------------------------------------------------------------------------------------
