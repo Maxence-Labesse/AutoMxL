@@ -261,6 +261,7 @@ class Hyperopt(object):
             # compute model metrics
             eval_dict = classifier_evaluate(y, y_pred, y_proba, verbose=0)
             fpr_train, tpr_train = self.train_model_dict[key]['train_metrics']['fpr tpr']
+            eval_dict['train_auc'] = auc(fpr_train, tpr_train)
             eval_dict['delta_auc'] = abs(auc(fpr_train, tpr_train) - eval_dict["Roc_auc"])
 
             # store 
