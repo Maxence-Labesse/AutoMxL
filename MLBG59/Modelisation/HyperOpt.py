@@ -154,7 +154,7 @@ class Hyperopt(object):
             else:
                 clf = xgboost.XGBClassifier(**HP_dict)
 
-            # X / ycx
+            # X / y
             y_train = df_train[target]
             X_train = df_train.drop(target, axis=1)
 
