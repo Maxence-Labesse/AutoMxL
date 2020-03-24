@@ -8,7 +8,7 @@ from MLBG59.Preprocessing.Missing_Values import NAEncoder
 from MLBG59.Preprocessing.Outliers import OutliersEncoder
 from MLBG59.Preprocessing.Categorical import CategoricalEncoder
 from MLBG59.Modelisation.HyperOpt import *
-from MLBG59.Select_Features.Select_Features import select_features, FeatSelector
+from MLBG59.Select_Features.Select_Features import FeatSelector
 
 
 class AML(pd.DataFrame, ABC):
@@ -113,7 +113,7 @@ class AML(pd.DataFrame, ABC):
         self.d_features = explore(
             df_local, verbose=verbose)
 
-        self.step = 'recap'
+        self.step = 'explore'
 
         # created attributes display
         if verbose:
@@ -160,7 +160,7 @@ class AML(pd.DataFrame, ABC):
 
         """
         # check pipe step
-        assert self.step in ['recap'], 'apply explore method first'
+        assert self.step in ['explore'], 'apply explore method first'
         assert not self.is_fitted_preprocessing, 'preprocessing encoders already fitted'
 
         ###############################
@@ -319,20 +319,10 @@ class AML(pd.DataFrame, ABC):
     """
 
     def select_features(self, method='pca', verbose=False):
-        """Apply preprocessing.
-        Requires preprocess method to have been applied (so that all encoder are fitted)
-
-        Parameters
-        ----------
-        df : DataFrame
-            dataset to apply preprocessing on
-        verbose : boolean (Default False)
-            Get logging information
-        Returns
-        -------
-        DataFrame : Preprocessed dataset
         """
-        assert self.step in ['select_features'], 'apply preprocess method'
+        """
+        print(self.step)
+        assert self.step in ['preprocess'], 'apply preprocess method'
 
         target = self.target
 
@@ -353,13 +343,14 @@ class AML(pd.DataFrame, ABC):
         self.__dict__.update(df_local.__dict__)
         self.target = target
         self.features_selector = features_selector
+        self.is_fitted_selector = True
         self.step = 'features_selection'
 
     """
         --------------------------------------------------------------------------------------------------------------------
     """
 
-    def select_features_apply(self, method='pca', verbose=False):
+    def select_features_apply(self, df, verbose=False):
         """Apply features selection.
          Requires Select_Features method to have been applied
 
@@ -377,15 +368,9 @@ class AML(pd.DataFrame, ABC):
         assert self.is_fitted_selector, "fit first (please)"
 
         if verbose:
-            print_title1('Apply Preprofessing')
+            print_title1('Apply select_features')
 
-        target = self.target
-
-        if verbose:
-            print('')
-            print_title1('Features Selection')
-
-        df_local = self.copy()
+        df_local = df.copy()
 
         df_local = self.features_selector.transform(df_local, verbose=verbose)
 
