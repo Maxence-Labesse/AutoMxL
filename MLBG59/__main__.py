@@ -71,8 +71,10 @@ class AML(pd.DataFrame, ABC):
         self.d_features = None
         self.d_preprocess = None
         self.features_selector = None
+        self.hyperopt = None
         self.is_fitted_preprocessing = False
         self.is_fitted_selector = False
+        self.is_fitted_model = False
 
     """
     --------------------------------------------------------------------------------------------------------------------
@@ -463,5 +465,69 @@ class AML(pd.DataFrame, ABC):
     """
 
     @timer
-    def train(self, df, verbose):
-        pass
+    def train(self, clf='XGBOOST', top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
+        """
+
+        Parameters
+
+        ----------
+        clf
+        top_bagging
+        n_comb
+        comb_seed
+        verbose
+
+        Returns
+        -------
+
+        """
+        assert self.step in ['preprocess', 'features_selection'], 'apply preprocess method'
+
+        df_train = self.copy()
+
+        if verbose:
+            print_title1('Train Models')
+
+        hyperopt = Hyperopt(classifier=clf, grid_param=None, n_param_comb=n_comb,
+                            top_bagging=top_bagging, comb_seed=comb_seed)
+
+        # fit model on train set
+        if verbose:
+            color_print('training models')
+
+        hyperopt.fit(df_train, self.target, verbose=verbose)
+
+        self.hyperopt = hyperopt
+
+    """
+    ------------------------------------------------------------------------------------------------------------------------
+    """
+
+    @timer
+    def predict(self, df, metric='F1', verbose=True):
+        """
+
+        """
+        # Apply model on test set
+
+        if verbose:
+            color_print('\napplying models')
+
+        d_fitted_models = self.hyperopt.predict(df, self.target, delta_auc=0.03, verbose=verbose)
+
+        # model selection
+        if verbose:
+            color_print('\nbest model selection')
+        best_model_idx, l_valid_models = self.hyperopt.get_best_model(d_fitted_models, metric=metric, delta_auc_th=0.03,
+                                                                      verbose=False)
+
+        df_model_res = self.hyperopt.model_res_to_df(d_fitted_models, sort_metric=metric)
+
+        if best_model_idx is not None:
+            print_title1('best model : ' + str(best_model_idx))
+            print(metric + ' : ' + str(round(d_fitted_models[best_model_idx]['metrics'][metric], 4)))
+            print('AUC : ' + str(round(d_fitted_models[best_model_idx]['metrics']['Roc_auc'], 4)))
+            if round(d_fitted_models[best_model_idx]['metrics'][metric], 4) == 1.0:
+                color_print("C'était pas qu'un physique finalement hein ?", 32)
+
+        return d_fitted_models, l_valid_models, best_model_idx, df_model_res

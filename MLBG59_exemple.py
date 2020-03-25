@@ -32,19 +32,21 @@ print_dict(auto_df.d_preprocess)
 auto_df.select_features(method='pca', verbose=False)
 
 # random search
-res_dict, l_valid_models, best_model_index, df_model_res = auto_df.train_model(clf='XGBOOST', n_comb=2,
-                                                                               comb_seed=None, verbose=True)
+#res_dict, l_valid_models, best_model_index, df_model_res = auto_df.train_model(clf='XGBOOST', n_comb=2,
+#                                                                               comb_seed=None, verbose=True)
 
 
+auto_df.train(clf='RF', n_comb=2, comb_seed=None, verbose=True)
 
-# apply
+
+# dev
 print_title1("Apply")
 df_apply = auto_df.preprocess_apply(df, verbose=False)
 df_apply = auto_df.select_features_apply(df_apply, verbose=False)
 
-print_dict(res_dict[best_model_index]['train_metrics'])
+res_dict, l_valid_models, best_model_index, df_model_res = auto_df.predict(df_apply, metric='F1', verbose=True)
 
-# X / y
+# test
 y = df_apply[target]
 X = df_apply.drop(target, axis=1)
 
