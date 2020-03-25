@@ -36,8 +36,8 @@ auto_df.select_features(method='pca', verbose=False)
 #                                                                               comb_seed=None, verbose=True)
 
 
+# train
 auto_df.train(clf='RF', n_comb=2, comb_seed=None, verbose=True)
-
 
 # dev
 print_title1("Apply")
