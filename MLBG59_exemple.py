@@ -32,19 +32,19 @@ print_dict(auto_df.d_preprocess)
 auto_df.select_features(method='pca', verbose=False)
 
 # random search
-#res_dict, l_valid_models, best_model_index, df_model_res = auto_df.train_model(clf='XGBOOST', n_comb=2,
+# res_dict, l_valid_models, best_model_index, df_model_res = auto_df.train_model(clf='XGBOOST', n_comb=2,
 #                                                                               comb_seed=None, verbose=True)
 
 
 # train
-auto_df.train(clf='RF', n_comb=2, comb_seed=None, verbose=True)
+auto_df.model_train(clf='RF', n_comb=2, comb_seed=None, verbose=True)
 
 # dev
 print_title1("Apply")
 df_apply = auto_df.preprocess_apply(df, verbose=False)
 df_apply = auto_df.select_features_apply(df_apply, verbose=False)
 
-res_dict, l_valid_models, best_model_index, df_model_res = auto_df.predict(df_apply, metric='F1', verbose=True)
+res_dict, l_valid_models, best_model_index, df_model_res = auto_df.model_predict(df_apply, metric='F1', verbose=True)
 
 # test
 y = df_apply[target]
@@ -57,3 +57,5 @@ eval_dict = classifier_evaluate(y, y_pred, y_proba, verbose=0)
 
 color_print("eval_dict")
 print_dict(eval_dict)
+
+print(auto_df.hyperopt[best_model_index]['train_metrics'])

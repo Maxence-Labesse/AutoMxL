@@ -202,7 +202,7 @@ def get_cat_outliers(df, l_var=None, threshold=0.05, verbose=False):
     # store outliers categories in dict
     d_outliers = {k: v[v < threshold].index.tolist()
                   for k, v in d_freq.items()
-                  if len(v[v < threshold]) > 0}
+                  if len(v[v < threshold]) > 1}
 
     if verbose:
         color_print('cat features outliers identification (frequency<' + str(threshold) + ')')

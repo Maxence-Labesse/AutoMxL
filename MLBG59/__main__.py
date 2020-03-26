@@ -1,5 +1,4 @@
 from abc import ABC
-
 from MLBG59.Utils.Display import print_title1
 from MLBG59.Utils.Decorators import timer
 from MLBG59.Explore.Explore import explore
@@ -17,17 +16,20 @@ class AML(pd.DataFrame, ABC):
     AutoML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to a class
     method that can be called with default or filled parameters.
 
-    - Epxlore: dataset exploration and features types identification
-    - Preprocess: clean and prepare data (optional : outliers processing).
-    - Preprocess_apply : allow to apply fitted preprocessing to a dataset
-    - Select_Features: features selection (optional)
-    - Model (random search)
-    - Model_apply : allow to apply fitted model to a dataset
+    - epxlore: explore dataset and identify features types
+    - preprocess: clean and prepare data (optional : outliers processing).
+    - select_features: features selection (optional)
+    - model_train_predict : split AML in train/test sets to fits/apply models with random search.
+    Then gives you the list of the valid models (without overfitting) and the best one.
+    - Deployment methods:
+        - preprocess_apply : apply fitted preprocessing transformation to a new dataset
+        - select_features_apply : idem
+        - model_apply : apply fitted models to a new dataset
 
     Notes :
 
     - A method requires that the former one has been applied
-    - Target has to be binary (multi-class incoming) and encoded as int (1/0)
+    - Target has to be binary and encoded as int (1/0)
 
     Parameters
     ----------
@@ -37,28 +39,6 @@ class AML(pd.DataFrame, ABC):
         target name
     step : string
         last method applied on object
-    d_features : dict (created by audit method)
-
-        {x : list of variables names}
-
-        - date: date features
-        - identifier: identifier features
-        - verbatim: verbatim features
-        - boolean: boolean features
-        - categorical: categorical features
-        - numerical: numerical features
-        - categorical: categorical features
-        - date: date features
-        - NA: features which contains NA values
-        - low_variance: list of the features with low variance and unique values
-
-    d_preprocess : dict (created with preprocess method)
-
-        - remove: list of the features to remove
-        - date: fitted DateEncoder object
-        - NA: Fitted NAEncoder object
-        - categorical: Fitted CategoricalEncoder object
-        - outlier: Fitted OutlierEncoder object
   """
 
     def __init__(self, *args, target=None, **kwargs):
@@ -89,20 +69,29 @@ class AML(pd.DataFrame, ABC):
 
     @timer
     def explore(self, verbose=False):
-        """get and store global information about the dataset :
+        """data exploration and features type identification
 
-        - Variables type
-        - NA values
-        - low variance and unique values variables
-
-        Target variable is not included for exploration
-
-        Note : if you wish tu modify some features types, you can directly modify d_features attribute
+        Note :  if you disagree with automated identification, you can directly modify d_features attribute
 
         Parameters
         ----------
         verbose : boolean (Default False)
             Get logging information
+
+        Returns
+        -------
+        create self.d_features : dict {x : list of variables names}
+
+        - date: date features
+        - identifier: identifier features
+        - verbatim: verbatim features
+        - boolean: boolean features
+        - categorical: categorical features
+        - numerical: numerical features
+        - categorical: categorical features
+        - date: date features
+        - NA: features which contains NA values
+        - low_variance: list of the features with low variance and unique values
         """
         if verbose:
             print_title1('Explore')
@@ -160,6 +149,15 @@ class AML(pd.DataFrame, ABC):
         cat_method : string (Default : 'deep_encoder')
             Categorical features encoding method
 
+        Returns
+        -------
+        create self.d_preprocess : dict {step : transformation}
+
+        - remove: list of the features to remove
+        - date: fitted DateEncoder object
+        - NA: fitted NAEncoder object
+        - categorical: fitted CategoricalEncoder object
+        - outlier: fitted OutlierEncoder object
         """
         # check pipe step
         assert self.step in ['explore'], 'apply explore method first'
@@ -321,7 +319,15 @@ class AML(pd.DataFrame, ABC):
     """
 
     def select_features(self, method='pca', verbose=False):
-        """
+        """ fit and apply features selection
+
+        Parameters
+        ----------
+        method : string (Default pca)
+            method use to select features
+        verbose : boolean (Default False)
+            Get logging information
+
         """
         print(self.step)
         assert self.step in ['preprocess'], 'apply preprocess method'
@@ -354,6 +360,7 @@ class AML(pd.DataFrame, ABC):
 
     def select_features_apply(self, df, verbose=False):
         """Apply features selection.
+
          Requires Select_Features method to have been applied
 
          Parameters
@@ -364,7 +371,7 @@ class AML(pd.DataFrame, ABC):
              Get logging information
          Returns
          -------
-         DataFrame : Preprocessed dataset
+         DataFrame : reduced dataset
          """
         # check pipe step and is_fitted
         assert self.is_fitted_selector, "fit first (please)"
@@ -383,14 +390,20 @@ class AML(pd.DataFrame, ABC):
     """
 
     @timer
-    def train_model(self, clf='XGBOOST', metric='F1', top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
-        """Model hyper-optimisation with random search.
+    def model_train_test(self, clf='XGBOOST', metric='F1', top_bagging=False, n_comb=10, comb_seed=None,
+                         verbose=True):
+        """train and test models with random search
 
-        - Create random hyper-parameters combinations from HP grid
-        - train and test a model for each combination
+        - Create models with random hyper-parameters combinations from HP grid
+        - split (random 80/20) train/test sets to fit/apply models
+        - identify valid models |(auc(train)-auc(test)|<0.03
         - get the best model in respect of a selected metric among valid model
 
-        Available classifiers : Random Forest, XGBOOST (and bagging)
+
+        Notes :
+
+        - Available classifiers : Random Forest, XGBOOST (and bagging)
+        - can enable bagggin algo with top_bagging parameter
 
         Parameters
         ----------
@@ -458,6 +471,9 @@ class AML(pd.DataFrame, ABC):
             if round(d_fitted_models[best_model_idx]['metrics'][metric], 4) == 1.0:
                 color_print("C'était pas qu'un physique finalement hein ?", 32)
 
+        self.hyperopt = hyperopt
+        self.is_fitted_model = True
+
         return d_fitted_models, l_valid_models, best_model_idx, df_model_res
 
     """
@@ -465,20 +481,33 @@ class AML(pd.DataFrame, ABC):
     """
 
     @timer
-    def train(self, clf='XGBOOST', top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
-        """
+    def model_train(self, clf='XGBOOST', top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
+        """train models with random search
+
+        - Create models with random hyper-parameters combinations from HP grid
+        - fit models on self
+        - identify valid models |(auc(train)-auc(test)|<0.03
+        - get the best model in respect of a selected metric among valid model
+
+
+        Notes :
+
+        - Available classifiers : Random Forest, XGBOOST (and bagging)
+        - can enable bagggin algo with top_bagging parameter
 
         Parameters
-
         ----------
-        clf
-        top_bagging
-        n_comb
-        comb_seed
-        verbose
+        clf : string (Default : 'XGBOOST')
+            classifier used for modelisation
+        top_bagging : boolean (Default : False)
+            enable Bagging
+        n_comb : int (Default : 10)
+            HP combination number
+        comb_seed : int (Default : None)
+            random combination seed
+        verbose : boolean (Default False)
+            Get logging information
 
-        Returns
-        -------
 
         """
         assert self.step in ['preprocess', 'features_selection'], 'apply preprocess method'
@@ -488,6 +517,7 @@ class AML(pd.DataFrame, ABC):
         if verbose:
             print_title1('Train Models')
 
+        # instantiate Hyperopt object
         hyperopt = Hyperopt(classifier=clf, grid_param=None, n_param_comb=n_comb,
                             top_bagging=top_bagging, comb_seed=comb_seed)
 
@@ -495,24 +525,45 @@ class AML(pd.DataFrame, ABC):
         if verbose:
             color_print('training models')
 
+        # fit hyperopt on self
         hyperopt.fit(df_train, self.target, verbose=verbose)
 
         self.hyperopt = hyperopt
+        self.is_fitted_model = True
 
     """
     ------------------------------------------------------------------------------------------------------------------------
     """
 
     @timer
-    def predict(self, df, metric='F1', verbose=True):
-        """
+    def model_predict(self, df, metric='F1', verbose=True):
+        """apply fitted models on a dataset
+
+        Parameters
+        ----------
+        metric : string (Default : 'F1')
+            objective metric
+        verbose : boolean (Default False)
+            Get logging information
+
+        Returns
+        -------
+        dict
+            {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
+        list
+            valid model indexes
+        int
+            best model index
+        DataFrame
+            Models information and metrics stored in DataFrame
 
         """
-        # Apply model on test set
+        assert self.is_fitted_model, "model is not fitted yet, apply model_train_predict or model_train methods"
 
         if verbose:
             color_print('\napplying models')
 
+        # apply models on dataset
         d_fitted_models = self.hyperopt.predict(df, self.target, delta_auc=0.03, verbose=verbose)
 
         # model selection
@@ -520,7 +571,7 @@ class AML(pd.DataFrame, ABC):
             color_print('\nbest model selection')
         best_model_idx, l_valid_models = self.hyperopt.get_best_model(d_fitted_models, metric=metric, delta_auc_th=0.03,
                                                                       verbose=False)
-
+        # store model results
         df_model_res = self.hyperopt.model_res_to_df(d_fitted_models, sort_metric=metric)
 
         if best_model_idx is not None:

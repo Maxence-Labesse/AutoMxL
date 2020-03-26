@@ -198,7 +198,7 @@ class TestOutliers(unittest.TestCase):
         df_out2 = out_encoder2.fit_transform(df, verbose=False)
 
         # cat outliers
-        self.assertEqual(list(df_out1['Hair']), ['brown', 'brown', 'outliers', 'blond', 'blond', 'blond'])
+        self.assertEqual(list(df_out1['Hair']), ['brown', 'brown', 'dark', 'blond', 'blond', 'blond'])
         self.assertEqual(list(df_out1['Sexe']), ['M', 'M', 'M', np.nan, 'F', 'M'])
         self.assertEqual(list(df_out2['Name']), ['outliers'] * 6)
         # num outliers
