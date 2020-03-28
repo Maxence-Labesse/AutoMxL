@@ -155,7 +155,7 @@
 <span class="sd">- get_params : get bagging object parameters</span>
 <span class="sd">- fit : create bagging samples from a DataFrame and fit the train_model on each sample</span>
 <span class="sd">- predict : apply models fitted on sample to a  dataset</span>
-<span class="sd">- feature_importance : get features importance of the train_model</span>
+<span class="sd">- bag_feature_importance : get features importance of the train_model</span>
 
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -259,7 +259,7 @@
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">niter</span><span class="p">):</span>
             <span class="c1"># Sample creation</span>
-            <span class="n">df_train_bag</span> <span class="o">=</span> <span class="n">Bagging_sample</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">replace</span><span class="p">)</span>
+            <span class="n">df_train_bag</span> <span class="o">=</span> <span class="n">create_sample</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">replace</span><span class="p">)</span>
 
             <span class="c1"># X_train / y_train</span>
             <span class="n">X_train_bag</span> <span class="o">=</span> <span class="n">df_train_bag</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -315,7 +315,7 @@
 <span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Bagging.feature_importance"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.feature_importance">[docs]</a>    <span class="k">def</span> <span class="nf">feature_importance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="Bagging.bag_feature_importance"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.bag_feature_importance">[docs]</a>    <span class="k">def</span> <span class="nf">bag_feature_importance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get features importance of the train_model by averaging importance of models fitted on the samples</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -350,7 +350,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="Bagging_sample"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging_sample">[docs]</a><span class="k">def</span> <span class="nf">Bagging_sample</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">pos_target_nb</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="create_sample"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.create_sample">[docs]</a><span class="k">def</span> <span class="nf">create_sample</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">pos_target_nb</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create a DataFrame sample with selected number of target=1</span>
 <span class="sd">        </span>
 <span class="sd">    Parameters</span>

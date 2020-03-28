@@ -29,7 +29,6 @@ class FeatSelector(object):
         self.method = method
         self.is_fitted = False
         self.l_select_var = []
-        self.l_var_other = []
         self.selector = None
         self.scaler = None
 
@@ -134,14 +133,13 @@ class FeatSelector(object):
         if verbose:
             print("Numerical Dimensions reduction : " + str(len(self.l_select_var)) + " - > " + str(n_dim + 1))
             print("explained inertia : " + str(round(np.cumsum(pca.explained_variance_ratio_)[n_dim], 4)))
-
         return df_reduced
 
     """
     ----------------------------------------------------------------------------------------------
     """
 
-    def fit_transform(self, df, l_var, verbose):
+    def fit_transform(self, df, l_var, verbose=False):
         """ fit and apply features selection
 
         Parameters

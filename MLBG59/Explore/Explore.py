@@ -66,6 +66,7 @@ def explore(df, verbose=False):
     l_unique = [col for col in df.columns.tolist() if df[col].dtype == 'object' and df[col].nunique(dropna=True) == 1]
 
     l_low_var = l_low_var + l_unique
+
     df_valid = df.drop(l_low_var, axis=1).copy()
 
     #################

@@ -55,6 +55,7 @@ class Bagging(object):
         self.pos_sample_size = pos_sample_size
         self.replace = replace
         self.list_model = list()
+        self.is_fitted = False
 
     """
     -------------------------------------------------------------------------------------------------------------
@@ -104,7 +105,7 @@ class Bagging(object):
 
         for i in range(self.niter):
             # Sample creation
-            df_train_bag = Bagging_sample(df_train, target, N, replace=self.replace)
+            df_train_bag = create_sample(df_train, target, N, replace=self.replace)
 
             # X_train / y_train
             X_train_bag = df_train_bag.copy()
@@ -116,6 +117,8 @@ class Bagging(object):
 
             # fit model for each sample
             self.list_model[i].fit(X_train_bag, y_train_bag)
+
+            self.is_fitted = True
 
         return self
 
@@ -139,6 +142,7 @@ class Bagging(object):
         numpy.ndarray (int)
             Predictions for each observation
         """
+        assert self.is_fitted, "Fit first !"
         # Init probs storage matrix
         mat_prob = np.zeros((self.niter, df.shape[0]))
 
@@ -160,7 +164,7 @@ class Bagging(object):
     -------------------------------------------------------------------------------------------------------------
     """
 
-    def feature_importance(self, X):
+    def bag_feature_importance(self, X):
         """Get features importance of the model by averaging importance of models fitted on the samples
         
         Parameters
@@ -195,7 +199,7 @@ class Bagging(object):
 """
 
 
-def Bagging_sample(df, target, pos_target_nb, replace=False):
+def create_sample(df, target, pos_target_nb, replace=False):
     """Generate a DataFrame sample with selected number of target=1
         
     Parameters

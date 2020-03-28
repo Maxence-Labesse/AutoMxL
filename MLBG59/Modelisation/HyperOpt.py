@@ -15,7 +15,7 @@ from datetime import datetime
 from MLBG59.param_config import default_bagging_param, default_RF_grid_param, default_XGB_grid_param
 
 
-class Hyperopt(object):
+class HyperOpt(object):
     """Model hyper-optimisation with random search :
 
     - From a hyper-parameters grid, creates random HPs combinations
@@ -30,7 +30,7 @@ class Hyperopt(object):
         HP grid
     n_param_comb : int (Default : 10)
         number of HP combinations
-    top_bagging : Boolean (Default = False)
+    bagging : Boolean (Default = False)
         use bagging method
     bagging_param : n-uple
         bagging parameters (Default : default_bagging_param (Bagging module))
@@ -46,7 +46,7 @@ class Hyperopt(object):
                  classifier='RF',
                  grid_param=None,
                  n_param_comb=10,
-                 top_bagging=False,
+                 bagging=False,
                  bagging_param=default_bagging_param,
                  comb_seed=None):
 
@@ -56,14 +56,17 @@ class Hyperopt(object):
                 self.grid_param = default_RF_grid_param
             elif classifier == 'XGBOOST':
                 self.grid_param = default_XGB_grid_param
+        else:
+            self.grid_param = grid_param
         self.classifier = classifier
         self.n_param_comb = n_param_comb
-        self.top_bagging = top_bagging
+        self.bagging = bagging
         self.bagging_param = bagging_param
         self.comb_seed = comb_seed
         # attributes
-        self.train_model_dict = None
+        self.d_train_model = {}
         self.d_bagging = {}
+        self.is_fitted = False
 
     """
     -------------------------------------------------------------------------------------------------------------
@@ -80,7 +83,7 @@ class Hyperopt(object):
         return {'classifier': self.classifier,
                 'grid_param': self.grid_param,
                 'n_param_comb': self.n_param_comb,
-                'top_bagging': self.top_bagging,
+                'top_bagging': self.bagging,
                 'bagging_param': self.bagging_param,
                 'comb_seed': self.comb_seed}
 
@@ -105,6 +108,10 @@ class Hyperopt(object):
         self.train_model_dict (created with fit method) : dict
             {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics'}
         """
+        # X / y
+        y_train = df_train[target]
+        X_train = df_train.drop(target, axis=1)
+
         # Sort HPs grid dict by param name (a->z)
         grid_names = sorted(self.grid_param)
         # random sampling : 'n_param_comb' HPS combinations
@@ -115,45 +122,32 @@ class Hyperopt(object):
         sample_combinations = random.sample(list(it.product(*(self.grid_param[Name] for Name in grid_names))),
                                             k=self.n_param_comb)
 
-        if verbose:
-            print('\033[34m' + 'Random search:', self.n_param_comb, 'HP combs',
-                  '\033[0m')
-            print('\033[34m' + 'Model : ', self.classifier, '\033[0m')
-
-        # init train_model_dict
-        self.train_model_dict = {}
-
         # for each HP combination :
-        for l in range(len(sample_combinations)):
-
+        for model_idx in range(len(sample_combinations)):
             t_ini_model = datetime.now()
 
-            # Model params
-            HP_dict = dict(zip(grid_names, sample_combinations[l]))
+            # Model params in dict
+            HP_dict = dict(zip(grid_names, sample_combinations[model_idx]))
 
-            # Model creation
+            # instantiate model
             if self.classifier == 'RF':  # Classifier Random Forest
                 clf = RandomForestClassifier(**HP_dict)
             # elif self.classifier == 'XGBOOST':
             else:
                 clf = xgboost.XGBClassifier(**HP_dict)
 
-            # X / y
-            y_train = df_train[target]
-            X_train = df_train.drop(target, axis=1)
-
-            # Without bagging
-            if not self.top_bagging:
+            # disabling bagging
+            if not self.bagging:
 
                 # model training
                 clf_fit = clf.fit(X_train, y_train)
                 # features importance
                 features_dict = dict(zip(X_train.columns, clf.feature_importances_))
-                # classification probas
+                # outputs
                 y_proba = clf_fit.predict_proba(X_train)[:, 1]
                 y_pred = clf_fit.predict(X_train)
 
-            # With bagging
+            # enabling bagging
             else:
                 # init bagging object with default params
                 bag = Bagging(clf, **self.bagging_param)
@@ -161,28 +155,33 @@ class Hyperopt(object):
                 bag.fit(df_train, target)
                 clf_fit = bag.list_model
                 # features importance
-                features_dict = bag.feature_importance(X_train)
+                features_dict = bag.bag_feature_importance(X_train)
                 # classification probas
                 y_proba, y_pred = bag.predict(df_train.drop(target, axis=1))
 
-                self.d_bagging[l] = bag
+                self.d_bagging[model_idx] = bag
 
             # Model evaluation
             eval_dict = classifier_evaluate(y_train, y_pred, y_proba, verbose=0)
 
             # store
             train_model = {'HP': HP_dict,
-                           'probas': y_proba,
                            'model': clf_fit,
                            'features_importance': features_dict,
+                           'train_output': {'y_proba': y_proba, 'y_pred': y_pred},
                            'train_metrics': eval_dict}
 
-            self.train_model_dict[l] = train_model
+            # store model results for each combination
+            self.d_train_model[model_idx] = train_model
 
-            t_fin_model = datetime.now()
+            # Fitted !
+            self.is_fitted = True
 
             if verbose:
-                print(str(l + 1) + '/' + str(len(sample_combinations)) +
+                t_fin_model = datetime.now()
+                print('\033[34m' + 'Random search:', self.n_param_comb, 'HP combs', '\033[0m')
+                print('\033[34m' + 'Model : ', self.classifier, '\033[0m')
+                print(str(model_idx + 1) + '/' + str(len(sample_combinations)) +
                       ' >> {} Sec.'.format((t_fin_model - t_ini_model).total_seconds()))
 
         return self
@@ -210,21 +209,22 @@ class Hyperopt(object):
         dict
             {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
         """
-        res_model_dict = self.train_model_dict
+        assert self.is_fitted, 'fit first'
+
+        d_apply_model = self.d_train_model
 
         # X / y
         y = df[target]
         X = df.drop(target, axis=1)
 
         # For each HPs combination
-        for key, value in self.train_model_dict.items():
+        for key, value in self.d_train_model.items():
+            t_ini_model = datetime.now()
 
             modl = value['model']
 
-            t_ini_model = datetime.now()
-
             # Without bagging
-            if not self.top_bagging:
+            if not self.bagging:
 
                 # classification probas
                 y_proba = modl.predict_proba(X)[:, 1]
@@ -233,24 +233,22 @@ class Hyperopt(object):
                 y_pred = modl.predict(X)
 
             # With bagging
-            elif self.top_bagging:
+            elif self.bagging:
 
                 # classification probs and votes
                 y_proba, y_pred = self.d_bagging[key].predict(X)
 
-                # store
-            dict_model = {'y_proba': y_proba,
-                          'y_pred': y_pred}
+            # store outputs
+            d_output = {'y_proba': y_proba,
+                        'y_pred': y_pred}
 
             # compute model metrics
             eval_dict = classifier_evaluate(y, y_pred, y_proba, verbose=0)
-            fpr_train, tpr_train = self.train_model_dict[key]['train_metrics']['fpr tpr']
-            eval_dict['train_auc'] = auc(fpr_train, tpr_train)
-            eval_dict['delta_auc'] = abs(auc(fpr_train, tpr_train) - eval_dict["Roc_auc"])
+            eval_dict['delta_auc'] = abs(self.d_train_model[key]['train_metrics']['Roc_auc'] - eval_dict["Roc_auc"])
 
             # store 
-            res_model_dict[key]['outputs'] = dict_model
-            res_model_dict[key]['metrics'] = eval_dict
+            d_apply_model[key]['outputs'] = d_output
+            d_apply_model[key]['metrics'] = eval_dict
 
             # print metrics
             if verbose:
@@ -260,18 +258,17 @@ class Hyperopt(object):
                 else:
                     c_code = 31
 
-                roc_auc_train = auc(fpr_train, tpr_train)
                 color_print(
-                    ' > AUC test: ' + str(round(eval_dict["Roc_auc"], 3)) + ' train: ' + str(round(roc_auc_train, 3)) +
+                    ' > AUC test: ' + str(round(eval_dict["Roc_auc"], 3)) + ' train: ' + str(
+                        round(self.d_train_model[key]['train_metrics']['Roc_auc'], 3)) +
                     ' / F1: ' + str(round(eval_dict['F1'], 3)) +
                     ' / prec: ' + str(round(eval_dict['Precision'], 3)) +
                     ' / recall: ' + str(round(eval_dict['Recall'], 3)), color_code=c_code)
 
-            t_fin_model = datetime.now()
-            if verbose:
+                t_fin_model = datetime.now()
                 print('{} Sec.'.format((t_fin_model - t_ini_model).total_seconds()))
 
-        return res_model_dict
+        return d_apply_model
 
     """
     -------------------------------------------------------------------------------------------------------------
@@ -338,7 +335,7 @@ class Hyperopt(object):
         """
         # dataFrame columns names
         model_col = ['model_index']
-        HP_col = list(self.train_model_dict[0]['HP'].keys())
+        HP_col = list(self.d_train_model[0]['HP'].keys())
         bagging_col = ['bagging']
         metrics_col = ['Accuracy', 'Roc_auc', 'F1', 'Logloss', 'Precision', 'Recall', 'delta_auc']
         feat_imp_col = ['TOP_feat1', 'TOP_feat2', 'TOP_feat3', 'TOP_feat4', 'TOP_feat5']
@@ -346,13 +343,13 @@ class Hyperopt(object):
         df_local = pd.DataFrame(columns=model_col + HP_col + bagging_col + metrics_col + feat_imp_col)
 
         # store informations in df
-        for key, value in self.train_model_dict.items():
+        for key, value in self.d_train_model.items():
             dict_tmp = {'model_index': key}
             dict_tmp.update(value['HP'].copy())
             dict_tmp.update({x: d_model_infos[key]['metrics'][x] for x in metrics_col})
 
-            dict_tmp.update({'bagging': self.top_bagging})
-            df_tmp = pd.DataFrame.from_dict(self.train_model_dict[key]['features_importance'],
+            dict_tmp.update({'bagging': self.bagging})
+            df_tmp = pd.DataFrame.from_dict(self.d_train_model[key]['features_importance'],
                                             orient='index').reset_index().rename(
                 columns={'index': 'feat', 0: 'importance'}).sort_values(by='importance', ascending=False).head(5)
             serie_tmp = df_tmp['feat'] + ' ' + round(df_tmp['importance'], 5).astype(str)

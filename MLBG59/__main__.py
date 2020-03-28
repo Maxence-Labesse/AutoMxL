@@ -29,7 +29,7 @@ class AML(pd.DataFrame, ABC):
     Notes :
 
     - A method requires that the former one has been applied
-    - Target has to be binary and encoded as int (1/0)
+    - Target has to be binary and encoded as int (1/0) (don't call it target)
 
     Parameters
     ----------
@@ -144,10 +144,11 @@ class AML(pd.DataFrame, ABC):
             If None, today date
         process_outliers : boolean (Default : False)
             Enable outliers replacement
-                verbose : boolean (Default False)
-            Get logging information
         cat_method : string (Default : 'deep_encoder')
             Categorical features encoding method
+        verbose : boolean (Default False)
+            Get logging information
+
 
         Returns
         -------
@@ -184,6 +185,7 @@ class AML(pd.DataFrame, ABC):
             print("  >", len(l_remove), "features to remove")
             if len(l_remove) > 0:
                 print(" ", l_remove)
+
 
         # Transform date -> time between date and date_ref
         if verbose:
@@ -266,6 +268,7 @@ class AML(pd.DataFrame, ABC):
             dataset to apply preprocessing on
         verbose : boolean (Default False)
             Get logging information
+
         Returns
         -------
         DataFrame : Preprocessed dataset
@@ -319,7 +322,7 @@ class AML(pd.DataFrame, ABC):
     """
 
     def select_features(self, method='pca', verbose=False):
-        """ fit and apply features selection
+        """ fit and apply features selection (optional)
 
         Parameters
         ----------
@@ -369,6 +372,7 @@ class AML(pd.DataFrame, ABC):
              dataset to apply selection on
          verbose : boolean (Default False)
              Get logging information
+
          Returns
          -------
          DataFrame : reduced dataset
@@ -402,7 +406,7 @@ class AML(pd.DataFrame, ABC):
 
         Notes :
 
-        - Available classifiers : Random Forest, XGBOOST (and bagging)
+        - Available classifiers : Random Forest, XGBOOST
         - can enable bagggin algo with top_bagging parameter
 
         Parameters
@@ -441,8 +445,8 @@ class AML(pd.DataFrame, ABC):
         df_train, df_test = train_test(self, 0.3)
 
         # Create Hyperopt object
-        hyperopt = Hyperopt(classifier=clf, grid_param=None, n_param_comb=n_comb,
-                            top_bagging=top_bagging, comb_seed=comb_seed)
+        hyperopt = HyperOpt(classifier=clf, grid_param=None, n_param_comb=n_comb,
+                            bagging=top_bagging, comb_seed=comb_seed)
 
         # fit model on train set
         if verbose:
@@ -518,8 +522,8 @@ class AML(pd.DataFrame, ABC):
             print_title1('Train Models')
 
         # instantiate Hyperopt object
-        hyperopt = Hyperopt(classifier=clf, grid_param=None, n_param_comb=n_comb,
-                            top_bagging=top_bagging, comb_seed=comb_seed)
+        hyperopt = HyperOpt(classifier=clf, grid_param=None, n_param_comb=n_comb,
+                            bagging=top_bagging, comb_seed=comb_seed)
 
         # fit model on train set
         if verbose:

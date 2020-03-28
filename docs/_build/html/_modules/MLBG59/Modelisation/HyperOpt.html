@@ -335,7 +335,7 @@
                 <span class="n">bag</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
                 <span class="n">clf_fit</span> <span class="o">=</span> <span class="n">bag</span><span class="o">.</span><span class="n">list_model</span>
                 <span class="c1"># features importance</span>
-                <span class="n">features_dict</span> <span class="o">=</span> <span class="n">bag</span><span class="o">.</span><span class="n">feature_importance</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
+                <span class="n">features_dict</span> <span class="o">=</span> <span class="n">bag</span><span class="o">.</span><span class="n">bag_feature_importance</span><span class="p">(</span><span class="n">X_train</span><span class="p">)</span>
                 <span class="c1"># classification probas</span>
                 <span class="n">y_proba</span><span class="p">,</span> <span class="n">y_pred</span> <span class="o">=</span> <span class="n">bag</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_train</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 

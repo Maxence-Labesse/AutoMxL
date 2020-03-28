@@ -695,7 +695,7 @@ If None, today date</li>
 <li>get_params : get bagging object parameters</li>
 <li>fit : create bagging samples from a DataFrame and fit the train_model on each sample</li>
 <li>predict : apply models fitted on sample to a  dataset</li>
-<li>feature_importance : get features importance of the train_model</li>
+<li>bag_feature_importance : get features importance of the train_model</li>
 </ul>
 <dl class="class">
 <dt id="MLBG59.Modelisation.Bagging.Bagging">
@@ -726,8 +726,8 @@ sample and outputs are combined by averaging (for regression) or voting (for cla
 </tbody>
 </table>
 <dl class="method">
-<dt id="MLBG59.Modelisation.Bagging.Bagging.feature_importance">
-<code class="descname">feature_importance</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging.feature_importance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging.feature_importance" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Modelisation.Bagging.Bagging.bag_feature_importance">
+<code class="descname">bag_feature_importance</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging.bag_feature_importance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging.bag_feature_importance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get features importance of the train_model by averaging importance of models fitted on the samples</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -807,8 +807,8 @@ Combine models by averaging the outputs (for regression) or voting (for classifi
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Modelisation.Bagging.Bagging_sample">
-<code class="descclassname">MLBG59.Modelisation.Bagging.</code><code class="descname">Bagging_sample</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>pos_target_nb</em>, <em>replace=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging_sample" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Modelisation.Bagging.create_sample">
+<code class="descclassname">MLBG59.Modelisation.Bagging.</code><code class="descname">create_sample</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>pos_target_nb</em>, <em>replace=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#create_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.create_sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a DataFrame sample with selected number of target=1</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
