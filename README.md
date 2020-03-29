@@ -100,7 +100,7 @@ d_fitted_models, l_valid_models, best_model_idx, df_model_res = auto_df.model_tr
 ```
 output :
 
-- d_fitted_models: dict containing models and information on test set: {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
+- d_fitted_models: dict containing models and information on test set
 - l_valid_models: valid model indexes
 - best_model_idx: best model index
 - df_model_res: models information and metrics stored in DataFrame
