@@ -45,13 +45,13 @@ df_raw = import_data('data/bank-additional-full.csv', verbose=False)
 # => get modified dataset and new target name
 new_df, new_target = category_to_target(df_raw, var='y' , cat='yes')
 
-# instantiate AutoML object with dataset and target name
+# instantiate AML object with dataset and target name
 auto_df = AML(new_df.copy(), target=new_target)
 ```
 
 ### Explore
 
-<span style="color: orange">explore</span> method gives you global information about the dataset (dimensions, NA containing features, low variance feature) and automatically
+<span style="color: orange">explore</span> method gives you global information about the dataset and automatically
 identify features types (booleans, dates, verbatims, categorical, numerical). This information is stored in "d_features" attribute.
 
 ```python
@@ -104,7 +104,7 @@ d_fitted_models, l_valid_models, best_model_idx, df_model_res = auto_df.model_tr
 ```
 output :
 
-- d_fitted_moels: dict containing models and information on test set: {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
+- d_fitted_models: dict containing models and information on test set: {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
 - l_valid_models: valid model indexes
 - best_model_idx: best model index
 - df_model_res: models information and metrics stored in DataFrame
