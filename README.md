@@ -70,8 +70,6 @@ print(auto_df.d_features.keys())
 - processes categorical data (using one hot encoding or Pytorch §NN embedding encoder)
 - processes outliers (optional)
 
-
-Features Transformations are stored in d_preprocess attribute.
 ```python
 auto_df.preprocess(process_outliers=False, cat_method='encoder', verbose=False)
 ```
@@ -80,7 +78,6 @@ auto_df.preprocess(process_outliers=False, cat_method='encoder', verbose=False)
 <span style="color: orange">select_features</span> method reduces the features dimension to speed up the modelisation execution time 
 (may increase model performance aswell).
 
-Features reduction is store in "features_selector" attribute.
 ```python
 
 auto_df.select_features(verbose=True)
@@ -109,15 +106,19 @@ output :
 - df_model_res: models information and metrics stored in DataFrame
 
 ### Application methods
-Since features transformations and models are stored as class attributes, you can apply it to any iso-structure dataset :
+Once you have apply preprocess and select_features methods, you can apply the same transformations to any iso-structure dataset :
 - preprocess_apply
 - select_features_apply
-- model_apply
+
 
 ```python
 df_prep = auto_df.preprocess_apply(df)
 df_sel = auto_df.select_features_apply(df_prep)
 ```
+\
+If you prefere to train and test your model separately, you can also use the following modelisation methods :
+- model_train
+- model apply
 
 ### Other methods
 Since AML is pandas DataFrame inherited class, you can apply any DataFrame methods.
