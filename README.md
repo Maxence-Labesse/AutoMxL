@@ -64,11 +64,11 @@ print(auto_df.d_features.keys())
 ### Preprocess
 <span style="color: orange">preprocess</span> method prepares the data before feeding it to the model :
 
-- remove features with low variance and features identified as verbatims and identifiers
-- transform date features to numeric data (timedelta, week of the year, ...)
-- fill missing values
-- process categorical data (using one hot encoding or Pytorch §NN embedding encoder)
-- process outliers (optional)
+- removes features with low variance and features identified as verbatims and identifiers
+- transforms date features to numeric data (timedelta, week of the year, ...)
+- fills missing values
+- processes categorical data (using one hot encoding or Pytorch §NN embedding encoder)
+- processes outliers (optional)
 
 
 Features Transformations are stored in d_preprocess attribute.
@@ -89,10 +89,10 @@ auto_df.select_features(verbose=True)
 ### Model Train Test
 model_train_test method trains and test models with random search.
 
-- Create models with random hyper-parameters combinations from HP grid
-- split (random 80/20) train/test sets to fit/apply models
-- identify valid models |(auc(train)-auc(test)|<0.03
-- get the best model in respect of a selected metric among valid model
+- creates models with random hyper-parameters combinations from HP grid
+- splits (random 80/20) train/test sets to fit/apply models
+- identifies valid models |(auc(train)-auc(test)|<0.03
+- gets the best model in respect of a selected metric among valid model
 
 Available classifiers : Random Forest, XGBOOST (and bagging).
 
