@@ -70,7 +70,6 @@ print(auto_df.d_features.keys())
 - process categorical data (using one hot encoding or Pytorch §NN embedding encoder)
 - process outliers (optional)
 
-For categorical encoding, you can choose classical one-hot-encoding method or pytorch NN embedding encoder.
 
 Features Transformations are stored in d_preprocess attribute.
 ```python
