@@ -10,7 +10,7 @@ The main purpose of this package is to provide a Python AutoML class named AML t
 from a raw dataset to a deployable model.
 It can be used as well as a functions/classes catalogue to ease and speed-up Data Scientists repetitive dev tasks.
 
-You can fin the whole code documentation on [Readthedoc documentation](https://mlbg59.readthedocs.io/en/latest/)
+You can fin the whole code documentation on [MLBG59 Readthedoc documentation](https://mlbg59.readthedocs.io/en/latest/)
 
 # Getting Started
 ### Prerequisites
@@ -25,9 +25,8 @@ Since this package is uploaded to PyPI, it can be installed with pip using the t
 $ pip install MLBG59
 ```
 
-# AutoML tutorial
-AML is built as a class inherited from pandas DataFrame. Except for data import, each step corresponds to a class method that can be 
-called with default parameters or filled ones.
+# AML class tutorial
+AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to a method that can be called with default or filled parameters.
 
 Note : 
 verbose parameter allows you to get logging informations for all the methods

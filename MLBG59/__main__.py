@@ -13,7 +13,7 @@ from MLBG59.Select_Features.Select_Features import FeatSelector
 class AML(pd.DataFrame, ABC):
     """Covers the complete pipeline of a classification project from a raw dataset to a deployable model.
 
-    AutoML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to a class
+    AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to a
     method that can be called with default or filled parameters.
 
     - epxlore: explore dataset and identify features types
