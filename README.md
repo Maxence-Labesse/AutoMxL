@@ -67,7 +67,7 @@ print(auto_df.d_features.keys())
 - remove features with low variance and features identified as verbatims and identifiers
 - transform date features to numeric data (timedelta, week of the year, ...)
 - fill missing values
-- process categorical data
+- process categorical data (using one hot encoding or Pytorch §NN embedding encoder)
 - process outliers (optional)
 
 For categorical encoding, you can choose classical one-hot-encoding method or pytorch NN embedding encoder.
