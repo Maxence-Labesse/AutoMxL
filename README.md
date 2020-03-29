@@ -93,8 +93,6 @@ model_train_test method trains and test models with random search.
 
 Available classifiers : Random Forest, XGBOOST (and bagging).
 
-Models, metrics and outputs are stored in "d_hyperopt" attribute
-
 ```python
 d_fitted_models, l_valid_models, best_model_idx, df_model_res = auto_df.model_train_test(verbose=False)
 ```
@@ -105,7 +103,7 @@ output :
 - best_model_idx: best model index
 - df_model_res: models information and metrics stored in DataFrame
 
-
+\
 Note : if you prefere to train and test your model separately, you can also use the following modelisation methods:
 ```python
 auto_df.model_train(verbose=False)
