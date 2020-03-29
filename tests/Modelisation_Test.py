@@ -94,6 +94,13 @@ class TestHyperOpt(unittest.TestCase):
         self.assertIn(best_idx, range(2))
         self.assertLessEqual(len(l_valid), 2)
 
+        # test best model is valid (delta_auc)
+        self.assertTrue(d_apply_model[best_idx]['evaluation']['delta_auc'] < 0.03)
+        # best model have the max F1 score among valid models
+        for i in range(2):
+            if d_apply_model[i]['evaluation']['delta_auc'] < 0.03:
+                self.assertTrue(d_apply_model[best_idx]['evaluation']['F1'] >= d_apply_model[i]['evaluation']['F1'])
+
     def test_model_res_to_df(self):
         """ model_res_to_df """
         d_apply_model = self.hyperopt.predict(df_iris_binary, target='Setosa', delta_auc=0.03)

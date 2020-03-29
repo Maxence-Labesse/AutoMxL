@@ -122,6 +122,10 @@ class HyperOpt(object):
         sample_combinations = random.sample(list(it.product(*(self.grid_param[Name] for Name in grid_names))),
                                             k=self.n_param_comb)
 
+        if verbose :
+            print('\033[34m' + 'Random search:', self.n_param_comb, 'HP combs', '\033[0m')
+            print('\033[34m' + 'Model : ', self.classifier, '\033[0m')
+
         # for each HP combination :
         for model_idx in range(len(sample_combinations)):
             t_ini_model = datetime.now()
@@ -179,8 +183,6 @@ class HyperOpt(object):
 
             if verbose:
                 t_fin_model = datetime.now()
-                print('\033[34m' + 'Random search:', self.n_param_comb, 'HP combs', '\033[0m')
-                print('\033[34m' + 'Model : ', self.classifier, '\033[0m')
                 print(str(model_idx + 1) + '/' + str(len(sample_combinations)) +
                       ' >> {} Sec.'.format((t_fin_model - t_ini_model).total_seconds()))
 

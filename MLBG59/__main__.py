@@ -51,7 +51,7 @@ class AML(pd.DataFrame, ABC):
         self.d_features = None
         self.d_preprocess = None
         self.features_selector = None
-        self.hyperopt = None
+        self.d_hyperopt = None
         self.is_fitted_preprocessing = False
         self.is_fitted_selector = False
         self.is_fitted_model = False
@@ -62,6 +62,15 @@ class AML(pd.DataFrame, ABC):
 
     def __repr__(self):
         return 'MLBG59 instance'
+
+    """
+    --------------------------------------------------------------------------------------------------------------------
+    """
+
+    def duplicate(self):
+        res = AML(self)
+        res.__dict__.update(self.__dict__)
+        return res
 
     """
     --------------------------------------------------------------------------------------------------------------------
@@ -186,7 +195,6 @@ class AML(pd.DataFrame, ABC):
             if len(l_remove) > 0:
                 print(" ", l_remove)
 
-
         # Transform date -> time between date and date_ref
         if verbose:
             color_print("Transform date")
@@ -200,7 +208,7 @@ class AML(pd.DataFrame, ABC):
             color_print('Missing values')
 
         NA_encoder = NAEncoder()
-        NA_encoder.fit(self, l_var=self.d_features['NA'], verbose=False)
+        NA_encoder.fit(df_local, l_var=None, verbose=False)
         df_local = NA_encoder.transform(df_local, verbose=verbose)
 
         # replace outliers
@@ -394,7 +402,8 @@ class AML(pd.DataFrame, ABC):
     """
 
     @timer
-    def model_train_test(self, clf='XGBOOST', metric='F1', top_bagging=False, n_comb=10, comb_seed=None,
+    def model_train_test(self, clf='XGBOOST', grid_param=None, metric='F1', top_bagging=False, n_comb=10,
+                         comb_seed=None,
                          verbose=True):
         """train and test models with random search
 
@@ -433,7 +442,7 @@ class AML(pd.DataFrame, ABC):
         int
             best model index
         DataFrame
-            Models information and metrics stored in DataFrame
+            models information and metrics stored in DataFrame
         """
         assert self.step in ['preprocess', 'features_selection'], 'apply preprocess method'
 
@@ -445,7 +454,7 @@ class AML(pd.DataFrame, ABC):
         df_train, df_test = train_test(self, 0.3)
 
         # Create Hyperopt object
-        hyperopt = HyperOpt(classifier=clf, grid_param=None, n_param_comb=n_comb,
+        hyperopt = HyperOpt(classifier=clf, grid_param=grid_param, n_param_comb=n_comb,
                             bagging=top_bagging, comb_seed=comb_seed)
 
         # fit model on train set
@@ -475,7 +484,7 @@ class AML(pd.DataFrame, ABC):
             if round(d_fitted_models[best_model_idx]['metrics'][metric], 4) == 1.0:
                 color_print("C'était pas qu'un physique finalement hein ?", 32)
 
-        self.hyperopt = hyperopt
+        self.d_hyperopt = hyperopt
         self.is_fitted_model = True
 
         return d_fitted_models, l_valid_models, best_model_idx, df_model_res
@@ -485,7 +494,7 @@ class AML(pd.DataFrame, ABC):
     """
 
     @timer
-    def model_train(self, clf='XGBOOST', top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
+    def model_train(self, clf='XGBOOST', grid_param=None, top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
         """train models with random search
 
         - Create models with random hyper-parameters combinations from HP grid
@@ -512,7 +521,6 @@ class AML(pd.DataFrame, ABC):
         verbose : boolean (Default False)
             Get logging information
 
-
         """
         assert self.step in ['preprocess', 'features_selection'], 'apply preprocess method'
 
@@ -522,7 +530,7 @@ class AML(pd.DataFrame, ABC):
             print_title1('Train Models')
 
         # instantiate Hyperopt object
-        hyperopt = HyperOpt(classifier=clf, grid_param=None, n_param_comb=n_comb,
+        hyperopt = HyperOpt(classifier=clf, grid_param=grid_param, n_param_comb=n_comb,
                             bagging=top_bagging, comb_seed=comb_seed)
 
         # fit model on train set
@@ -532,7 +540,7 @@ class AML(pd.DataFrame, ABC):
         # fit hyperopt on self
         hyperopt.fit(df_train, self.target, verbose=verbose)
 
-        self.hyperopt = hyperopt
+        self.d_hyperopt = hyperopt
         self.is_fitted_model = True
 
     """
@@ -568,15 +576,15 @@ class AML(pd.DataFrame, ABC):
             color_print('\napplying models')
 
         # apply models on dataset
-        d_fitted_models = self.hyperopt.predict(df, self.target, delta_auc=0.03, verbose=verbose)
+        d_fitted_models = self.d_hyperopt.predict(df, self.target, delta_auc=0.03, verbose=verbose)
 
         # model selection
         if verbose:
             color_print('\nbest model selection')
-        best_model_idx, l_valid_models = self.hyperopt.get_best_model(d_fitted_models, metric=metric, delta_auc_th=0.03,
-                                                                      verbose=False)
+        best_model_idx, l_valid_models = self.d_hyperopt.get_best_model(d_fitted_models, metric=metric, delta_auc_th=0.03,
+                                                                        verbose=False)
         # store model results
-        df_model_res = self.hyperopt.model_res_to_df(d_fitted_models, sort_metric=metric)
+        df_model_res = self.d_hyperopt.model_res_to_df(d_fitted_models, sort_metric=metric)
 
         if best_model_idx is not None:
             print_title1('best model : ' + str(best_model_idx))
