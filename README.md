@@ -105,6 +105,13 @@ output :
 - best_model_idx: best model index
 - df_model_res: models information and metrics stored in DataFrame
 
+
+Note : if you prefere to train and test your model separately, you can also use the following modelisation methods:
+```python
+auto_df.model_train(verbose=False)
+d_fitted_models, l_valid_models, best_model_idx, df_model_res = auto_df.model_apply(df_sel, verbose=False)
+```
+
 ### Application methods
 Once you have apply preprocess and select_features, you can apply the same transformations to any iso-structure dataset using follow methods:
 
@@ -112,13 +119,6 @@ Once you have apply preprocess and select_features, you can apply the same trans
 df_prep = auto_df.preprocess_apply(df, verbose=False)
 df_sel = auto_df.select_features_apply(df_prep, verbose=False)
 ```
-\
-If you prefere to train and test your model separately, you can also use the following modelisation methods:
-```python
-auto_df.model_train(verbose=False)
-d_fitted_models, l_valid_models, best_model_idx, df_model_res = auto_df.model_apply(df_sel, verbose=False)
-```
-
 
 ### Other methods
 Since AML is pandas DataFrame inherited class, you can apply any DataFrame methods.
