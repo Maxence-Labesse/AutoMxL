@@ -52,7 +52,7 @@ auto_df = AML(new_df.copy(), target=new_target)
 ### Explore
 
 <span style="color: orange">explore</span> method gives you global information about the dataset (dimensions, NA containing features, low variance feature) and automatically
-identify features types (booleans, dates, verbatims, categorical, numerical). This information is stored in "d_features" attribute".
+identify features types (booleans, dates, verbatims, categorical, numerical). This information is stored in "d_features" attribute.
 
 ```python
 auto_df.explore(verbose=False)
