@@ -29,7 +29,7 @@ $ pip install MLBG59
 AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to a method that can be called with default or filled parameters.
 
 Note : 
-verbose parameter allows you to get logging informations for all the methods
+For each method, verbose parameter allows you to get logging informations.
 
 ### Import and target encoding
 
