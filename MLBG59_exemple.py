@@ -32,20 +32,19 @@ print_dict(auto_df.d_features)
 # features selection
 auto_df.select_features(method='pca', verbose=False)
 
-"""
 # random search
-# res_dict, l_valid_models, best_model_index, df_model_res = auto_df.train_model(clf='XGBOOST', n_comb=2,
-#                                                                               comb_seed=None, verbose=True)
+res_dict, l_valid_models, best_model_index, df_model_res = auto_df.model_trian_predict(clf='XGBOOST', n_comb=2,
+                                                                                       comb_seed=None, verbose=True)
 
+print(pd.DataFrame(res_dict['features_importance']))
 
+"""
 # train
 auto_df.model_train(clf='RF', n_comb=2, comb_seed=None, verbose=True)
 
 # dev
 print_title1("Apply")
 df_apply = auto_df.preprocess_apply(df, verbose=False)
-
-
 
 df_apply = auto_df.select_features_apply(df_apply, verbose=False)
 

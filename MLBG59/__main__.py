@@ -19,8 +19,8 @@ class AML(pd.DataFrame, ABC):
     - epxlore: explore dataset and identify features types
     - preprocess: clean and prepare data (optional : outliers processing).
     - select_features: features selection (optional)
-    - model_train_predict : split AML in train/test sets to fits/apply models with random search.
-    Then gives you the list of the valid models (without overfitting) and the best one.
+    - model_train_predict : split AML in train/test sets to fits/apply models with random search. Then gives you the
+    list of the valid models (without overfitting) and the best one.
     - Deployment methods:
         - preprocess_apply : apply fitted preprocessing transformation to a new dataset
         - select_features_apply : idem
@@ -28,8 +28,9 @@ class AML(pd.DataFrame, ABC):
 
     Notes :
 
-    - A method requires that the former one has been applied
-    - Target has to be binary and encoded as int (1/0) (don't call it target)
+    - A method requires that the former one has been applied (actuel step is given by "step" attribute)
+    - Target has to be binary and encoded as int (1/0) (see MLGB59.Start.Encode_Target module if you need help)
+    - don't call your target "target" please :>
 
     Parameters
     ----------
@@ -37,8 +38,6 @@ class AML(pd.DataFrame, ABC):
         Source Dataset
     target : string
         target name
-    step : string
-        last method applied on object
   """
 
     def __init__(self, *args, target=None, **kwargs):
@@ -89,6 +88,7 @@ class AML(pd.DataFrame, ABC):
 
         Returns
         -------
+
         create self.d_features : dict {x : list of variables names}
 
         - date: date features
@@ -581,7 +581,8 @@ class AML(pd.DataFrame, ABC):
         # model selection
         if verbose:
             color_print('\nbest model selection')
-        best_model_idx, l_valid_models = self.d_hyperopt.get_best_model(d_fitted_models, metric=metric, delta_auc_th=0.03,
+        best_model_idx, l_valid_models = self.d_hyperopt.get_best_model(d_fitted_models, metric=metric,
+                                                                        delta_auc_th=0.03,
                                                                         verbose=False)
         # store model results
         df_model_res = self.d_hyperopt.model_res_to_df(d_fitted_models, sort_metric=metric)
