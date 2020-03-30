@@ -21,7 +21,7 @@ class OutliersEncoder(object):
     ----------
     cat_threshold : float (default 0.02)
         Minimum modality frequency
-     num_xstd : int (Default : 3)
+    num_xstd : int (Default : 3)
         Variance gap coef
 
     """

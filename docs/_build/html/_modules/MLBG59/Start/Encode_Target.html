@@ -79,13 +79,14 @@
             
               <p class="caption"><span class="caption-text">AutoML class</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AutoML class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AML class</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#explore">Explore</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#module-MLBG59.Select_Features.Select_Features">Features Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#modelisation">Modelisation</a></li>
 </ul>
 
@@ -153,8 +154,10 @@
 <span></span><span class="sd">&quot;&quot;&quot;Target encoding functions :</span>
 
 <span class="sd">- category_to_target : create a target variable (1/0) from a selected category</span>
+<span class="sd">- range_to_target : create a target variable (1/0) from a selected range</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
 <div class="viewcode-block" id="category_to_target"><a class="viewcode-back" href="../../../features.html#MLBG59.Start.Encode_Target.category_to_target">[docs]</a><span class="k">def</span> <span class="nf">category_to_target</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">cat</span><span class="p">):</span>
@@ -185,15 +188,70 @@
     <span class="n">target_dummies</span><span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_dummies</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span>
 
     <span class="c1"># add encoded cat feature to dataset</span>
-    <span class="n">df_bis</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">df</span><span class="p">,</span> <span class="n">target_dummies</span><span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df_local</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">df</span><span class="p">,</span> <span class="n">target_dummies</span><span class="p">[</span><span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># remove var</span>
-    <span class="k">del</span> <span class="n">df_bis</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">df_bis</span><span class="p">,</span> <span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span></div>
+    <span class="k">return</span> <span class="n">df_local</span><span class="p">,</span> <span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">cat</span></div>
 
 
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">-----------------------------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
+
+<div class="viewcode-block" id="range_to_target"><a class="viewcode-back" href="../../../features.html#MLBG59.Start.Encode_Target.range_to_target">[docs]</a><span class="k">def</span> <span class="nf">range_to_target</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a target variable (1/0) from a selected range</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : DataFrame</span>
+<span class="sd">        input dataset</span>
+<span class="sd">    var : string</span>
+<span class="sd">        variable containing the target range</span>
+<span class="sd">    min : float</span>
+<span class="sd">        lower limit.</span>
+<span class="sd">        If None, no min</span>
+<span class="sd">    max : float</span>
+<span class="sd">        upper limit.</span>
+<span class="sd">        If None, no max</span>
+<span class="sd">    verbose : boolean (Default False)</span>
+<span class="sd">        Get logging information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame : modified dataset</span>
+<span class="sd">    string : new target name (var+&#39;_&#39;+lower+&#39;_&#39;+upper)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;fill at least one limit parameter (lower,upper)&#39;</span>
+
+    <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># transform variable to numeric if string</span>
+    <span class="k">if</span> <span class="n">var</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df_local</span><span class="o">.</span><span class="n">_get_numeric_data</span><span class="p">()</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+
+    <span class="c1"># handle None limits : replace by infinity</span>
+    <span class="k">if</span> <span class="nb">min</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">min</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">max</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">max</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+
+    <span class="c1"># define target name, using lower and upper values</span>
+    <span class="n">target_name</span> <span class="o">=</span> <span class="n">var</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">min</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
+
+    <span class="c1"># encode target</span>
+    <span class="n">df_local</span><span class="p">[</span><span class="n">target_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Created target : &quot;</span><span class="p">,</span> <span class="n">target_name</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">target_name</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="s1">&#39;values&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">(</span><span class="s1">&#39;counts&#39;</span><span class="p">))</span>
+
+    <span class="c1"># remove var</span>
+    <span class="k">del</span> <span class="n">df_local</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">df_local</span><span class="p">,</span> <span class="n">target_name</span></div>
 
 </pre></div>
 

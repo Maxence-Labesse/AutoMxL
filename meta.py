@@ -3,7 +3,7 @@ from time import time
 from datetime import date
 from MLBG59 import *
 import pandas as pd
-from MLBG59.Utils.Display import print_title1
+from MLBG59.Utils.Display import print_title1, print_dict
 from MLBG59.Utils.Utils import random_from_dict
 from data.data_config import d_files
 from MLBG59.param_config import n_epoch, learning_rate, batch_size, crit, optim
@@ -32,7 +32,7 @@ d_all_param['clf'] = ['RF', 'XGBOOST']
 # features selection
 d_all_param['select_method'] = ['pca', None]
 # categorical encoding method
-d_all_param['cat_method'] = ['one_hot', 'deep_encoder']
+d_all_param['cat_method'] = ['deep_encoder']
 # bagging use for modelisation
 d_all_param['bagging'] = [True, False]
 
@@ -73,6 +73,7 @@ for i in range(n_iter):
 
         # explore
         auto_df.explore(verbose=False)
+        print_dict(auto_df.d_features)
 
         # preprocess
         auto_df.preprocess(process_outliers=d_param['outliers'], cat_method=d_param['cat_method'], verbose=False)

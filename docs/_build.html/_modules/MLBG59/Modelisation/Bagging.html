@@ -79,13 +79,14 @@
             
               <p class="caption"><span class="caption-text">AutoML class</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AutoML class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AML class</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#explore">Explore</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#module-MLBG59.Select_Features.Select_Features">Features Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../features.html#modelisation">Modelisation</a></li>
 </ul>
 
@@ -152,21 +153,18 @@
   <h1>Source code for MLBG59.Modelisation.Bagging</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot; Bagging algorithm class. Methods :</span>
 
-<span class="sd">- get_params : get bagging object parameters</span>
-<span class="sd">- fit : create bagging samples from a DataFrame and fit the train_model on each sample</span>
-<span class="sd">- predict : apply models fitted on sample to a  dataset</span>
-<span class="sd">- bag_feature_importance : get features importance of the train_model</span>
-
+<span class="sd">- Bagging (class) : generate new training more balanced and train model for each</span>
+<span class="sd">- Bagging_sample (func) : generate bagging sample</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Utils.Utils</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Modelisation.Utils</span> <span class="k">import</span> <span class="o">*</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Default bagging parameters</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="n">default_bagging_param</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;niter&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+<span class="n">default_bagging_param</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;n_sample&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
                          <span class="s1">&#39;pos_sample_size&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
                          <span class="s1">&#39;replace&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
 
@@ -175,15 +173,15 @@
     <span class="sd">&quot;&quot;&quot;Meta-algo designed to improve the stability and accuracy of ML classif/regression algos</span>
 <span class="sd">    or to face an &quot;imbalanced target distribution&quot; issue.</span>
 <span class="sd">    </span>
-<span class="sd">    Bagging generates m new training sets more balanced. Then, a train_model is fitted on each</span>
+<span class="sd">    Bagging generates m new training sets more balanced. Then, a model is fitted on each</span>
 <span class="sd">    sample and outputs are combined by averaging (for regression) or voting (for classification).</span>
 
 <span class="sd">    Available classifiers : Random Forest and XGBOOST</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    clf : train_model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)</span>
-<span class="sd">        train_model fitted on the samples</span>
+<span class="sd">    clf : Model fitted on samples (Default  : RandomForestClassifier(n_estimators=100, max_leaf_nodes=100)</span>
+<span class="sd">        Model fitted on the samples</span>
 <span class="sd">    n_sample : int (Default : 5)</span>
 <span class="sd">        number a samples</span>
 <span class="sd">    pos_sample_size : int/float (Default : 1.0)</span>
@@ -210,6 +208,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pos_sample_size</span> <span class="o">=</span> <span class="n">pos_sample_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">replace</span> <span class="o">=</span> <span class="n">replace</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    -------------------------------------------------------------------------------------------------------------</span>
@@ -234,7 +233,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Bagging.fit"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create bagging samples from a DataFrame and fit the train_model (self.clf) on each sample</span>
+        <span class="sd">&quot;&quot;&quot;Create bagging samples from a DataFrame and fit the model (self.clf) on each sample</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -266,11 +265,13 @@
             <span class="n">y_train_bag</span> <span class="o">=</span> <span class="n">X_train_bag</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">X_train_bag</span><span class="p">[</span><span class="n">target</span><span class="p">]</span>
 
-            <span class="c1"># Create and store train_model</span>
+            <span class="c1"># Create and store model</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier</span>
 
-            <span class="c1"># fit train_model for each sample</span>
+            <span class="c1"># fit model for each sample</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train_bag</span><span class="p">,</span> <span class="n">y_train_bag</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="bp">self</span></div>
 
@@ -285,7 +286,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        df : DataFrame</span>
-<span class="sd">            Dataset to apply the train_model</span>
+<span class="sd">            Dataset to apply the model</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -294,12 +295,13 @@
 <span class="sd">        numpy.ndarray (int)</span>
 <span class="sd">            Predictions for each observation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">,</span> <span class="s2">&quot;Fit first !&quot;</span>
         <span class="c1"># Init probs storage matrix</span>
         <span class="n">mat_prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">niter</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 
         <span class="c1"># for each fitted models</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">niter</span><span class="p">):</span>
-            <span class="c1"># apply the train_model on test set</span>
+            <span class="c1"># apply the model on test set</span>
             <span class="n">y_prob_rf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_model</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
             <span class="c1"># probabilities storage in matrix</span>
             <span class="n">mat_prob</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_prob_rf</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
@@ -316,7 +318,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Bagging.bag_feature_importance"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.Bagging.bag_feature_importance">[docs]</a>    <span class="k">def</span> <span class="nf">bag_feature_importance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get features importance of the train_model by averaging importance of models fitted on the samples</span>
+        <span class="sd">&quot;&quot;&quot;Get features importance of the model by averaging importance of models fitted on the samples</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -351,7 +353,7 @@
 
 
 <div class="viewcode-block" id="create_sample"><a class="viewcode-back" href="../../../features.html#MLBG59.Modelisation.Bagging.create_sample">[docs]</a><span class="k">def</span> <span class="nf">create_sample</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">pos_target_nb</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create a DataFrame sample with selected number of target=1</span>
+    <span class="sd">&quot;&quot;&quot;Generate a DataFrame sample with selected number of target=1</span>
 <span class="sd">        </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -373,9 +375,11 @@
     <span class="n">df_pos</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)]</span>
     <span class="n">df_neg</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df</span><span class="p">[</span><span class="n">target</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span>
 
+    <span class="n">n_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">pos_target_nb</span><span class="p">,</span> <span class="n">df_neg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
     <span class="c1"># sample creation</span>
     <span class="n">df_bag</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">df_pos</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">pos_target_nb</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">),</span> <span class="n">df_neg</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">3</span> <span class="o">*</span> <span class="n">pos_target_nb</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">df_pos</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">pos_target_nb</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">),</span> <span class="n">df_neg</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">df_bag</span></div>
 </pre></div>

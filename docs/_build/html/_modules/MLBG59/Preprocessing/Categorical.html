@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MLBG59.Preprocessing.Categorical &mdash; MLBG59 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MLBG59
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">AutoML class</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../autoML.html">AML class</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Features</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html">Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#explore">Explore</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#module-MLBG59.Select_Features.Select_Features">Features Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../features.html#modelisation">Modelisation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">MLBG59</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>MLBG59.Preprocessing.Categorical</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for MLBG59.Preprocessing.Categorical</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">MLBG59.Explore.Features_Type</span> <span class="k">import</span> <span class="n">is_categorical</span><span class="p">,</span> <span class="n">is_boolean</span>
+
+<span class="sd">&quot;&quot;&quot; Categorical features processing</span>
+
+<span class="sd"> - CategoricalEncoder (class) : Encode categorical features</span>
+<span class="sd"> - dummy_all_var (func) : get one hot encoded vector for each category of a categorical features list</span>
+<span class="sd"> - get_embedded_cat (func) : get embedding representation with NN</span>
+<span class="sd"> - mca (func) : TODO</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Deep_Encoder</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">LabelEncoder</span>
+<span class="kn">from</span> <span class="nn">MLBG59.param_config</span> <span class="k">import</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">n_epoch</span><span class="p">,</span> <span class="n">learning_rate</span>
+
+
+<div class="viewcode-block" id="CategoricalEncoder"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Categorical.CategoricalEncoder">[docs]</a><span class="k">class</span> <span class="nc">CategoricalEncoder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Encode categorical features</span>
+
+<span class="sd">    Available encoding methods :</span>
+
+<span class="sd">    - one hot encoding</span>
+<span class="sd">    - deep_encoder : Build and train a Neural Network for the creation of embeddings for categorical variables. (https://www.fast.ai/2018/04/29/categorical-embeddings/)</span>
+
+<span class="sd">    Default NN model parameters are stored in param_config.py file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    method : string (Default : deep_encoder)</span>
+<span class="sd">        method used to get categorical encoding</span>
+<span class="sd">        Available methods : &quot;one_hot&quot;, &quot;deep_encoder&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">method</span><span class="o">=</span><span class="s1">&#39;deep_encoder&#39;</span>
+                 <span class="p">):</span>
+
+        <span class="k">assert</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;deep_encoder&#39;</span><span class="p">,</span> <span class="s1">&#39;one_hot&#39;</span><span class="p">],</span> <span class="s1">&#39;invalid method : select deep_encoder / one_hot&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l_var_other</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_embeddings</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_int_encoders</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_metrics</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CategoricalEncoder.fit"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Categorical.CategoricalEncoder.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">l_var</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Fit encoder on dataset following method</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : DataFrame</span>
+<span class="sd">            input dataset</span>
+<span class="sd">        l_var : list (Default None)</span>
+<span class="sd">            names of the variables to encode.</span>
+<span class="sd">            If None, all the categorical and boolean features</span>
+<span class="sd">        target : string (Default None)</span>
+<span class="sd">            name of the target for deep_encoder method</span>
+<span class="sd">        verbose : boolean (Default False)</span>
+<span class="sd">            Get logging information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;deep_encoder&#39;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;fill target parameter to use deep encoder&#39;</span>
+
+        <span class="c1"># get categorical and boolean features (see Features_Type module doc)</span>
+        <span class="n">l_cat</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span>
+                 <span class="p">(</span><span class="n">is_categorical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_boolean</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="n">target</span><span class="p">]</span>
+
+        <span class="c1"># list of features to encode</span>
+        <span class="k">if</span> <span class="n">l_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span> <span class="o">=</span> <span class="n">l_cat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">l_var</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">l_cat</span><span class="p">]</span>
+
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># store target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+            <span class="c1"># deep learning embedded representation method</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;deep_encoder&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">d_int_encoders</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_embeddings</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_metrics</span> <span class="o">=</span> \
+                    <span class="n">get_embedded_cat</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">n_epoch</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">,</span>
+                                     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Fitted !</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># verbose</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; **method : &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt;&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">),</span> <span class="s2">&quot;features to encode&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;deep_encoder&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  NN Loss:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_metrics</span><span class="p">[</span><span class="s1">&#39;loss&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;/ Accuracy:&quot;</span><span class="p">,</span>
+                      <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_metrics</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Epoch:&quot;</span><span class="p">,</span> <span class="n">n_epoch</span><span class="p">,</span> <span class="s2">&quot;/ batch:&quot;</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="s2">&quot;/ l_rate:&quot;</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">)</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CategoricalEncoder.transform"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Categorical.CategoricalEncoder.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; transform dataset categorical features using the encoder.</span>
+<span class="sd">        Can be done only if encoder has been fitted</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : DataFrame</span>
+<span class="sd">            dataset to transform</span>
+<span class="sd">        verbose : boolean (Default False)</span>
+<span class="sd">            Get logging information</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataFrame : modified dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">,</span> <span class="s1">&#39;fit the encoding first using .fit method&#39;</span>
+
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># if list of features to encode is not empty</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># one hot encoding method</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;one_hot&#39;</span><span class="p">:</span>
+
+                <span class="k">return</span> <span class="n">dummy_all_var</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">,</span> <span class="n">prefix_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                     <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+            <span class="c1"># Deep learning embedding method</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;deep_encoder&#39;</span><span class="p">:</span>
+                <span class="c1"># features not to encode</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">l_var_other</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_local</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">]</span>
+
+                <span class="c1"># transform data with int encoder</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">:</span>
+                    <span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_int_encoders</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+
+                <span class="c1"># get embedding</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; Deep Encoder Embedding dim:&#39;</span><span class="p">)</span>
+
+                <span class="n">df_embedded</span> <span class="o">=</span> <span class="n">df_local</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">l_var2encode</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">d_level</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_embeddings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_level</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                        <span class="c1"># replace int values with new embedding</span>
+                        <span class="n">df_embedded</span><span class="p">[</span><span class="n">col</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">df_embedded</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                            <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d_level</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+
+                    <span class="c1"># drop raw feature</span>
+                    <span class="n">df_embedded</span> <span class="o">=</span> <span class="n">df_embedded</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+                    <span class="c1"># verbose</span>
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt; &quot;</span> <span class="o">+</span> <span class="n">col</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d_level</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">l_var_other</span><span class="p">],</span> <span class="n">df_embedded</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># if no feature to encode</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; No variable to encode&quot;</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">df_local</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ----------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CategoricalEncoder.fit_transform"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Categorical.CategoricalEncoder.fit_transform">[docs]</a>    <span class="k">def</span> <span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">l_var</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;fit and transform dataset categorical features</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : DataFrame</span>
+<span class="sd">            input dataset</span>
+<span class="sd">        l_var : list (Default None)</span>
+<span class="sd">            names of the variables to encode.</span>
+<span class="sd">            If None, all the categorical and boolean features</span>
+<span class="sd">        target : string (Default None)</span>
+<span class="sd">            name of the target for deep_encoder method</span>
+<span class="sd">        verbose : boolean (Default False)</span>
+<span class="sd">            Get logging information</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataFrame : modified dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># fit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">l_var</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df_local</span></div></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">----------------------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="dummy_all_var"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Categorical.dummy_all_var">[docs]</a><span class="k">def</span> <span class="nf">dummy_all_var</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get one hot encoded vector for selected/all categorical features</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">     df : DatraFrame</span>
+<span class="sd">        Input dataset</span>
+<span class="sd">     var_list : list (Default : None)</span>
+<span class="sd">        Names of the features to dummify</span>
+<span class="sd">        If None, all the num features</span>
+<span class="sd">     prefix_list : list (default : None)</span>
+<span class="sd">        Prefix to add before new features name (prefix+&#39;_&#39;+cat).</span>
+<span class="sd">        If None, prefix=variable name</span>
+<span class="sd">     keep : boolean (Default = False)</span>
+<span class="sd">        If True, delete the original feature</span>
+<span class="sd">     verbose : boolean (Default False)</span>
+<span class="sd">        Get logging information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    DataFrame</span>
+<span class="sd">          Modified dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">:</span>
+        <span class="c1"># if prefix_list == None, add column name as prefix, else add prefix_list</span>
+        <span class="k">if</span> <span class="n">prefix_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pref</span> <span class="o">=</span> <span class="n">col</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pref</span> <span class="o">=</span> <span class="n">prefix_list</span><span class="p">[</span><span class="n">var_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span>
+
+        <span class="c1"># dummify</span>
+        <span class="n">df_cat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">prefix</span><span class="o">=</span><span class="n">pref</span><span class="p">)</span>
+        <span class="c1"># concat source DataFrame and new features</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">((</span><span class="n">df_local</span><span class="p">,</span> <span class="n">df_cat</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># if keep = False, remove original features</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep</span><span class="p">:</span>
+            <span class="n">df_local</span> <span class="o">=</span> <span class="n">df_local</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  &gt; &#39;</span> <span class="o">+</span> <span class="n">col</span> <span class="o">+</span> <span class="s1">&#39; -&gt;&#39;</span><span class="p">,</span> <span class="n">df_cat</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">df_local</span></div>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">----------------------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="get_embedded_cat"><a class="viewcode-back" href="../../../features.html#MLBG59.Preprocessing.Categorical.get_embedded_cat">[docs]</a><span class="k">def</span> <span class="nf">get_embedded_cat</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var_list</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">batchsize</span><span class="p">,</span> <span class="n">n_epochs</span><span class="p">,</span> <span class="n">lr</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get embedded representation for categorical features using NN encoder</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    df : DataFrame</span>
+<span class="sd">        input Dataset</span>
+<span class="sd">    var_list : list of strings</span>
+<span class="sd">        features names</span>
+<span class="sd">    target : string</span>
+<span class="sd">        target name</span>
+<span class="sd">    batchsize : int</span>
+<span class="sd">        batch size for encoder training</span>
+<span class="sd">    n_epochs : int</span>
+<span class="sd">        number of epoch for encoder training</span>
+<span class="sd">    lr : float</span>
+<span class="sd">        encoder learning rate</span>
+<span class="sd">    verbose : boolean (Default False)</span>
+<span class="sd">        Get logging information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        DataFrame : modified dataset</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">######################</span>
+    <span class="c1"># Get list to encode #</span>
+    <span class="c1">######################</span>
+    <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">var_list</span> <span class="o">+</span> <span class="p">[</span><span class="n">target</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1">############################</span>
+    <span class="c1"># Categories to int labels #</span>
+    <span class="c1">############################</span>
+    <span class="n">d_int_encoders</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">cat_col</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">:</span>
+        <span class="n">d_int_encoders</span><span class="p">[</span><span class="n">cat_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">LabelEncoder</span><span class="p">()</span>
+        <span class="n">df_local</span><span class="p">[</span><span class="n">cat_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">d_int_encoders</span><span class="p">[</span><span class="n">cat_col</span><span class="p">]</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">[</span><span class="n">cat_col</span><span class="p">])</span>
+
+    <span class="c1">###################</span>
+    <span class="c1"># Get layer sizes #</span>
+    <span class="c1">###################</span>
+    <span class="n">d_exp</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">}</span>
+    <span class="n">d_tmp</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">exp</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">exp</span> <span class="ow">in</span> <span class="n">d_exp</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="n">sum_</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">d_tmp</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+
+    <span class="n">A</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span>
+    <span class="n">nlayer1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">A</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d_tmp</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">sum_</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">nlayer2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">nlayer1</span> <span class="o">/</span> <span class="n">B</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+
+    <span class="n">emb_dims</span> <span class="o">=</span> <span class="p">[(</span><span class="n">df_local</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">(),</span> <span class="n">d_tmp</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">var_list</span><span class="p">]</span>
+
+    <span class="c1">#####################</span>
+    <span class="c1"># Train the encoder #</span>
+    <span class="c1">#####################</span>
+    <span class="c1"># Create Torch_Dataset</span>
+    <span class="n">df_to_encoder</span> <span class="o">=</span> <span class="n">Torch_Dataset</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">df_local</span><span class="p">,</span> <span class="n">cat_cols</span><span class="o">=</span><span class="n">var_list</span><span class="p">,</span> <span class="n">output_col</span><span class="o">=</span><span class="n">target</span><span class="p">)</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Deep_Cat_Encoder</span><span class="p">(</span><span class="n">emb_dims</span><span class="p">,</span> <span class="n">layer_sizes</span><span class="o">=</span><span class="p">[</span><span class="n">nlayer1</span><span class="p">,</span> <span class="n">nlayer2</span><span class="p">],</span> <span class="n">output_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">fit_model</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">accuracy</span> <span class="o">=</span> <span class="n">train_deep_encoder</span><span class="p">(</span><span class="n">df_to_encoder</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;Adam&#39;</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;MSE&#39;</span><span class="p">,</span>
+                                                   <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">n_epochs</span><span class="o">=</span><span class="n">n_epochs</span><span class="p">,</span> <span class="n">batchsize</span><span class="o">=</span><span class="n">batchsize</span><span class="p">,</span>
+                                                   <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="n">d_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;loss&#39;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s1">&#39;accuracy&#39;</span><span class="p">:</span> <span class="n">accuracy</span><span class="p">}</span>
+
+    <span class="c1">############################################</span>
+    <span class="c1"># Store embedding and get output DataFrame #</span>
+    <span class="c1">############################################</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">d_embeddings</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">fit_model</span><span class="o">.</span><span class="n">emb_layers</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+        <span class="n">d_embeddings</span><span class="p">[</span><span class="n">var_list</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]))),</span> <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">d_int_encoders</span><span class="p">,</span> <span class="n">d_embeddings</span><span class="p">,</span> <span class="n">d_metrics</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Maxence LABESSE
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

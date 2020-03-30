@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="AutoML class" href="autoML.html" /> 
+    <link rel="prev" title="AML class" href="autoML.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -80,7 +80,7 @@
             
               <p class="caption"><span class="caption-text">AutoML class</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="autoML.html">AutoML class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoML.html">AML class</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Features</span></p>
 <ul class="current">
@@ -90,17 +90,18 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#explore">Explore</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Explore.Get_Info">Get_Info</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Explore.Get_Outliers">Get Outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Explore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Explore.Features_Type">Features_Type</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#preprocessing">Preprocessing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Preprocessing.Missing_Values">Missing_Values</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Preprocessing.Categorical_Data">Categorical Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Preprocessing.Date_Data">Date Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Preprocessing.Process_Outliers">Process Outliers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Preprocessing.Categorical">Categorical Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Preprocessing.Date">Date Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Preprocessing.Outliers">Process Outliers</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="#module-MLBG59.Select_Features.Select_Features">Features Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#modelisation">Modelisation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Modelisation.Bagging">Bagging</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-MLBG59.Modelisation.HyperOpt">Hyperoptimisation</a></li>
@@ -231,6 +232,7 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 <p>Target encoding functions :</p>
 <ul class="simple">
 <li>category_to_target : create a target variable (1/0) from a selected category</li>
+<li>range_to_target : create a target variable (1/0) from a selected range</li>
 </ul>
 <dl class="function">
 <dt id="MLBG59.Start.Encode_Target.category_to_target">
@@ -258,42 +260,342 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 </table>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="explore">
-<h1>Explore<a class="headerlink" href="#explore" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-MLBG59.Explore.Get_Info">
-<span id="get-info"></span><h2>Get_Info<a class="headerlink" href="#module-MLBG59.Explore.Get_Info" title="Permalink to this headline">¶</a></h2>
-<p>Global dataset information functions :</p>
-<ul class="simple">
-<li>explore : get global information about the dataset (NA, features type, low variance features, …)</li>
-<li>is_date : test if a variable is as date</li>
-<li>get_all_dates : identify date features</li>
-<li>low variance features : identify features with low variance</li>
-</ul>
 <dl class="function">
-<dt id="MLBG59.Explore.Get_Info.get_all_dates">
-<code class="descclassname">MLBG59.Explore.Get_Info.</code><code class="descname">get_all_dates</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Info.html#get_all_dates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Info.get_all_dates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identify dates variables.</p>
-<p>Method : try to apply to_datetime</p>
+<dt id="MLBG59.Start.Encode_Target.range_to_target">
+<code class="descclassname">MLBG59.Start.Encode_Target.</code><code class="descname">range_to_target</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>min=None</em>, <em>max=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Start/Encode_Target.html#range_to_target"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Start.Encode_Target.range_to_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a target variable (1/0) from a selected range</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df</strong> (<em>DataFrame</em>) – input DataFrame</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>var</strong> (<em>string</em>) – variable containing the target range</li>
+<li><strong>min</strong> (<em>float</em>) – lower limit.
+If None, no min</li>
+<li><strong>max</strong> (<em>float</em>) – upper limit.
+If None, no max</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">features identified as date</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>DataFrame</strong> (<em>modified dataset</em>)</li>
+<li><strong>string</strong> (<em>new target name (var+’_’+lower+’_’+upper)</em>)</li>
+</ul>
+</p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="explore">
+<h1>Explore<a class="headerlink" href="#explore" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>Explore<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-MLBG59.Explore.Explore"></span><p>Global dataset information functions :</p>
+<ul class="simple">
+<li>explore (func): Identify variables types and gives global information about the dataset (NA, low variance features)</li>
+<li>low variance features (func): identify features with low variance</li>
+<li><ul class="first">
+<li>get_features_type (func): get all features per type</li>
+</ul>
+</li>
+</ul>
+<dl class="function">
+<dt id="MLBG59.Explore.Explore.explore">
+<code class="descclassname">MLBG59.Explore.Explore.</code><code class="descname">explore</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Explore.html#explore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Explore.explore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify variables types and gives global information about the dataset</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>Variables type :</dt>
+<dd><ul class="first last">
+<li>date</li>
+<li>identifier</li>
+<li>verbatim</li>
+<li>boolean</li>
+<li>categorical</li>
+<li>numerical</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>variables containing NA values</li>
+<li>low variance and unique values variables</li>
+</ul>
+<p>See get_features_type function doc for type identification heuristics</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>{x : variables names list }</p>
+<ul class="simple">
+<li>date : date features</li>
+<li>identifier : identifier features</li>
+<li>verbatim : verbatim features</li>
+<li>boolean : boolean features</li>
+<li>categorical : categorical features</li>
+<li>numerical : numerical features</li>
+<li>categorical : categorical features</li>
+<li>date : date features</li>
+<li>NA : features which contains NA values</li>
+<li>low_variance : list of the features with low variance</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Explore.Get_Info.is_date">
-<code class="descclassname">MLBG59.Explore.Get_Info.</code><code class="descname">is_date</code><span class="sig-paren">(</span><em>df</em>, <em>col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Info.html#is_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Info.is_date" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test if a variable is as date.</p>
+<dt id="MLBG59.Explore.Explore.get_features_type">
+<code class="descclassname">MLBG59.Explore.Explore.</code><code class="descname">get_features_type</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>th=0.95</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Explore.html#get_features_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Explore.get_features_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all features per type :</p>
+<ul class="simple">
+<li>date : try to apply to_datetime</li>
+<li><dl class="first docutils">
+<dt>identifier :</dt>
+<dd><ul class="first last">
+<li>#(unique values)/#(total values) &gt; threshold (default 0.95)</li>
+<li>AND length is the same for all values (for non NA)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>verbatim :</dt>
+<dd><ul class="first last">
+<li>#(unique values)/#(total values) &gt;= threshold (default 0.95)</li>
+<li>AND length is NOT the same for all values (for non NA)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>boolean : #(distinct values) = 2</li>
+<li><dl class="first docutils">
+<dt>categorical :</dt>
+<dd><ul class="first last">
+<li>not a date</li>
+<li>#(unique values)/#(total values) &lt; threshold (default 0.95)</li>
+<li>AND #(uniques values)&gt;2</li>
+<li>AND for num values #(unique values)&lt;30</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>numerical : others</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default  : None</em><em>)</em>) – variable names</li>
+<li><strong>th</strong> (<em>float</em><em> (</em><em>Default : 0.95</em><em>)</em>) – threshold used to identify identifiers/verbatims variables</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{ type : variables name list}</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MLBG59.Explore.Explore.low_variance_features">
+<code class="descclassname">MLBG59.Explore.Explore.</code><code class="descname">low_variance_features</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>threshold=0</em>, <em>rescale=True</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Explore.html#low_variance_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Explore.low_variance_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify numerical features with low variance : (&lt; threshold).
+Possible to rescale feature before computing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input DataFrame</li>
+<li><strong>var_list</strong> (<em>list</em><em> (</em><em>default : None</em><em>)</em>) – names of the variables to check variance
+if None : all the numerical features</li>
+<li><strong>threshold</strong> (<em>float</em><em> (</em><em>default : 0</em><em>)</em>) – variance threshold</li>
+<li><strong>rescale</strong> (<em>bool</em><em> (</em><em>default : true</em><em>)</em>) – enable  MinMaxScaler before computing variance</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>verbose <span class="classifier-delimiter">:</span> <span class="classifier">boolean (Default False)</span></dt>
+<dd>Get logging information</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Names of the variables with low variance</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-MLBG59.Explore.Features_Type">
+<span id="features-type"></span><h2>Features_Type<a class="headerlink" href="#module-MLBG59.Explore.Features_Type" title="Permalink to this headline">¶</a></h2>
+<p>Variables type identification function</p>
+<ul class="simple">
+<li>features_from_type (func): get all features for a selected type</li>
+<li>is_date (func): test if a variable is a date</li>
+<li>is_identifier (func): test if a variable is an identifier</li>
+<li>is_verbatim (func): test if a variable is a verbatim</li>
+<li>is_boolean (func): test if a variable is a boolean</li>
+<li>is_categorical (func): test if a variable is a categorical one (with more than 2 categories)</li>
+</ul>
+<dl class="function">
+<dt id="MLBG59.Explore.Features_Type.features_from_type">
+<code class="descclassname">MLBG59.Explore.Features_Type.</code><code class="descname">features_from_type</code><span class="sig-paren">(</span><em>df</em>, <em>typ</em>, <em>l_var=None</em>, <em>th=0.95</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Features_Type.html#features_from_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Features_Type.features_from_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get features of a selected type :</p>
+<ul class="simple">
+<li>date : try to apply to_datetime</li>
+<li><dl class="first docutils">
+<dt>identifier :</dt>
+<dd><ul class="first last">
+<li>#(unique values)/#(total values) &gt; threshold (default 0.95)</li>
+<li>AND length is the same for all values (for non NA)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>verbatim :</dt>
+<dd><ul class="first last">
+<li>#(unique values)/#(total values) &gt;= threshold (default 0.95)</li>
+<li>AND length is NOT the same for all values (for non NA)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li>boolean : #(distinct values) = 2</li>
+<li><dl class="first docutils">
+<dt>categorical :</dt>
+<dd><ul class="first last">
+<li>not a date</li>
+<li>#(unique values)/#(total values) &lt; threshold (default 0.95)</li>
+<li>AND #(uniques values)&gt;2</li>
+<li>AND for num values #(unique values)&lt;30</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>typ</strong> (<em>string</em>) – <p>selected type to get features:</p>
+<ul>
+<li>’date’</li>
+<li>’identifier’</li>
+<li>’verbatim’</li>
+<li>’boolean’</li>
+<li>categorical</li>
+</ul>
+</li>
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – variables names. If None, all dataset columns</li>
+<li><strong>th</strong> (<em>float</em><em> (</em><em>Default : 0.95</em><em>)</em>) – threshold used to identify identifiers/verbatims variables</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">identified variables names</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MLBG59.Explore.Features_Type.is_boolean">
+<code class="descclassname">MLBG59.Explore.Features_Type.</code><code class="descname">is_boolean</code><span class="sig-paren">(</span><em>df</em>, <em>col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Features_Type.html#is_boolean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Features_Type.is_boolean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is a boolean.</p>
+<ul class="simple">
+<li>#(distinct values) = 2</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>col</strong> (<em>string</em>) – variable name</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – test result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MLBG59.Explore.Features_Type.is_categorical">
+<code class="descclassname">MLBG59.Explore.Features_Type.</code><code class="descname">is_categorical</code><span class="sig-paren">(</span><em>df</em>, <em>col</em>, <em>th=0.95</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Features_Type.html#is_categorical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Features_Type.is_categorical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is a categorical one (with more than 2 categories).</p>
+<ul class="simple">
+<li>not a date</li>
+<li>#(unique values)/#(total values) &lt; threshold (default 0.95</li>
+<li>AND #(uniques values)&gt;2</li>
+<li>AND for num values #(unique values)&lt;30</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>col</strong> (<em>string</em>) – variable name</li>
+<li><strong>th</strong> (<em>float</em><em> (</em><em>Default : 0.95</em><em>)</em>) – threshold</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – test result</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MLBG59.Explore.Features_Type.is_date">
+<code class="descclassname">MLBG59.Explore.Features_Type.</code><code class="descname">is_date</code><span class="sig-paren">(</span><em>df</em>, <em>col</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Features_Type.html#is_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Features_Type.is_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is a date.</p>
 <p>Method : try to apply to_datetime</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -316,40 +618,13 @@ If a sequence of int / str is given, a MultiIndex is used.</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Explore.Get_Info.low_variance_features">
-<code class="descclassname">MLBG59.Explore.Get_Info.</code><code class="descname">low_variance_features</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>threshold=0</em>, <em>rescale=True</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Info.html#low_variance_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Info.low_variance_features" title="Permalink to this definition">¶</a></dt>
-<dd><p>Identify  features with low variance (&lt; threshold).
-Possible to rescale feature before computing.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<em>DataFrame</em>) – input DataFrame</li>
-<li><strong>var_list</strong> (<em>list</em><em> (</em><em>default : None</em><em>)</em>) – names of the variables to test variance</li>
-<li><strong>threshold</strong> (<em>float</em><em> (</em><em>default : 0</em><em>)</em>) – variance threshold</li>
-<li><strong>rescale</strong> (<em>bool</em><em> (</em><em>default : true</em><em>)</em>) – enable  MinMaxScaler before computing variance</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Names of the variables with low variance</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="MLBG59.Explore.Get_Info.explore">
-<code class="descclassname">MLBG59.Explore.Get_Info.</code><code class="descname">explore</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Info.html#explore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Info.explore" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get global information about the dataset</p>
+<dt id="MLBG59.Explore.Features_Type.is_identifier">
+<code class="descclassname">MLBG59.Explore.Features_Type.</code><code class="descname">is_identifier</code><span class="sig-paren">(</span><em>df</em>, <em>col</em>, <em>th=0.95</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Features_Type.html#is_identifier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Features_Type.is_identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is an identifier.</p>
 <ul class="simple">
-<li>Variables type (num, cat, date)</li>
-<li>NA values</li>
-<li>low variance variables</li>
+<li>#(unique values)/#(total values) &gt; threshold (default 0.95)</li>
+<li>AND length is the same for all values (for non NA)</li>
+<li>AND not date</li>
 </ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -357,58 +632,15 @@ Possible to rescale feature before computing.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+<li><strong>col</strong> (<em>string</em>) – variable name</li>
+<li><strong>th</strong> (<em>float</em><em> (</em><em>Default : 0.95</em><em>)</em>) – threshold rate</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>{x : list of variables names}</p>
-<ul class="simple">
-<li>x = numerical : numerical features</li>
-<li>x = categorical : categorical features</li>
-<li>x = date : date features</li>
-<li>x = NA : features which contains NA values</li>
-<li>x = low_variance : list of the features with low variance</li>
-</ul>
-</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – test result</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-MLBG59.Explore.Get_Outliers">
-<span id="get-outliers"></span><h2>Get Outliers<a class="headerlink" href="#module-MLBG59.Explore.Get_Outliers" title="Permalink to this headline">¶</a></h2>
-<p>Outliers detection functions :</p>
-<ul class="simple">
-<li>get_cat_outliers : identify categorical features containing outliers</li>
-<li>get_num_outliers : identify numerical features containing outliers</li>
-</ul>
-<dl class="function">
-<dt id="MLBG59.Explore.Get_Outliers.get_cat_outliers">
-<code class="descclassname">MLBG59.Explore.Get_Outliers.</code><code class="descname">get_cat_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>threshold=0.05</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Outliers.html#get_cat_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Outliers.get_cat_outliers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Outliers detection for selected/all categorical features.</p>
-<p>Method : Modalities with frequency &lt;x% (Default 5%)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
-<li><strong>var_list</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – Names of the features
-If None, all the categorical features</li>
-<li><strong>threshold</strong> (<em>float</em><em> (</em><em>Default : 0.05</em><em>)</em>) – Minimum modality frequency</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{variable : list of categories considered as outliers}</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
 </td>
 </tr>
 </tbody>
@@ -416,27 +648,28 @@ If None, all the categorical features</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Explore.Get_Outliers.get_num_outliers">
-<code class="descclassname">MLBG59.Explore.Get_Outliers.</code><code class="descname">get_num_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>xstd=3</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Get_Outliers.html#get_num_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Get_Outliers.get_num_outliers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Outliers detection for selected/all numerical features.</p>
-<p>Method : x outlier &lt;=&gt; abs(x - mean) &gt; xstd * var</p>
+<dt id="MLBG59.Explore.Features_Type.is_verbatim">
+<code class="descclassname">MLBG59.Explore.Features_Type.</code><code class="descname">is_verbatim</code><span class="sig-paren">(</span><em>df</em>, <em>col</em>, <em>th=0.95</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Explore/Features_Type.html#is_verbatim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Explore.Features_Type.is_verbatim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test if a variable is a verbatim.</p>
+<ul class="simple">
+<li>#(unique values)/#(total values) &gt;= threshold (default 0.95)</li>
+<li>AND length is NOT the same for all values (for non NA)</li>
+</ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
-<li><strong>var_list</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – Names of the features
-If None, all the num features</li>
-<li><strong>xstd</strong> (<em>int</em><em> (</em><em>Default : 3</em><em>)</em>) – Variance gap coef</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>col</strong> (<em>string</em>) – variable name</li>
+<li><strong>th</strong> (<em>float</em><em> (</em><em>Default : 0.95</em><em>)</em>) – threshold rate</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{variable : [lower_limit, upper_limit]}</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> – test result</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">boolean</p>
 </td>
 </tr>
 </tbody>
@@ -451,12 +684,96 @@ If None, all the num features</li>
 <span id="missing-values"></span><h2>Missing_Values<a class="headerlink" href="#module-MLBG59.Preprocessing.Missing_Values" title="Permalink to this headline">¶</a></h2>
 <p>Missing values handling functions :</p>
 <ul class="simple">
-<li>fill_numerical: replace missing values for numerical features</li>
-<li>fill_categorical: replace missing values for categorical features</li>
+<li>NAEncoder (class): encoder that replaces missing values</li>
+<li>fill_numerical (func): replace missing values for numerical features</li>
+<li>fill_categorical (func): replace missing values for categorical features</li>
+<li>get_NA_features (func): get features containing NA values</li>
 </ul>
+<dl class="class">
+<dt id="MLBG59.Preprocessing.Missing_Values.NAEncoder">
+<em class="property">class </em><code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">NAEncoder</code><span class="sig-paren">(</span><em>replace_num_with='median'</em>, <em>replace_cat_with='NR'</em>, <em>track_num_NA=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#NAEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.NAEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Missing values filling</p>
+<p>Available methods to replace missing values</p>
+<ul class="simple">
+<li>num : metdian/mean/zero</li>
+<li>cat : ‘NR’</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>replace_num_with</strong> (<em>string</em>) – method used to replace numerical missing values</li>
+<li><strong>replace_cat_with</strong> (<em>string</em>) – method used to replace categorical missing values</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Missing_Values.NAEncoder.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df</em>, <em>l_var</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#NAEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.NAEncoder.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>fit encoder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em>) – features to encode.
+If None, all features</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Missing_Values.NAEncoder.fit_transform">
+<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#NAEncoder.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.NAEncoder.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>fit and transform dataset with encoder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em>) – features to encode.
+If None, all features identified as dates (see Features_Type module)</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Missing_Values.NAEncoder.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#NAEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.NAEncoder.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform dataset categorical features using the encoder.
+Can be done only if encoder has been fitted</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – dataset to transform</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="MLBG59.Preprocessing.Missing_Values.fill_categorical">
-<code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">fill_categorical</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>method='NR'</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#fill_categorical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.fill_categorical" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">fill_categorical</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>method='NR'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#fill_categorical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.fill_categorical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill missing values for selected/all categorical features.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -464,7 +781,7 @@ If None, all the num features</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
-<li><strong>var_list</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – list of the features to fill.
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – list of the features to fill.
 If None, contains all the categorical features</li>
 <li><strong>method</strong> (<em>string</em><em> (</em><em>Default : 'NR'</em><em>)</em>) – <p>Method used to fill the NA values :</p>
 <ul>
@@ -487,7 +804,7 @@ If None, contains all the categorical features</li>
 
 <dl class="function">
 <dt id="MLBG59.Preprocessing.Missing_Values.fill_numerical">
-<code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">fill_numerical</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>method='median'</em>, <em>top_var_NA=True</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#fill_numerical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.fill_numerical" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">fill_numerical</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>method='median'</em>, <em>track_num_NA=True</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#fill_numerical"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.fill_numerical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fill missing values for selected/all numerical features.
 top_var_NA parameter allows to create a variable to keep track of missing values.</p>
 <p>Available methods : replace with zero, median or mean (Default = median)</p>
@@ -497,7 +814,7 @@ top_var_NA parameter allows to create a variable to keep track of missing values
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
-<li><strong>var_list</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – names of the features to fill.
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – names of the features to fill.
 If None, all the numerical features</li>
 <li><strong>method</strong> (<em>string</em><em> (</em><em>Default : 'median'</em><em>)</em>) – <p>Method used to fill the NA values :</p>
 <ul>
@@ -506,7 +823,7 @@ If None, all the numerical features</li>
 <li>mean : replace with mean</li>
 </ul>
 </li>
-<li><strong>top_var_NA</strong> (<em>boolean</em><em> (</em><em>Defaut : True</em><em>)</em>) – If True, create a boolean column to keep track of missing values</li>
+<li><strong>track_num_NA</strong> (<em>boolean</em><em> (</em><em>Defaut : True</em><em>)</em>) – If True, create a boolean column to keep track of missing values</li>
 <li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
 </ul>
 </td>
@@ -521,17 +838,124 @@ If None, all the numerical features</li>
 </table>
 </dd></dl>
 
-</div>
-<div class="section" id="module-MLBG59.Preprocessing.Categorical_Data">
-<span id="categorical-data"></span><h2>Categorical Data<a class="headerlink" href="#module-MLBG59.Preprocessing.Categorical_Data" title="Permalink to this headline">¶</a></h2>
-<p>Categorical features processing</p>
-<ul class="simple">
-<li>dummy_all_var : get one hot encoded vector for each category of a categorical features list</li>
-<li>label encoding : coming soon</li>
-</ul>
 <dl class="function">
-<dt id="MLBG59.Preprocessing.Categorical_Data.dummy_all_var">
-<code class="descclassname">MLBG59.Preprocessing.Categorical_Data.</code><code class="descname">dummy_all_var</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>prefix_list=None</em>, <em>keep=False</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Categorical_Data.html#dummy_all_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Categorical_Data.dummy_all_var" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Preprocessing.Missing_Values.get_NA_features">
+<code class="descclassname">MLBG59.Preprocessing.Missing_Values.</code><code class="descname">get_NA_features</code><span class="sig-paren">(</span><em>df</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Missing_Values.html#get_NA_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Missing_Values.get_NA_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>identify features containing NA values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df</strong> (<em>DataFrame</em>) – input dataset</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>list</strong></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">features containing missing values</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-MLBG59.Preprocessing.Categorical">
+<span id="categorical-data"></span><h2>Categorical Data<a class="headerlink" href="#module-MLBG59.Preprocessing.Categorical" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="MLBG59.Preprocessing.Categorical.CategoricalEncoder">
+<em class="property">class </em><code class="descclassname">MLBG59.Preprocessing.Categorical.</code><code class="descname">CategoricalEncoder</code><span class="sig-paren">(</span><em>method='deep_encoder'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Categorical.html#CategoricalEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Categorical.CategoricalEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode categorical features</p>
+<p>Available encoding methods :</p>
+<ul class="simple">
+<li>one hot encoding</li>
+<li>deep_encoder : Build and train a Neural Network for the creation of embeddings for categorical variables. (<a class="reference external" href="https://www.fast.ai/2018/04/29/categorical-embeddings/">https://www.fast.ai/2018/04/29/categorical-embeddings/</a>)</li>
+</ul>
+<p>Default NN model parameters are stored in param_config.py file</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>string</em><em> (</em><em>Default : deep_encoder</em><em>)</em>) – method used to get categorical encoding
+Available methods : “one_hot”, “deep_encoder”</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Categorical.CategoricalEncoder.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>target=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Categorical.html#CategoricalEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Categorical.CategoricalEncoder.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit encoder on dataset following method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default None</em><em>)</em>) – names of the variables to encode.
+If None, all the categorical and boolean features</li>
+<li><strong>target</strong> (<em>string</em><em> (</em><em>Default None</em><em>)</em>) – name of the target for deep_encoder method</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Categorical.CategoricalEncoder.fit_transform">
+<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>target=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Categorical.html#CategoricalEncoder.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Categorical.CategoricalEncoder.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>fit and transform dataset categorical features</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default None</em><em>)</em>) – names of the variables to encode.
+If None, all the categorical and boolean features</li>
+<li><strong>target</strong> (<em>string</em><em> (</em><em>Default None</em><em>)</em>) – name of the target for deep_encoder method</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>DataFrame</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">modified dataset</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Categorical.CategoricalEncoder.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Categorical.html#CategoricalEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Categorical.CategoricalEncoder.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform dataset categorical features using the encoder.
+Can be done only if encoder has been fitted</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – dataset to transform</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>DataFrame</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">modified dataset</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="MLBG59.Preprocessing.Categorical.dummy_all_var">
+<code class="descclassname">MLBG59.Preprocessing.Categorical.</code><code class="descname">dummy_all_var</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>prefix_list=None</em>, <em>keep=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Categorical.html#dummy_all_var"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Categorical.dummy_all_var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get one hot encoded vector for selected/all categorical features</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -542,8 +966,8 @@ If None, all the numerical features</li>
 <li><strong>var_list</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – Names of the features to dummify
 If None, all the num features</li>
 <li><strong>prefix_list</strong> (<em>list</em><em> (</em><em>default : None</em><em>)</em>) – Prefix to add before new features name (prefix+’_’+cat).
-It None, prefix=variable name</li>
-<li><strong>Keep</strong> (<em>boolean</em><em> (</em><em>Default = False</em><em>)</em>) – If True, delete the original feature</li>
+If None, prefix=variable name</li>
+<li><strong>keep</strong> (<em>boolean</em><em> (</em><em>Default = False</em><em>)</em>) – If True, delete the original feature</li>
 <li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
 </ul>
 </td>
@@ -558,17 +982,130 @@ It None, prefix=variable name</li>
 </table>
 </dd></dl>
 
+<dl class="function">
+<dt id="MLBG59.Preprocessing.Categorical.get_embedded_cat">
+<code class="descclassname">MLBG59.Preprocessing.Categorical.</code><code class="descname">get_embedded_cat</code><span class="sig-paren">(</span><em>df</em>, <em>var_list</em>, <em>target</em>, <em>batchsize</em>, <em>n_epochs</em>, <em>lr</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Categorical.html#get_embedded_cat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Categorical.get_embedded_cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get embedded representation for categorical features using NN encoder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input Dataset</li>
+<li><strong>var_list</strong> (<em>list of strings</em>) – features names</li>
+<li><strong>target</strong> (<em>string</em>) – target name</li>
+<li><strong>batchsize</strong> (<em>int</em>) – batch size for encoder training</li>
+<li><strong>n_epochs</strong> (<em>int</em>) – number of epoch for encoder training</li>
+<li><strong>lr</strong> (<em>float</em>) – encoder learning rate</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>DataFrame</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">modified dataset</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
-<div class="section" id="module-MLBG59.Preprocessing.Date_Data">
-<span id="date-data"></span><h2>Date Data<a class="headerlink" href="#module-MLBG59.Preprocessing.Date_Data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-MLBG59.Preprocessing.Date">
+<span id="date-data"></span><h2>Date Data<a class="headerlink" href="#module-MLBG59.Preprocessing.Date" title="Permalink to this headline">¶</a></h2>
 <p>Date Features processing functions:</p>
 <ul class="simple">
-<li>all_to_date : detect dates from num/cat features and transform them to datetime format.</li>
-<li>date_to_anc : Transform datetime features to timedelta according to a ref date</li>
+<li>DateEncoder (class) : encode date features</li>
+<li>all_to_date (func): detect dates from num/cat features and transform them to datetime format.</li>
+<li>date_to_anc (func): transform datetime features to timedelta according to a ref date</li>
 </ul>
+<dl class="class">
+<dt id="MLBG59.Preprocessing.Date.DateEncoder">
+<em class="property">class </em><code class="descclassname">MLBG59.Preprocessing.Date.</code><code class="descname">DateEncoder</code><span class="sig-paren">(</span><em>method='timedelta'</em>, <em>date_ref=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Date.html#DateEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Date.DateEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encode categorical features</p>
+<p>Available methods :</p>
+<ul class="simple">
+<li>timedelta : compute time between date feature and parameter date_ref</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>method</strong> (<em>string</em><em> (</em><em>Default : timedelta</em><em>)</em>) – method used to encode dates
+Available methods : “timedelta”</li>
+<li><strong>date_ref</strong> (<em>string '%d/%m/%y'</em><em> (</em><em>Default : None</em><em>)</em>) – Date to compute timedelta.
+If None, today date</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Date.DateEncoder.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Date.html#DateEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Date.DateEncoder.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>fit encoder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em>) – features to encode.
+If None, contains all features identified as dates (see Features_Type module)</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Date.DateEncoder.fit_transform">
+<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Date.html#DateEncoder.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Date.DateEncoder.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>fit and transform dataset with encoder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em>) – features to encode.
+If None, all features identified as dates (see Features_Type module)</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Date.DateEncoder.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Date.html#DateEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Date.DateEncoder.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform dataset date features using the encoder.
+Can be done only if encoder has been fitted</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – dataset to transform</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
-<dt id="MLBG59.Preprocessing.Date_Data.all_to_date">
-<code class="descclassname">MLBG59.Preprocessing.Date_Data.</code><code class="descname">all_to_date</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Date_Data.html#all_to_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Date_Data.all_to_date" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Preprocessing.Date.all_to_date">
+<code class="descclassname">MLBG59.Preprocessing.Date.</code><code class="descname">all_to_date</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Date.html#all_to_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Date.all_to_date" title="Permalink to this definition">¶</a></dt>
 <dd><p>Detect dates from selected/all features and transform them to datetime format.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -576,7 +1113,7 @@ It None, prefix=variable name</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
-<li><strong>var_list</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – Names of the features
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – Names of the features
 If None, all the features</li>
 <li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
 </ul>
@@ -593,8 +1130,8 @@ If None, all the features</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Preprocessing.Date_Data.date_to_anc">
-<code class="descclassname">MLBG59.Preprocessing.Date_Data.</code><code class="descname">date_to_anc</code><span class="sig-paren">(</span><em>df</em>, <em>var_list=None</em>, <em>date_ref=None</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Date_Data.html#date_to_anc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Date_Data.date_to_anc" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Preprocessing.Date.date_to_anc">
+<code class="descclassname">MLBG59.Preprocessing.Date.</code><code class="descname">date_to_anc</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>date_ref=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Date.html#date_to_anc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Date.date_to_anc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform selected/all datetime features to timedelta according to a ref date</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -602,7 +1139,7 @@ If None, all the features</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
-<li><strong>var_list</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – List of the features to analyze.
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – List of the features to analyze.
 If None, contains all the datetime features</li>
 <li><strong>date_ref</strong> (<em>string '%d/%m/%y'</em><em> (</em><em>Default : None</em><em>)</em>) – Date to compute timedelta.
 If None, today date</li>
@@ -622,16 +1159,156 @@ If None, today date</li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-MLBG59.Preprocessing.Process_Outliers">
-<span id="process-outliers"></span><h2>Process Outliers<a class="headerlink" href="#module-MLBG59.Preprocessing.Process_Outliers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-MLBG59.Preprocessing.Outliers">
+<span id="process-outliers"></span><h2>Process Outliers<a class="headerlink" href="#module-MLBG59.Preprocessing.Outliers" title="Permalink to this headline">¶</a></h2>
 <p>Outliers handling functions</p>
 <ul class="simple">
-<li>replace_category : replace categories of a categorical variable</li>
-<li>replace_extreme_values : replace extreme values (oh!)</li>
+<li>OutliersEncoding (class) : identify and replace outliers</li>
+<li>get_cat_outliers (funct): identify categorical features containing outliers</li>
+<li>get_num_outliers (func): identify numerical features containing outliers</li>
+<li>replace_category (func): replace categories of a categorical variable</li>
+<li>replace_extreme_values (func): replace extreme values (oh!)</li>
 </ul>
+<dl class="class">
+<dt id="MLBG59.Preprocessing.Outliers.OutliersEncoder">
+<em class="property">class </em><code class="descclassname">MLBG59.Preprocessing.Outliers.</code><code class="descname">OutliersEncoder</code><span class="sig-paren">(</span><em>cat_threshold=0.02</em>, <em>num_xstd=4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Outliers.html#OutliersEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Outliers.OutliersEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify et replace outliers for categorical dang numerical features</p>
+<ul class="simple">
+<li>num : x outlier &lt;=&gt; abs(x - mean) &gt; xstd * var</li>
+<li>cat : x outlier category &lt;=&gt; with frequency &lt;x% (Default 5%)</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>cat_threshold</strong> (<em>float</em><em> (</em><em>default 0.02</em><em>)</em>) – Minimum modality frequency</li>
+<li><strong>num_xstd</strong> (<em>int</em><em> (</em><em>Default : 3</em><em>)</em>) – Variance gap coef</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Outliers.OutliersEncoder.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df</em>, <em>l_var</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Outliers.html#OutliersEncoder.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Outliers.OutliersEncoder.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit encoder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em>) – features to encode.
+If None, all features</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Outliers.OutliersEncoder.fit_transform">
+<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Outliers.html#OutliersEncoder.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Outliers.OutliersEncoder.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit and transform dataset with encoder</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em>) – features to encode.
+If None, all features identified as dates (see Features_Type module)</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Preprocessing.Outliers.OutliersEncoder.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Outliers.html#OutliersEncoder.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Outliers.OutliersEncoder.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform dataset  features using the encoder.
+Can be done only if encoder has been fitted</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – dataset to transform</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
-<dt id="MLBG59.Preprocessing.Process_Outliers.replace_category">
-<code class="descclassname">MLBG59.Preprocessing.Process_Outliers.</code><code class="descname">replace_category</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>categories</em>, <em>replace_with='outliers'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Process_Outliers.html#replace_category"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Process_Outliers.replace_category" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Preprocessing.Outliers.get_cat_outliers">
+<code class="descclassname">MLBG59.Preprocessing.Outliers.</code><code class="descname">get_cat_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>threshold=0.05</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Outliers.html#get_cat_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Outliers.get_cat_outliers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outliers detection for selected/all categorical features.</p>
+<p>Method : Modalities with frequency &lt;x% (Default 5%)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – Names of the features
+If None, all the categorical features</li>
+<li><strong>threshold</strong> (<em>float</em><em> (</em><em>Default : 0.05</em><em>)</em>) – Minimum modality frequency</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{variable : list of categories considered as outliers}</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MLBG59.Preprocessing.Outliers.get_num_outliers">
+<code class="descclassname">MLBG59.Preprocessing.Outliers.</code><code class="descname">get_num_outliers</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>xstd=3</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Outliers.html#get_num_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Outliers.get_num_outliers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outliers detection for selected/all numerical features.</p>
+<p>Method : x outlier &lt;=&gt; abs(x - mean) &gt; xstd * var</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – Input dataset</li>
+<li><strong>l_var</strong> (<em>list</em><em> (</em><em>Default : None</em><em>)</em>) – Names of the features
+If None, all the num features</li>
+<li><strong>xstd</strong> (<em>int</em><em> (</em><em>Default : 3</em><em>)</em>) – Variance gap coef</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{variable : [lower_limit, upper_limit]}</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MLBG59.Preprocessing.Outliers.replace_category">
+<code class="descclassname">MLBG59.Preprocessing.Outliers.</code><code class="descname">replace_category</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>categories</em>, <em>replace_with='outliers'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Outliers.html#replace_category"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Outliers.replace_category" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace categories of a categorical variable</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -657,8 +1334,8 @@ If None, today date</li>
 </dd></dl>
 
 <dl class="function">
-<dt id="MLBG59.Preprocessing.Process_Outliers.replace_extreme_values">
-<code class="descclassname">MLBG59.Preprocessing.Process_Outliers.</code><code class="descname">replace_extreme_values</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>lower_th=None</em>, <em>upper_th=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Process_Outliers.html#replace_extreme_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Process_Outliers.replace_extreme_values" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Preprocessing.Outliers.replace_extreme_values">
+<code class="descclassname">MLBG59.Preprocessing.Outliers.</code><code class="descname">replace_extreme_values</code><span class="sig-paren">(</span><em>df</em>, <em>var</em>, <em>lower_th=None</em>, <em>upper_th=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Preprocessing/Outliers.html#replace_extreme_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Preprocessing.Outliers.replace_extreme_values" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace extrem values : &gt; upper threshold or &lt; lower threshold</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -685,23 +1362,146 @@ If None, today date</li>
 
 </div>
 </div>
+<div class="section" id="module-MLBG59.Select_Features.Select_Features">
+<span id="features-selection"></span><h1>Features Selection<a class="headerlink" href="#module-MLBG59.Select_Features.Select_Features" title="Permalink to this headline">¶</a></h1>
+<p>Features selection</p>
+<ul class="simple">
+<li>select_features (func) : features selection following method</li>
+</ul>
+<dl class="class">
+<dt id="MLBG59.Select_Features.Select_Features.FeatSelector">
+<em class="property">class </em><code class="descclassname">MLBG59.Select_Features.Select_Features.</code><code class="descname">FeatSelector</code><span class="sig-paren">(</span><em>method='pca'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Select_Features/Select_Features.html#FeatSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Select_Features.Select_Features.FeatSelector" title="Permalink to this definition">¶</a></dt>
+<dd><p>features selection following  method</p>
+<ul class="simple">
+<li>pca : use pca to reduce dataset dimensions</li>
+<li>no_rescale_pca : use pca without rescaling data</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>method</strong> (<em>string</em><em> (</em><em>Default pca</em><em>)</em>) – method use to select features</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="MLBG59.Select_Features.Select_Features.FeatSelector.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df</em>, <em>l_var=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Select_Features/Select_Features.html#FeatSelector.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Select_Features.Select_Features.FeatSelector.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>fit selector</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em>) – features to encode.
+If None, all features identified as numerical</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Select_Features.Select_Features.FeatSelector.fit_transform">
+<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>df</em>, <em>l_var</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Select_Features/Select_Features.html#FeatSelector.fit_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Select_Features.Select_Features.FeatSelector.fit_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>fit and apply features selection</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset</li>
+<li><strong>l_var</strong> (<em>list</em>) – features to encode.
+If None, all features identified as dates (see Features_Type module)</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>DataFrame</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">modified dataset</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="MLBG59.Select_Features.Select_Features.FeatSelector.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Select_Features/Select_Features.html#FeatSelector.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Select_Features.Select_Features.FeatSelector.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>apply features selection on a dataset</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – dataset to transform</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>DataFrame</strong></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">modified dataset</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="MLBG59.Select_Features.Select_Features.select_features">
+<code class="descclassname">MLBG59.Select_Features.Select_Features.</code><code class="descname">select_features</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>method='pca'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Select_Features/Select_Features.html#select_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Select_Features.Select_Features.select_features" title="Permalink to this definition">¶</a></dt>
+<dd><p>features selection following  method</p>
+<ul class="simple">
+<li>pca : use pca to reduce dataset dimensions</li>
+<li>no_rescale_pca : use pca without rescaling data</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>df</strong> (<em>DataFrame</em>) – input dataset containing features</li>
+<li><strong>target</strong> (<em>string</em>) – target name</li>
+<li><strong>method</strong> (<em>string</em><em> (</em><em>Default pca</em><em>)</em>) – method use to select features</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified dataset</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
 <div class="section" id="modelisation">
 <h1>Modelisation<a class="headerlink" href="#modelisation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-MLBG59.Modelisation.Bagging">
 <span id="bagging"></span><h2>Bagging<a class="headerlink" href="#module-MLBG59.Modelisation.Bagging" title="Permalink to this headline">¶</a></h2>
 <p>Bagging algorithm class. Methods :</p>
 <ul class="simple">
-<li>get_params : get bagging object parameters</li>
-<li>fit : create bagging samples from a DataFrame and fit the train_model on each sample</li>
-<li>predict : apply models fitted on sample to a  dataset</li>
-<li>bag_feature_importance : get features importance of the train_model</li>
+<li>Bagging (class) : generate new training more balanced and train model for each</li>
+<li>Bagging_sample (func) : generate bagging sample</li>
 </ul>
 <dl class="class">
 <dt id="MLBG59.Modelisation.Bagging.Bagging">
 <em class="property">class </em><code class="descclassname">MLBG59.Modelisation.Bagging.</code><code class="descname">Bagging</code><span class="sig-paren">(</span><em>clf=&lt;sphinx.ext.autodoc.importer._MockObject object&gt;</em>, <em>n_sample=5</em>, <em>pos_sample_size=1.0</em>, <em>replace=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging" title="Permalink to this definition">¶</a></dt>
 <dd><p>Meta-algo designed to improve the stability and accuracy of ML classif/regression algos
 or to face an “imbalanced target distribution” issue.</p>
-<p>Bagging generates m new training sets more balanced. Then, a train_model is fitted on each
+<p>Bagging generates m new training sets more balanced. Then, a model is fitted on each
 sample and outputs are combined by averaging (for regression) or voting (for classification).</p>
 <p>Available classifiers : Random Forest and XGBOOST</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -709,7 +1509,7 @@ sample and outputs are combined by averaging (for regression) or voting (for cla
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>clf</strong> (<em>train_model fitted on samples</em><em> (</em><em>Default  : RandomForestClassifier</em><em>(</em><em>n_estimators=100</em><em>, </em><em>max_leaf_nodes=100</em><em>)</em>) – train_model fitted on the samples</li>
+<li><strong>clf</strong> (<em>Model fitted on samples</em><em> (</em><em>Default  : RandomForestClassifier</em><em>(</em><em>n_estimators=100</em><em>, </em><em>max_leaf_nodes=100</em><em>)</em>) – Model fitted on the samples</li>
 <li><strong>n_sample</strong> (<em>int</em><em> (</em><em>Default : 5</em><em>)</em>) – number a samples</li>
 <li><strong>pos_sample_size</strong> (<em>int/float</em><em> (</em><em>Default : 1.0</em><em>)</em>) – <p>Number/rate of target=1 observations in each sample (filled with 3 times more target=0 )</p>
 <ul>
@@ -727,7 +1527,7 @@ sample and outputs are combined by averaging (for regression) or voting (for cla
 <dl class="method">
 <dt id="MLBG59.Modelisation.Bagging.Bagging.bag_feature_importance">
 <code class="descname">bag_feature_importance</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging.bag_feature_importance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging.bag_feature_importance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get features importance of the train_model by averaging importance of models fitted on the samples</p>
+<dd><p>Get features importance of the model by averaging importance of models fitted on the samples</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -745,7 +1545,7 @@ sample and outputs are combined by averaging (for regression) or voting (for cla
 <dl class="method">
 <dt id="MLBG59.Modelisation.Bagging.Bagging.fit">
 <code class="descname">fit</code><span class="sig-paren">(</span><em>df_train</em>, <em>target</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#Bagging.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.Bagging.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create bagging samples from a DataFrame and fit the train_model (self.clf) on each sample</p>
+<dd><p>Create bagging samples from a DataFrame and fit the model (self.clf) on each sample</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -791,7 +1591,7 @@ Combine models by averaging the outputs (for regression) or voting (for classifi
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df</strong> (<em>DataFrame</em>) – Dataset to apply the train_model</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>df</strong> (<em>DataFrame</em>) – Dataset to apply the model</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
 <li><em>numpy.ndarray (float)</em> – Averaged classification probabilities</li>
@@ -808,7 +1608,7 @@ Combine models by averaging the outputs (for regression) or voting (for classifi
 <dl class="function">
 <dt id="MLBG59.Modelisation.Bagging.create_sample">
 <code class="descclassname">MLBG59.Modelisation.Bagging.</code><code class="descname">create_sample</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>pos_target_nb</em>, <em>replace=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/Bagging.html#create_sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.Bagging.create_sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a DataFrame sample with selected number of target=1</p>
+<dd><p>Generate a DataFrame sample with selected number of target=1</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -835,24 +1635,18 @@ Combine models by averaging the outputs (for regression) or voting (for classifi
 <div class="section" id="module-MLBG59.Modelisation.HyperOpt">
 <span id="hyperoptimisation"></span><h2>Hyperoptimisation<a class="headerlink" href="#module-MLBG59.Modelisation.HyperOpt" title="Permalink to this headline">¶</a></h2>
 <p>Hyperopt class :
-train_model hyper-optimisation with random search</p>
-<p>Available algorithms : Random Forest, XGBOOST (and bagging)</p>
-<p>Methods :</p>
+Model hyper-optimisation with random search</p>
 <ul class="simple">
-<li>get_params : get Hyperopt object parameters</li>
-<li>train : fit a train_model for each HP combination</li>
-<li>predict : apply the models</li>
-<li>get_best_model : identify the best train_model in respect of a metric</li>
-<li>model_res_to_df : store models summary in DataFrame</li>
+<li>Hyperopt (class) : Model hyper-optimisation with random search</li>
 </ul>
 <dl class="class">
-<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt">
-<em class="property">class </em><code class="descclassname">MLBG59.Modelisation.HyperOpt.</code><code class="descname">Hyperopt</code><span class="sig-paren">(</span><em>classifier='RF'</em>, <em>grid_param=None</em>, <em>n_param_comb=10</em>, <em>top_bagging=False</em>, <em>bagging_param={'niter': 5</em>, <em>'pos_sample_size': 1.0</em>, <em>'replace': False}</em>, <em>comb_seed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt" title="Permalink to this definition">¶</a></dt>
-<dd><p>train_model hyper-optimisation with random search :</p>
+<dt id="MLBG59.Modelisation.HyperOpt.HyperOpt">
+<em class="property">class </em><code class="descclassname">MLBG59.Modelisation.HyperOpt.</code><code class="descname">HyperOpt</code><span class="sig-paren">(</span><em>classifier='RF'</em>, <em>grid_param=None</em>, <em>n_param_comb=10</em>, <em>bagging=False</em>, <em>bagging_param={'n_sample': 5</em>, <em>'pos_sample_size': 1.0</em>, <em>'replace': False}</em>, <em>comb_seed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#HyperOpt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.HyperOpt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model hyper-optimisation with random search :</p>
 <ul class="simple">
 <li>From a hyper-parameters grid, creates random HPs combinations</li>
-<li>train a train_model for each combination</li>
-<li>apply the train_model</li>
+<li>train a model for each combination</li>
+<li>apply the model</li>
 </ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -862,9 +1656,9 @@ train_model hyper-optimisation with random search</p>
 <li><strong>classifier</strong> (<em>string</em><em> (</em><em>Default : 'RF'</em><em>)</em>) – classifier for modelisation</li>
 <li><strong>grid_param</strong> (<em>dict</em><em> (</em><em>Default : Default_RF_grid_param</em><em>)</em>) – HP grid</li>
 <li><strong>n_param_comb</strong> (<em>int</em><em> (</em><em>Default : 10</em><em>)</em>) – number of HP combinations</li>
-<li><strong>top_bagging</strong> (<em>Boolean</em><em> (</em><em>Default = False</em><em>)</em>) – use bagging method</li>
+<li><strong>bagging</strong> (<em>Boolean</em><em> (</em><em>Default = False</em><em>)</em>) – use bagging method</li>
 <li><strong>bagging_param</strong> (<em>n-uple</em>) – bagging parameters (Default : default_bagging_param (Bagging module))</li>
-<li><strong>(</strong><strong>created with fit method</strong><strong>)</strong> (<em>train_model_dict</em>) – {model_index : {‘HP’, ‘probas’, ‘train_model’, ‘features_importance’, ‘train_metrics’}</li>
+<li><strong>(</strong><strong>created with fit method</strong><strong>)</strong> (<em>train_model_dict</em>) – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’}</li>
 <li><strong>bagging_object</strong> (<a class="reference internal" href="#MLBG59.Modelisation.Bagging.Bagging" title="MLBG59.Modelisation.Bagging.Bagging"><em>Bagging</em></a>) – bagging object</li>
 <li><strong>comb_seed</strong> (<em>int</em>) – seed for randomized HP combinations</li>
 </ul>
@@ -873,9 +1667,9 @@ train_model hyper-optimisation with random search</p>
 </tbody>
 </table>
 <dl class="method">
-<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>df_train</em>, <em>target</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit a train_model for each HP combination</p>
+<dt id="MLBG59.Modelisation.HyperOpt.HyperOpt.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>df_train</em>, <em>target</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#HyperOpt.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.HyperOpt.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit a model for each HP combination</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -887,7 +1681,7 @@ train_model hyper-optimisation with random search</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>self.train_model_dict (created with fit method)</strong> – {model_index : {‘HP’, ‘probas’, ‘train_model’, ‘features_importance’, ‘train_metrics’}</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>self.train_model_dict (created with fit method)</strong> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’}</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
@@ -898,25 +1692,25 @@ train_model hyper-optimisation with random search</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model">
-<code class="descname">get_best_model</code><span class="sig-paren">(</span><em>d_model_info</em>, <em>metric='F1'</em>, <em>delta_auc_th=0.03</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.get_best_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Modelisation.HyperOpt.HyperOpt.get_best_model">
+<code class="descname">get_best_model</code><span class="sig-paren">(</span><em>d_model_info</em>, <em>metric='F1'</em>, <em>delta_auc_th=0.03</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#HyperOpt.get_best_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.HyperOpt.get_best_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identify valid models according to delta auc (test/train).
-Get the best train_model in respect of a selected metric among valid train_model</p>
+Get the best model in respect of a selected metric among valid model</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>d_model_info</strong> (<em>dict</em>) – {model_index : {‘HP’, ‘probas’, ‘train_model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
-<li><strong>metric</strong> (<em>string</em><em> (</em><em>default = F1-score</em><em>)</em>) – Metric used to get the best train_model</li>
+<li><strong>d_model_info</strong> (<em>dict</em>) – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
+<li><strong>metric</strong> (<em>string</em><em> (</em><em>default = F1-score</em><em>)</em>) – Metric used to get the best model</li>
 <li><strong>delta_auc_th</strong> (<em>float</em>) – Threshold for valid models : abs(auc(train) - auc(test))</li>
 <li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
 </ul>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>int</em> – Best train_model index</li>
-<li><em>list</em> – Valid train_model indexes</li>
+<li><em>int</em> – Best model index</li>
+<li><em>list</em> – Valid model indexes</li>
 </ul>
 </p>
 </td>
@@ -926,8 +1720,8 @@ Get the best train_model in respect of a selected metric among valid train_model
 </dd></dl>
 
 <dl class="method">
-<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.get_params">
-<code class="descname">get_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.get_params" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Modelisation.HyperOpt.HyperOpt.get_params">
+<code class="descname">get_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#HyperOpt.get_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.HyperOpt.get_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return Hyperopt object parameters</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -942,20 +1736,20 @@ Get the best train_model in respect of a selected metric among valid train_model
 </dd></dl>
 
 <dl class="method">
-<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.model_res_to_df">
-<code class="descname">model_res_to_df</code><span class="sig-paren">(</span><em>d_model_infos</em>, <em>sort_metric='F1'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.model_res_to_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.model_res_to_df" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Modelisation.HyperOpt.HyperOpt.model_res_to_df">
+<code class="descname">model_res_to_df</code><span class="sig-paren">(</span><em>d_model_infos</em>, <em>sort_metric='F1'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#HyperOpt.model_res_to_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.HyperOpt.model_res_to_df" title="Permalink to this definition">¶</a></dt>
 <dd><p>Store models summary in DataFrame</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>d_model_info</strong> (<em>dict</em>) – {model_index : {‘HP’, ‘probas’, ‘train_model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
+<li><strong>d_model_info</strong> (<em>dict</em>) – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
 <li><strong>sort_metric</strong> (<em>string</em><em> (</em><em>default = 'F1'</em><em>)</em>) – metric to sort models (descendant)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">train_model infos and metrics</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">model infos and metrics</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">DataFrame</p>
@@ -966,8 +1760,8 @@ Get the best train_model in respect of a selected metric among valid train_model
 </dd></dl>
 
 <dl class="method">
-<dt id="MLBG59.Modelisation.HyperOpt.Hyperopt.predict">
-<code class="descname">predict</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>delta_auc</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#Hyperopt.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.Hyperopt.predict" title="Permalink to this definition">¶</a></dt>
+<dt id="MLBG59.Modelisation.HyperOpt.HyperOpt.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>df</em>, <em>target</em>, <em>delta_auc</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/Modelisation/HyperOpt.html#HyperOpt.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.Modelisation.HyperOpt.HyperOpt.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply the models</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -981,7 +1775,7 @@ Get the best train_model in respect of a selected metric among valid train_model
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{model_index : {‘HP’, ‘probas’, ‘train_model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">{model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
@@ -1005,7 +1799,7 @@ Get the best train_model in respect of a selected metric among valid train_model
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="autoML.html" class="btn btn-neutral float-left" title="AutoML class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="autoML.html" class="btn btn-neutral float-left" title="AML class" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

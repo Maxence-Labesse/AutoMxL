@@ -20,8 +20,7 @@ class CategoricalEncoder(object):
     Available encoding methods :
 
     - one hot encoding
-    - deep_encoder : Build and train a Neural Network for the creation of embeddings for categorical variables.
-    (https://www.fast.ai/2018/04/29/categorical-embeddings/)
+    - deep_encoder : Build and train a Neural Network for the creation of embeddings for categorical variables. (https://www.fast.ai/2018/04/29/categorical-embeddings/)
 
     Default NN model parameters are stored in param_config.py file
 
@@ -80,6 +79,9 @@ class CategoricalEncoder(object):
             self.l_var2encode = [col for col in l_var if col in l_cat]
 
         df_local = df.copy()
+        for col in self.l_var2encode:
+            if df_local[col].dtype != 'object':
+                df_local[col] = df_local[col].astype('str')
 
         # store target
         self.target = target
@@ -144,6 +146,8 @@ class CategoricalEncoder(object):
 
                 # transform data with int encoder
                 for col in self.l_var2encode:
+                    if df_local[col].dtype != 'object':
+                        df_local[col] = df_local[col].astype('str')
                     df_local[col] = self.d_int_encoders[col].fit_transform(df_local[col])
 
                 # get embedding

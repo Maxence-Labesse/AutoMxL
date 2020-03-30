@@ -80,13 +80,14 @@
             
               <p class="caption"><span class="caption-text">AutoML class</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="autoML.html">AutoML class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="autoML.html">AML class</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html#explore">Explore</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html#module-MLBG59.Select_Features.Select_Features">Features Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html#modelisation">Modelisation</a></li>
 </ul>
 
@@ -158,25 +159,29 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  
 </div>
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Preprocessing.Date_Data.all_to_date">all_to_date() (in module MLBG59.Preprocessing.Date_Data)</a>
+      <li><a href="features.html#MLBG59.Preprocessing.Date.all_to_date">all_to_date() (in module MLBG59.Preprocessing.Date)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="autoML.html#MLBG59.__main__.AutoML">AutoML (class in MLBG59.__main__)</a>
+      <li><a href="autoML.html#MLBG59.__main__.AML">AML (class in MLBG59.__main__)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -184,11 +189,11 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Modelisation.Bagging.Bagging">Bagging (class in MLBG59.Modelisation.Bagging)</a>
+      <li><a href="features.html#MLBG59.Modelisation.Bagging.Bagging.bag_feature_importance">bag_feature_importance() (MLBG59.Modelisation.Bagging.Bagging method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Modelisation.Bagging.create_sample">create_sample() (in module MLBG59.Modelisation.Bagging)</a>
+      <li><a href="features.html#MLBG59.Modelisation.Bagging.Bagging">Bagging (class in MLBG59.Modelisation.Bagging)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -196,7 +201,13 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="features.html#MLBG59.Preprocessing.Categorical.CategoricalEncoder">CategoricalEncoder (class in MLBG59.Preprocessing.Categorical)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="features.html#MLBG59.Start.Encode_Target.category_to_target">category_to_target() (in module MLBG59.Start.Encode_Target)</a>
+</li>
+      <li><a href="features.html#MLBG59.Modelisation.Bagging.create_sample">create_sample() (in module MLBG59.Modelisation.Bagging)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -204,34 +215,68 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Preprocessing.Date_Data.date_to_anc">date_to_anc() (in module MLBG59.Preprocessing.Date_Data)</a>
+      <li><a href="features.html#MLBG59.Preprocessing.Date.date_to_anc">date_to_anc() (in module MLBG59.Preprocessing.Date)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="docstring_test.html#module-dev.Features_type">dev.Features_type (module)</a>
+      <li><a href="features.html#MLBG59.Preprocessing.Date.DateEncoder">DateEncoder (class in MLBG59.Preprocessing.Date)</a>
 </li>
-      <li><a href="features.html#MLBG59.Preprocessing.Categorical_Data.dummy_all_var">dummy_all_var() (in module MLBG59.Preprocessing.Categorical_Data)</a>
+      <li><a href="features.html#MLBG59.Preprocessing.Categorical.dummy_all_var">dummy_all_var() (in module MLBG59.Preprocessing.Categorical)</a>
 </li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="features.html#MLBG59.Explore.Explore.explore">explore() (in module MLBG59.Explore.Explore)</a>
+
+      <ul>
+        <li><a href="autoML.html#MLBG59.__main__.AML.explore">(MLBG59.__main__.AML method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Modelisation.Bagging.Bagging.bag_feature_importance">bag_feature_importance() (MLBG59.Modelisation.Bagging.Bagging method)</a>
+      <li><a href="features.html#MLBG59.Select_Features.Select_Features.FeatSelector">FeatSelector (class in MLBG59.Select_Features.Select_Features)</a>
 </li>
-      <li><a href="docstring_test.html#dev.Features_type.features_from_type">features_from_type() (in module dev.Features_type)</a>
+      <li><a href="features.html#MLBG59.Explore.Features_Type.features_from_type">features_from_type() (in module MLBG59.Explore.Features_Type)</a>
 </li>
       <li><a href="features.html#MLBG59.Preprocessing.Missing_Values.fill_categorical">fill_categorical() (in module MLBG59.Preprocessing.Missing_Values)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="features.html#MLBG59.Preprocessing.Missing_Values.fill_numerical">fill_numerical() (in module MLBG59.Preprocessing.Missing_Values)</a>
 </li>
       <li><a href="features.html#MLBG59.Modelisation.Bagging.Bagging.fit">fit() (MLBG59.Modelisation.Bagging.Bagging method)</a>
 
       <ul>
-        <li><a href="features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.fit">(MLBG59.Modelisation.HyperOpt.Hyperopt method)</a>
+        <li><a href="features.html#MLBG59.Modelisation.HyperOpt.HyperOpt.fit">(MLBG59.Modelisation.HyperOpt.HyperOpt method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Preprocessing.Categorical.CategoricalEncoder.fit">(MLBG59.Preprocessing.Categorical.CategoricalEncoder method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Preprocessing.Date.DateEncoder.fit">(MLBG59.Preprocessing.Date.DateEncoder method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Preprocessing.Missing_Values.NAEncoder.fit">(MLBG59.Preprocessing.Missing_Values.NAEncoder method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Preprocessing.Outliers.OutliersEncoder.fit">(MLBG59.Preprocessing.Outliers.OutliersEncoder method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Select_Features.Select_Features.FeatSelector.fit">(MLBG59.Select_Features.Select_Features.FeatSelector method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="features.html#MLBG59.Preprocessing.Categorical.CategoricalEncoder.fit_transform">fit_transform() (MLBG59.Preprocessing.Categorical.CategoricalEncoder method)</a>
+
+      <ul>
+        <li><a href="features.html#MLBG59.Preprocessing.Date.DateEncoder.fit_transform">(MLBG59.Preprocessing.Date.DateEncoder method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Preprocessing.Missing_Values.NAEncoder.fit_transform">(MLBG59.Preprocessing.Missing_Values.NAEncoder method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Preprocessing.Outliers.OutliersEncoder.fit_transform">(MLBG59.Preprocessing.Outliers.OutliersEncoder method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Select_Features.Select_Features.FeatSelector.fit_transform">(MLBG59.Select_Features.Select_Features.FeatSelector method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -240,24 +285,26 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Explore.Get_Info.get_all_dates">get_all_dates() (in module MLBG59.Explore.Get_Info)</a>
+      <li><a href="features.html#MLBG59.Modelisation.HyperOpt.HyperOpt.get_best_model">get_best_model() (MLBG59.Modelisation.HyperOpt.HyperOpt method)</a>
 </li>
-      <li><a href="features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.get_best_model">get_best_model() (MLBG59.Modelisation.HyperOpt.Hyperopt method)</a>
-</li>
-      <li><a href="features.html#MLBG59.Explore.Get_Outliers.get_cat_outliers">get_cat_outliers() (in module MLBG59.Explore.Get_Outliers)</a>
+      <li><a href="features.html#MLBG59.Preprocessing.Outliers.get_cat_outliers">get_cat_outliers() (in module MLBG59.Preprocessing.Outliers)</a>
 </li>
       <li><a href="features.html#MLBG59.Start.Load.get_delimiter">get_delimiter() (in module MLBG59.Start.Load)</a>
 </li>
+      <li><a href="features.html#MLBG59.Preprocessing.Categorical.get_embedded_cat">get_embedded_cat() (in module MLBG59.Preprocessing.Categorical)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Explore.Get_Outliers.get_num_outliers">get_num_outliers() (in module MLBG59.Explore.Get_Outliers)</a>
+      <li><a href="features.html#MLBG59.Explore.Explore.get_features_type">get_features_type() (in module MLBG59.Explore.Explore)</a>
 </li>
-      <li><a href="autoML.html#MLBG59.__main__.AutoML.get_outliers">get_outliers() (MLBG59.__main__.AutoML method)</a>
+      <li><a href="features.html#MLBG59.Preprocessing.Missing_Values.get_NA_features">get_NA_features() (in module MLBG59.Preprocessing.Missing_Values)</a>
+</li>
+      <li><a href="features.html#MLBG59.Preprocessing.Outliers.get_num_outliers">get_num_outliers() (in module MLBG59.Preprocessing.Outliers)</a>
 </li>
       <li><a href="features.html#MLBG59.Modelisation.Bagging.Bagging.get_params">get_params() (MLBG59.Modelisation.Bagging.Bagging method)</a>
 
       <ul>
-        <li><a href="features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.get_params">(MLBG59.Modelisation.HyperOpt.Hyperopt method)</a>
+        <li><a href="features.html#MLBG59.Modelisation.HyperOpt.HyperOpt.get_params">(MLBG59.Modelisation.HyperOpt.HyperOpt method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -266,7 +313,7 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Modelisation.HyperOpt.Hyperopt">Hyperopt (class in MLBG59.Modelisation.HyperOpt)</a>
+      <li><a href="features.html#MLBG59.Modelisation.HyperOpt.HyperOpt">HyperOpt (class in MLBG59.Modelisation.HyperOpt)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -276,21 +323,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="features.html#MLBG59.Start.Load.import_data">import_data() (in module MLBG59.Start.Load)</a>
 </li>
-      <li><a href="docstring_test.html#dev.Features_type.is_boolean">is_boolean() (in module dev.Features_type)</a>
+      <li><a href="features.html#MLBG59.Explore.Features_Type.is_boolean">is_boolean() (in module MLBG59.Explore.Features_Type)</a>
 </li>
-      <li><a href="docstring_test.html#dev.Features_type.is_categorical">is_categorical() (in module dev.Features_type)</a>
+      <li><a href="features.html#MLBG59.Explore.Features_Type.is_categorical">is_categorical() (in module MLBG59.Explore.Features_Type)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="docstring_test.html#dev.Features_type.is_date">is_date() (in module dev.Features_type)</a>
-
-      <ul>
-        <li><a href="features.html#MLBG59.Explore.Get_Info.is_date">(in module MLBG59.Explore.Get_Info)</a>
+      <li><a href="features.html#MLBG59.Explore.Features_Type.is_date">is_date() (in module MLBG59.Explore.Features_Type)</a>
 </li>
-      </ul></li>
-      <li><a href="docstring_test.html#dev.Features_type.is_identifier">is_identifier() (in module dev.Features_type)</a>
+      <li><a href="features.html#MLBG59.Explore.Features_Type.is_identifier">is_identifier() (in module MLBG59.Explore.Features_Type)</a>
 </li>
-      <li><a href="docstring_test.html#dev.Features_type.is_verbatim">is_verbatim() (in module dev.Features_type)</a>
+      <li><a href="features.html#MLBG59.Explore.Features_Type.is_verbatim">is_verbatim() (in module MLBG59.Explore.Features_Type)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -298,7 +341,7 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Explore.Get_Info.low_variance_features">low_variance_features() (in module MLBG59.Explore.Get_Info)</a>
+      <li><a href="features.html#MLBG59.Explore.Explore.low_variance_features">low_variance_features() (in module MLBG59.Explore.Explore)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -306,29 +349,53 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#module-MLBG59.Explore.Get_Info">MLBG59.Explore.Get_Info (module)</a>
+      <li><a href="features.html#module-MLBG59.Explore.Explore">MLBG59.Explore.Explore (module)</a>
 </li>
-      <li><a href="features.html#module-MLBG59.Explore.Get_Outliers">MLBG59.Explore.Get_Outliers (module)</a>
+      <li><a href="features.html#module-MLBG59.Explore.Features_Type">MLBG59.Explore.Features_Type (module)</a>
 </li>
       <li><a href="features.html#module-MLBG59.Modelisation.Bagging">MLBG59.Modelisation.Bagging (module)</a>
 </li>
       <li><a href="features.html#module-MLBG59.Modelisation.HyperOpt">MLBG59.Modelisation.HyperOpt (module)</a>
 </li>
-      <li><a href="features.html#module-MLBG59.Preprocessing.Categorical_Data">MLBG59.Preprocessing.Categorical_Data (module)</a>
+      <li><a href="features.html#module-MLBG59.Preprocessing.Categorical">MLBG59.Preprocessing.Categorical (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#module-MLBG59.Preprocessing.Date_Data">MLBG59.Preprocessing.Date_Data (module)</a>
+      <li><a href="features.html#module-MLBG59.Preprocessing.Date">MLBG59.Preprocessing.Date (module)</a>
 </li>
       <li><a href="features.html#module-MLBG59.Preprocessing.Missing_Values">MLBG59.Preprocessing.Missing_Values (module)</a>
 </li>
-      <li><a href="features.html#module-MLBG59.Preprocessing.Process_Outliers">MLBG59.Preprocessing.Process_Outliers (module)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="features.html#module-MLBG59.Preprocessing.Outliers">MLBG59.Preprocessing.Outliers (module)</a>
+</li>
+      <li><a href="features.html#module-MLBG59.Select_Features.Select_Features">MLBG59.Select_Features.Select_Features (module)</a>
 </li>
       <li><a href="features.html#module-MLBG59.Start.Encode_Target">MLBG59.Start.Encode_Target (module)</a>
 </li>
       <li><a href="features.html#module-MLBG59.Start.Load">MLBG59.Start.Load (module)</a>
 </li>
-      <li><a href="features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.model_res_to_df">model_res_to_df() (MLBG59.Modelisation.HyperOpt.Hyperopt method)</a>
+      <li><a href="autoML.html#MLBG59.__main__.AML.model_predict">model_predict() (MLBG59.__main__.AML method)</a>
+</li>
+      <li><a href="features.html#MLBG59.Modelisation.HyperOpt.HyperOpt.model_res_to_df">model_res_to_df() (MLBG59.Modelisation.HyperOpt.HyperOpt method)</a>
+</li>
+      <li><a href="autoML.html#MLBG59.__main__.AML.model_train">model_train() (MLBG59.__main__.AML method)</a>
+</li>
+      <li><a href="autoML.html#MLBG59.__main__.AML.model_train_test">model_train_test() (MLBG59.__main__.AML method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="features.html#MLBG59.Preprocessing.Missing_Values.NAEncoder">NAEncoder (class in MLBG59.Preprocessing.Missing_Values)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="features.html#MLBG59.Preprocessing.Outliers.OutliersEncoder">OutliersEncoder (class in MLBG59.Preprocessing.Outliers)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -339,12 +406,14 @@
       <li><a href="features.html#MLBG59.Modelisation.Bagging.Bagging.predict">predict() (MLBG59.Modelisation.Bagging.Bagging method)</a>
 
       <ul>
-        <li><a href="features.html#MLBG59.Modelisation.HyperOpt.Hyperopt.predict">(MLBG59.Modelisation.HyperOpt.Hyperopt method)</a>
+        <li><a href="features.html#MLBG59.Modelisation.HyperOpt.HyperOpt.predict">(MLBG59.Modelisation.HyperOpt.HyperOpt method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="autoML.html#MLBG59.__main__.AutoML.preprocess">preprocess() (MLBG59.__main__.AutoML method)</a>
+      <li><a href="autoML.html#MLBG59.__main__.AML.preprocess">preprocess() (MLBG59.__main__.AML method)</a>
+</li>
+      <li><a href="autoML.html#MLBG59.__main__.AML.preprocess_apply">preprocess_apply() (MLBG59.__main__.AML method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -352,17 +421,29 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Explore.Get_Info.explore">explore() (in module MLBG59.Explore.Get_Info)</a>
+      <li><a href="features.html#MLBG59.Start.Encode_Target.range_to_target">range_to_target() (in module MLBG59.Start.Encode_Target)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="features.html#MLBG59.Preprocessing.Outliers.replace_category">replace_category() (in module MLBG59.Preprocessing.Outliers)</a>
+</li>
+      <li><a href="features.html#MLBG59.Preprocessing.Outliers.replace_extreme_values">replace_extreme_values() (in module MLBG59.Preprocessing.Outliers)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="features.html#MLBG59.Select_Features.Select_Features.select_features">select_features() (in module MLBG59.Select_Features.Select_Features)</a>
 
       <ul>
-        <li><a href="autoML.html#MLBG59.__main__.AutoML.explore">(MLBG59.__main__.AutoML method)</a>
+        <li><a href="autoML.html#MLBG59.__main__.AML.select_features">(MLBG59.__main__.AML method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="features.html#MLBG59.Preprocessing.Process_Outliers.replace_category">replace_category() (in module MLBG59.Preprocessing.Process_Outliers)</a>
-</li>
-      <li><a href="features.html#MLBG59.Preprocessing.Process_Outliers.replace_extreme_values">replace_extreme_values() (in module MLBG59.Preprocessing.Process_Outliers)</a>
+      <li><a href="autoML.html#MLBG59.__main__.AML.select_features_apply">select_features_apply() (MLBG59.__main__.AML method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -370,8 +451,18 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="autoML.html#MLBG59.__main__.AutoML.train_model">train_model() (MLBG59.__main__.AutoML method)</a>
+      <li><a href="features.html#MLBG59.Preprocessing.Categorical.CategoricalEncoder.transform">transform() (MLBG59.Preprocessing.Categorical.CategoricalEncoder method)</a>
+
+      <ul>
+        <li><a href="features.html#MLBG59.Preprocessing.Date.DateEncoder.transform">(MLBG59.Preprocessing.Date.DateEncoder method)</a>
 </li>
+        <li><a href="features.html#MLBG59.Preprocessing.Missing_Values.NAEncoder.transform">(MLBG59.Preprocessing.Missing_Values.NAEncoder method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Preprocessing.Outliers.OutliersEncoder.transform">(MLBG59.Preprocessing.Outliers.OutliersEncoder method)</a>
+</li>
+        <li><a href="features.html#MLBG59.Select_Features.Select_Features.FeatSelector.transform">(MLBG59.Select_Features.Select_Features.FeatSelector method)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 

@@ -1,4 +1,3 @@
-from abc import ABC
 from MLBG59.Utils.Display import print_title1
 from MLBG59.Utils.Decorators import timer
 from MLBG59.Explore.Explore import explore
@@ -8,21 +7,27 @@ from MLBG59.Preprocessing.Outliers import OutliersEncoder
 from MLBG59.Preprocessing.Categorical import CategoricalEncoder
 from MLBG59.Modelisation.HyperOpt import *
 from MLBG59.Select_Features.Select_Features import FeatSelector
+from time import time
 
 
-class AML(pd.DataFrame, ABC):
+class AML(pd.DataFrame):
     """Covers the complete pipeline of a classification project from a raw dataset to a deployable model.
 
-    AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to method that can be called with default or filled parameters.
+    AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to method that
+    can be called with default or filled parameters.
 
-    - epxlore: explore dataset and identify features types
+    - explore: explore dataset and identify features types
     - preprocess: clean and prepare data (optional : outliers processing).
     - select_features: features selection (optional)
-    - model_train_predict : split AML in train/test sets to fits/apply models with random search. Returns the list of the valid models (without overfitting) and the best one.
-    - Deployment methods:
-        - preprocess_apply : apply fitted preprocessing transformation to a new dataset
-        - select_features_apply : idem
-        - model_apply : apply fitted models to a new dataset
+    - model_train_predict : split AML in train/test sets to fits/apply models with random search.
+      Returns the list of the valid models (without overfitting) and the best one.
+
+    deployment methods:
+
+    - preprocess_apply : apply fitted preprocessing transformation to a new dataset
+    - select_features_apply : idem
+    - model_apply : apply fitted models to a new dataset
+
 
     Notes :
 
@@ -73,9 +78,9 @@ class AML(pd.DataFrame, ABC):
     --------------------------------------------------------------------------------------------------------------------
     """
 
-    @timer
     def explore(self, verbose=False):
         """data exploration and features type identification
+
         Note :  if you disagree with automated identification, you can directly modify d_features attribute
 
         Create self.d_features : dict {x : list of variables names}
@@ -96,6 +101,7 @@ class AML(pd.DataFrame, ABC):
             Get logging information
         """
         if verbose:
+            start_time = time()
             print_title1('Explore')
 
         df_local = self.copy()
@@ -121,12 +127,12 @@ class AML(pd.DataFrame, ABC):
             print("  -> date")
             print("  -> NA")
             print("  -> low_variance")
+            print('\n\t\t>>>', 'explore execution time:', round(time() - start_time, 4), 'secs. <<<')
 
     """
     --------------------------------------------------------------------------------------------------------------------
     """
 
-    @timer
     def preprocess(self, date_ref=None, process_outliers=False,
                    cat_method='deep_encoder', verbose=False):
         """Prepare the data before feeding it to the model :
@@ -154,13 +160,13 @@ class AML(pd.DataFrame, ABC):
 
         Returns
         -------
-        create self.d_preprocess : dict {step : transformation}
 
-        - remove: list of the features to remove
-        - date: fitted DateEncoder object
-        - NA: fitted NAEncoder object
-        - categorical: fitted CategoricalEncoder object
-        - outlier: fitted OutlierEncoder object
+        create self.d_preprocess : dict {step : transformation}
+            - remove: list of the features to remove
+            - date: fitted DateEncoder object
+            - NA: fitted NAEncoder object
+            - categorical: fitted CategoricalEncoder object
+            - outlier: fitted OutlierEncoder object
         """
         # check pipe step
         assert self.step in ['explore'], 'apply explore method first'
@@ -170,6 +176,7 @@ class AML(pd.DataFrame, ABC):
         # Fit and apply preprocessing #
         ###############################
         if verbose:
+            start_time = time()
             print_title1('Fit and apply preprocessing')
 
         target = self.target
@@ -254,6 +261,7 @@ class AML(pd.DataFrame, ABC):
         if verbose:
             color_print("New DataFrame size ")
             print("  > row number : ", self.shape[0], "\n  > col number : ", self.shape[1])
+            print('\n\t\t>>>', 'proprocess execution time:', round(time() - start_time, 4), 'secs. <<<')
 
     """
     --------------------------------------------------------------------------------------------------------------------
@@ -275,6 +283,7 @@ class AML(pd.DataFrame, ABC):
         DataFrame : Preprocessed dataset
         """
         if verbose:
+            start_time = time()
             print_title1('Apply Preprocessing')
 
         # check pipe step and is_fitted
@@ -314,6 +323,7 @@ class AML(pd.DataFrame, ABC):
         # categorical processing
         if verbose:
             color_print('Encode categorical and boolean')
+            print('\n\t\t>>>', 'preprocess_apply execution time:', round(time() - start_time, 4), 'secs. <<<')
         df_local = self.d_preprocess['categorical'].transform(df_local, verbose=verbose)
 
         return df_local
@@ -333,13 +343,12 @@ class AML(pd.DataFrame, ABC):
             Get logging information
 
         """
-        print(self.step)
         assert self.step in ['preprocess'], 'apply preprocess method'
 
         target = self.target
 
         if verbose:
-            print('')
+            start_time = time()
             print_title1('Features Selection')
 
         df_local = self.copy()
@@ -357,6 +366,9 @@ class AML(pd.DataFrame, ABC):
         self.features_selector = features_selector
         self.is_fitted_selector = True
         self.step = 'features_selection'
+
+        if verbose :
+            print('\n\t\t>>>', 'select_features execution time:', round(time() - start_time, 4), 'secs. <<<')
 
     """
         --------------------------------------------------------------------------------------------------------------------
@@ -382,11 +394,15 @@ class AML(pd.DataFrame, ABC):
         assert self.is_fitted_selector, "fit first (please)"
 
         if verbose:
+            start_time = time()
             print_title1('Apply select_features')
 
         df_local = df.copy()
 
         df_local = self.features_selector.transform(df_local, verbose=verbose)
+
+        if verbose:
+            print('\n\t\t>>>', 'select_features_apply execution time:', round(time() - start_time, 4), 'secs. <<<')
 
         return df_local
 
@@ -394,16 +410,15 @@ class AML(pd.DataFrame, ABC):
         --------------------------------------------------------------------------------------------------------------------
     """
 
-    @timer
     def model_train_test(self, clf='XGBOOST', grid_param=None, metric='F1', top_bagging=False, n_comb=10,
                          comb_seed=None,
                          verbose=True):
         """train and test models with random search
 
-        - Create models with random hyper-parameters combinations from HP grid
-        - split (random 80/20) train/test sets to fit/apply models
-        - identify valid models |(auc(train)-auc(test)|<0.03
-        - get the best model in respect of a selected metric among valid model
+        - creates models with random hyper-parameters combinations from HP grid
+        - splits (random 80/20) train/test sets to fit/apply models
+        - identifies valid models |(auc(train)-auc(test)|<0.03
+        - gets the best model in respect of a selected metric among valid model
 
 
         Notes :
@@ -440,7 +455,7 @@ class AML(pd.DataFrame, ABC):
         assert self.step in ['preprocess', 'features_selection'], 'apply preprocess method'
 
         if verbose:
-            print('')
+            start_time = time()
             print_title1('Train predict')
 
         # Train/Test split
@@ -476,6 +491,7 @@ class AML(pd.DataFrame, ABC):
             print('AUC : ' + str(round(d_fitted_models[best_model_idx]['metrics']['Roc_auc'], 4)))
             if round(d_fitted_models[best_model_idx]['metrics'][metric], 4) == 1.0:
                 color_print("C'était pas qu'un physique finalement hein ?", 32)
+            print('\n\t\t>>>', 'model_train_test execution time:', round(time() - start_time, 4), 'secs. <<<')
 
         self.d_hyperopt = hyperopt
         self.is_fitted_model = True
@@ -486,14 +502,13 @@ class AML(pd.DataFrame, ABC):
     ------------------------------------------------------------------------------------------------------------------------
     """
 
-    @timer
     def model_train(self, clf='XGBOOST', grid_param=None, top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
         """train models with random search
 
-        - Create models with random hyper-parameters combinations from HP grid
-        - fit models on self
-        - identify valid models |(auc(train)-auc(test)|<0.03
-        - get the best model in respect of a selected metric among valid model
+        - creates models with random hyper-parameters combinations from HP grid
+        - fits models on self
+        - identifies valid models |(auc(train)-auc(test)|<0.03
+        - gets the best model in respect of a selected metric among valid model
 
 
         Notes :
@@ -520,6 +535,7 @@ class AML(pd.DataFrame, ABC):
         df_train = self.copy()
 
         if verbose:
+            start_time = time()
             print_title1('Train Models')
 
         # instantiate Hyperopt object
@@ -536,11 +552,13 @@ class AML(pd.DataFrame, ABC):
         self.d_hyperopt = hyperopt
         self.is_fitted_model = True
 
+        if verbose:
+            print('\n\t\t>>>', 'model_train execution time:', round(time() - start_time, 4), 'secs. <<<')
+
     """
     ------------------------------------------------------------------------------------------------------------------------
     """
 
-    @timer
     def model_predict(self, df, metric='F1', verbose=True):
         """apply fitted models on a dataset
 
@@ -566,6 +584,7 @@ class AML(pd.DataFrame, ABC):
         assert self.is_fitted_model, "model is not fitted yet, apply model_train_predict or model_train methods"
 
         if verbose:
+            start_time = time()
             color_print('\napplying models')
 
         # apply models on dataset
@@ -586,5 +605,6 @@ class AML(pd.DataFrame, ABC):
             print('AUC : ' + str(round(d_fitted_models[best_model_idx]['metrics']['Roc_auc'], 4)))
             if round(d_fitted_models[best_model_idx]['metrics'][metric], 4) == 1.0:
                 color_print("C'était pas qu'un physique finalement hein ?", 32)
+            print('\n\t\t>>>', 'model_predict execution time:', round(time() - start_time, 4), 'secs. <<<')
 
         return d_fitted_models, l_valid_models, best_model_idx, df_model_res

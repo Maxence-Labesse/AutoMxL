@@ -79,13 +79,14 @@
             
               <p class="caption"><span class="caption-text">AutoML class</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../autoML.html">AutoML class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../autoML.html">AML class</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Features</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../features.html#explore">Explore</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../features.html#preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../features.html#module-MLBG59.Select_Features.Select_Features">Features Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../features.html#modelisation">Modelisation</a></li>
 </ul>
 
@@ -152,55 +153,67 @@
   <h1>Source code for MLBG59.__main__</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">MLBG59.Utils.Display</span> <span class="k">import</span> <span class="n">print_title1</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Utils.Decorators</span> <span class="k">import</span> <span class="n">timer</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Explore.Get_Info</span> <span class="k">import</span> <span class="n">explore</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Explore.Get_Outliers</span> <span class="k">import</span> <span class="n">get_cat_outliers</span><span class="p">,</span> <span class="n">get_num_outliers</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Date_Data</span> <span class="k">import</span> <span class="n">all_to_date</span><span class="p">,</span> <span class="n">date_to_anc</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Missing_Values</span> <span class="k">import</span> <span class="n">fill_numerical</span><span class="p">,</span> <span class="n">fill_categorical</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Process_Outliers</span> <span class="k">import</span> <span class="n">replace_category</span><span class="p">,</span> <span class="n">replace_extreme_values</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Categorical_Data</span> <span class="k">import</span> <span class="n">dummy_all_var</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Explore.Explore</span> <span class="k">import</span> <span class="n">explore</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Date</span> <span class="k">import</span> <span class="n">DateEncoder</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Missing_Values</span> <span class="k">import</span> <span class="n">NAEncoder</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Outliers</span> <span class="k">import</span> <span class="n">OutliersEncoder</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Categorical</span> <span class="k">import</span> <span class="n">CategoricalEncoder</span>
 <span class="kn">from</span> <span class="nn">MLBG59.Modelisation.HyperOpt</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">MLBG59.Select_Features.Select_Features</span> <span class="k">import</span> <span class="n">FeatSelector</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
 
 
-<div class="viewcode-block" id="AutoML"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AutoML">[docs]</a><span class="k">class</span> <span class="nc">AutoML</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Covers the complete pipeline of a classification project from the raw dataset to a deployable train_model.</span>
+<div class="viewcode-block" id="AML"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML">[docs]</a><span class="k">class</span> <span class="nc">AML</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Covers the complete pipeline of a classification project from a raw dataset to a deployable model.</span>
 
-<span class="sd">    AutoML is Built as a class inherited from pandas DataFrame for which each step correponds to a class method that</span>
-<span class="sd">    can be called with only default parameters or chosen ones.</span>
+<span class="sd">    AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to method that</span>
+<span class="sd">    can be called with default or filled parameters.</span>
 
-<span class="sd">    - Data exploration (dataset information and outliers analysis)</span>
-<span class="sd">    - Preprocessing (clean and prepare data)</span>
-<span class="sd">    - Modelisation (random search)</span>
+<span class="sd">    - explore: explore dataset and identify features types</span>
+<span class="sd">    - preprocess: clean and prepare data (optional : outliers processing).</span>
+<span class="sd">    - select_features: features selection (optional)</span>
+<span class="sd">    - model_train_predict : split AML in train/test sets to fits/apply models with random search.</span>
+<span class="sd">      Returns the list of the valid models (without overfitting) and the best one.</span>
 
-<span class="sd">    Available classifiers : Random Forest and XGBOOST</span>
+<span class="sd">    deployment methods:</span>
 
-<span class="sd">    </span>
-<span class="sd">    Parameters </span>
+<span class="sd">    - preprocess_apply : apply fitted preprocessing transformation to a new dataset</span>
+<span class="sd">    - select_features_apply : idem</span>
+<span class="sd">    - model_apply : apply fitted models to a new dataset</span>
+
+
+<span class="sd">    Notes :</span>
+
+<span class="sd">    - A method requires that the former one has been applied (actuel step is given by &quot;step&quot; attribute)</span>
+<span class="sd">    - Target has to be binary and encoded as int (1/0) (see MLGB59.Start.Encode_Target module if you need help)</span>
+<span class="sd">    - don&#39;t call your target &quot;target&quot; please :&gt;</span>
+
+<span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    _obj : DataFrame</span>
 <span class="sd">        Source Dataset</span>
-<span class="sd">    d_features : dict (created by audit method)</span>
+<span class="sd">    target : string</span>
+<span class="sd">        target name</span>
+<span class="sd">  &quot;&quot;&quot;</span>
 
-<span class="sd">        {x : list of variables names}</span>
-
-<span class="sd">        - x = numerical : numerical features</span>
-<span class="sd">        - x = categorical : categorical features</span>
-<span class="sd">        - x = date : date features</span>
-<span class="sd">        - x = NA : features which contains NA values</span>
-<span class="sd">        - x = low_variance : list of the low variance features</span>
-<span class="sd">    d_num_outliers : dict (created with get_outliers method)</span>
-<span class="sd">        {feature : [lower_limit,upper_limit]}</span>
-<span class="sd">    d_cat_outliers : dict (created with get_outliers method)</span>
-<span class="sd">        {feature : outliers categories list}</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">AutoML</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AML</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">target</span> <span class="o">!=</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;target name cannot be &quot;target&quot;&#39;</span>
         <span class="c1"># parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
         <span class="c1"># attributes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;None&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">d_num_outliers</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">d_cat_outliers</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_selector</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_preprocessing</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_selector</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_model</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">&#39;MLBG59 instance&#39;</span>
@@ -209,275 +222,531 @@
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@timer</span>
-    <span class="k">def</span> <span class="nf">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;get and store global informations about the dataset :</span>
+    <span class="k">def</span> <span class="nf">duplicate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">AML</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
 
-<span class="sd">        - Variables type (num, cat, date)</span>
-<span class="sd">        - NA values</span>
-<span class="sd">        - low variance variables</span>
-<span class="sd">        </span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AML.explore"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.explore">[docs]</a>    <span class="k">def</span> <span class="nf">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;data exploration and features type identification</span>
+
+<span class="sd">        Note :  if you disagree with automated identification, you can directly modify d_features attribute</span>
+
+<span class="sd">        Create self.d_features : dict {x : list of variables names}</span>
+<span class="sd">            - date: date features</span>
+<span class="sd">            - identifier: identifier features</span>
+<span class="sd">            - verbatim: verbatim features</span>
+<span class="sd">            - boolean: boolean features</span>
+<span class="sd">            - categorical: categorical features</span>
+<span class="sd">            - numerical: numerical features</span>
+<span class="sd">            - categorical: categorical features</span>
+<span class="sd">            - date: date features</span>
+<span class="sd">            - NA: features which contains NA values</span>
+<span class="sd">            - low_variance: list of the features with low variance and unique values</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        target : string (Default : None)</span>
-<span class="sd">              target name</span>
 <span class="sd">        verbose : boolean (Default False)</span>
 <span class="sd">            Get logging information</span>
-<span class="sd">            </span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict : self.d_features {x : list of variables names}</span>
-
-<span class="sd">        - x = numerical : numerical features</span>
-<span class="sd">        - x = categorical : categorical features</span>
-<span class="sd">        - x = date : date features</span>
-<span class="sd">        - x = NA : features which contains NA values</span>
-<span class="sd">        - x = low_variance : list of the features with low variance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Explore&#39;</span><span class="p">)</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Explore&#39;</span><span class="p">)</span>
+
+        <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">df_local</span> <span class="o">=</span> <span class="n">df_local</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="c1"># call std_audit_dataset function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span> <span class="o">=</span> <span class="n">explore</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;explore&#39;</span>
 
         <span class="c1"># created attributes display</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Created attributes :  d_features (dict) &quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Keys :&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; numerical&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; date&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; identifier&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; verbatim&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; boolean&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; categorical&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; numerical&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; date&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; NA&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; low_variance&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; low_variance&quot;</span><span class="p">)</span></div>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@timer</span>
-    <span class="k">def</span> <span class="nf">get_outliers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_xstd</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">cat_freq</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Identify cat and num features which contains outlier</span>
-
-<span class="sd">        * num : x outlier &lt;=&gt; abs(x - mean) &gt; num_xstd * var</span>
-<span class="sd">        * cat : Modalities with frequency &lt;x% (Default 5%)</span>
-<span class="sd">        </span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        num_xstd : int (Default : 3)</span>
-<span class="sd">            Variance gap coef</span>
-<span class="sd">        cat_freq : float (Default : 0.05)</span>
-<span class="sd">            Minimum modality frequency</span>
-<span class="sd">        verbose : boolean (Default False)</span>
-<span class="sd">            Get logging information</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        self.d_num_outliers</span>
-<span class="sd">            {variable : list of categories considered as outliers}</span>
-<span class="sd">        self.d_num_outliers</span>
-<span class="sd">            {variable : [lower_limit, upper_limit]}</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Get_outliers&#39;</span><span class="p">)</span>
-        <span class="c1"># cat outliers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">d_cat_outliers</span> <span class="o">=</span> <span class="n">get_cat_outliers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;categorical&#39;</span><span class="p">],</span> <span class="n">threshold</span><span class="o">=</span><span class="n">cat_freq</span><span class="p">,</span>
-                                               <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="c1"># num outliers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">d_num_outliers</span> <span class="o">=</span> <span class="n">get_num_outliers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;numerical&#39;</span><span class="p">],</span> <span class="n">xstd</span><span class="o">=</span><span class="n">num_xstd</span><span class="p">,</span>
-                                               <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-
-        <span class="c1"># created attributes display</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Created attributes : &quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; d_num_outliers&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; d_cat_outliers&quot;</span><span class="p">)</span>
-
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="nd">@timer</span>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Prepare the data before feeding it to the train_model :</span>
+    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">cat_method</span><span class="o">=</span><span class="s1">&#39;deep_encoder&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Prepare the data before feeding it to the model :</span>
 
 <span class="sd">            - remove low variance features</span>
+<span class="sd">            - remove identifiers and verbatims features</span>
 <span class="sd">            - transform date features to timedelta</span>
 <span class="sd">            - fill missing values</span>
-<span class="sd">            - process categorical data</span>
+<span class="sd">            - process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)</span>
 <span class="sd">            - replace outliers (optional)</span>
-<span class="sd">        </span>
+
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        date_ref : string &#39;%d/%m/%y&#39; (Default : None)</span>
-<span class="sd">            ref ate to compute timedelta.</span>
+<span class="sd">            ref date to compute date features timedelta.</span>
 <span class="sd">            If None, today date</span>
 <span class="sd">        process_outliers : boolean (Default : False)</span>
-<span class="sd">              Enable outliers replacement</span>
+<span class="sd">            Enable outliers replacement</span>
+<span class="sd">        cat_method : string (Default : &#39;deep_encoder&#39;)</span>
+<span class="sd">            Categorical features encoding method</span>
 <span class="sd">        verbose : boolean (Default False)</span>
 <span class="sd">            Get logging information</span>
-<span class="sd">        </span>
+
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        self</span>
+
+<span class="sd">        create self.d_preprocess : dict {step : transformation}</span>
+<span class="sd">            - remove: list of the features to remove</span>
+<span class="sd">            - date: fitted DateEncoder object</span>
+<span class="sd">            - NA: fitted NAEncoder object</span>
+<span class="sd">            - categorical: fitted CategoricalEncoder object</span>
+<span class="sd">            - outlier: fitted OutlierEncoder object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># check pipe step</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;explore&#39;</span><span class="p">],</span> <span class="s1">&#39;apply explore method first&#39;</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_preprocessing</span><span class="p">,</span> <span class="s1">&#39;preprocessing encoders already fitted&#39;</span>
+
+        <span class="c1">###############################</span>
+        <span class="c1"># Fit and apply preprocessing #</span>
+        <span class="c1">###############################</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Preprocess&#39;</span><span class="p">)</span>
+            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Fit and apply preprocessing&#39;</span><span class="p">)</span>
 
         <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
-
-        <span class="c1">######################################</span>
-        <span class="c1"># Remove features with null variance</span>
-        <span class="c1">######################################</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;Remove features with null variance&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  features : &#39;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;low_variance&#39;</span><span class="p">]))</span>
-
         <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;low_variance&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;low_variance&#39;</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_local</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="ow">and</span> <span class="n">col</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">:</span>
-                    <span class="n">df_local</span> <span class="o">=</span> <span class="n">df_local</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># Features Removing &#39;zero variance / verbatims / identifiers)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;Features removing (zero variance / verbatims / identifiers)&quot;</span><span class="p">)</span>
 
-        <span class="c1"># delete removed cols from num_column</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;numerical&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;numerical&#39;</span><span class="p">]</span> <span class="k">if</span>
-                                        <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;low_variance&#39;</span><span class="p">]]</span>
+        <span class="n">l_remove</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;low_variance&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;verbatim&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;identifier&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">l_remove</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">df_local</span> <span class="o">=</span> <span class="n">df_local</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">l_remove</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="c1">####################################################</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt;&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">l_remove</span><span class="p">),</span> <span class="s2">&quot;features to remove&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">l_remove</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">l_remove</span><span class="p">)</span>
+
         <span class="c1"># Transform date -&gt; time between date and date_ref</span>
-        <span class="c1">####################################################</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">strg</span> <span class="o">=</span> <span class="s2">&quot;Transform date -&gt; timelapse&quot;</span>
-            <span class="n">color_print</span><span class="p">(</span><span class="n">strg</span><span class="p">)</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;Transform date&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Parse date to datetime</span>
-        <span class="n">df_local</span> <span class="o">=</span> <span class="n">all_to_date</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">date_encoder</span> <span class="o">=</span> <span class="n">DateEncoder</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;timedelta&#39;</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="n">date_ref</span><span class="p">)</span>
+        <span class="n">date_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_var</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">date_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
-        <span class="c1"># compute time between date and date_ref</span>
-        <span class="n">df_local</span><span class="p">,</span> <span class="n">new_var_list</span> <span class="o">=</span> <span class="n">date_to_anc</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="n">date_ref</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;numerical&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;numerical&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">new_var_list</span>
-
-        <span class="c1">##################</span>
-        <span class="c1"># fill NA values</span>
-        <span class="c1">##################</span>
-        <span class="c1"># num features</span>
+        <span class="c1"># Missing Values</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Fill NA&#39;</span><span class="p">)</span>
-            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;  Num:&#39;</span><span class="p">)</span>
-        <span class="n">df_local</span> <span class="o">=</span> <span class="n">fill_numerical</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;numerical&#39;</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="n">top_var_NA</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                  <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Missing values&#39;</span><span class="p">)</span>
 
-        <span class="c1"># cat features</span>
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;  Cat:&#39;</span><span class="p">)</span>
-        <span class="n">df_local</span> <span class="o">=</span> <span class="n">fill_categorical</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;categorical&#39;</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;NR&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">NA_encoder</span> <span class="o">=</span> <span class="n">NAEncoder</span><span class="p">()</span>
+        <span class="n">NA_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">l_var</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">NA_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
-        <span class="c1">####################</span>
         <span class="c1"># replace outliers</span>
-        <span class="c1">####################</span>
         <span class="k">if</span> <span class="n">process_outliers</span><span class="p">:</span>
-            <span class="c1"># num features</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Outliers processing&#39;</span><span class="p">)</span>
-                <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;  Num:&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_num_outliers</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">d_num_outliers</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_num_outliers</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">df_local</span> <span class="o">=</span> <span class="n">replace_extreme_values</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_num_outliers</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                                                  <span class="bp">self</span><span class="o">.</span><span class="n">d_num_outliers</span><span class="p">[</span><span class="n">var</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+                <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Outliers&#39;</span><span class="p">)</span>
+            <span class="n">out_encoder</span> <span class="o">=</span> <span class="n">OutliersEncoder</span><span class="p">()</span>
+            <span class="n">out_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">l_var</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">df_local</span> <span class="o">=</span> <span class="n">out_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_encoder</span> <span class="o">=</span> <span class="kc">None</span>
 
-            <span class="c1"># cat features</span>
-            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;  Cat:&#39;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_cat_outliers</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">df_local</span> <span class="o">=</span> <span class="n">replace_category</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_cat_outliers</span><span class="p">[</span><span class="n">var</span><span class="p">],</span>
-                                            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
-
-        <span class="c1">####################</span>
-        <span class="c1"># one hot encoding</span>
-        <span class="c1">####################</span>
+        <span class="c1"># categorical processing</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Categorical features processing&#39;</span><span class="p">)</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Encode Categorical and boolean&#39;</span><span class="p">)</span>
 
-        <span class="n">df_local</span> <span class="o">=</span> <span class="n">dummy_all_var</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;categorical&#39;</span><span class="p">],</span> <span class="n">prefix_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                 <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">cat_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;categorical&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_features</span><span class="p">[</span><span class="s1">&#39;boolean&#39;</span><span class="p">]</span>
+        <span class="c1"># apply one-hot encoding if target not filled in class parameters</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cat_method</span> <span class="o">=</span> <span class="s1">&#39;one_hot&#39;</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;No target -&gt; one_hot encoding !&#39;</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
 
+        <span class="c1"># get embedding</span>
+        <span class="n">cat_encoder</span> <span class="o">=</span> <span class="n">CategoricalEncoder</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">cat_method</span><span class="p">)</span>
+        <span class="n">cat_encoder</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l_var</span><span class="o">=</span><span class="n">cat_col</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">cat_encoder</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># store preprocessing params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;remove&#39;</span><span class="p">:</span> <span class="n">l_remove</span><span class="p">,</span> <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">date_encoder</span><span class="p">,</span> <span class="s1">&#39;NA&#39;</span><span class="p">:</span> <span class="n">NA_encoder</span><span class="p">,</span> <span class="s1">&#39;categorical&#39;</span><span class="p">:</span> <span class="n">cat_encoder</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">out_encoder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="p">[</span><span class="s1">&#39;outlier&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">out_encoder</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Created attributes :  d_preprocess (dict) &quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Keys :&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; remove&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; date&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; NA&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; categorical&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; outlier (optional)&quot;</span><span class="p">)</span>
+
+        <span class="c1"># is_fitted</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_preprocessing</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># update self</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">df_local</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;preprocess&#39;</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;New DataFrame size &quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt; row number : &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &gt; col number : &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+<div class="viewcode-block" id="AML.preprocess_apply"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.preprocess_apply">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply preprocessing.</span>
+<span class="sd">        Requires preprocess method to have been applied (so that all encoder are fitted)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : DataFrame</span>
+<span class="sd">            dataset to apply preprocessing on</span>
+<span class="sd">        verbose : boolean (Default False)</span>
+<span class="sd">            Get logging information</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataFrame : Preprocessed dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Apply Preprocessing&#39;</span><span class="p">)</span>
+
+        <span class="c1"># check pipe step and is_fitted</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_preprocessing</span><span class="p">,</span> <span class="s2">&quot;fit first (please)&quot;</span>
+
+        <span class="c1">#</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Remove features with zero variance / verbatims and identifiers</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;Remove features (zero variance, verbatims and identifiers&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="p">[</span><span class="s1">&#39;remove&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">df_local</span> <span class="o">=</span> <span class="n">df_local</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="p">[</span><span class="s1">&#39;remove&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt;&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="p">[</span><span class="s1">&#39;remove&#39;</span><span class="p">]),</span> <span class="s1">&#39;removed features&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt; No features to remove&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Transform date -&gt; time between date and date_ref</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;Transform date&quot;</span><span class="p">)</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># Missing Values</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Missing values&#39;</span><span class="p">)</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="p">[</span><span class="s1">&#39;NA&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># replace outliers</span>
+        <span class="k">if</span> <span class="s1">&#39;outlier&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Outliers&#39;</span><span class="p">)</span>
+            <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="p">[</span><span class="s1">&#39;outlier&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># categorical processing</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Encode categorical and boolean&#39;</span><span class="p">)</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="p">[</span><span class="s1">&#39;categorical&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df_local</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AML.select_features"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.select_features">[docs]</a>    <span class="k">def</span> <span class="nf">select_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; fit and apply features selection (optional)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        method : string (Default pca)</span>
+<span class="sd">            method use to select features</span>
+<span class="sd">        verbose : boolean (Default False)</span>
+<span class="sd">            Get logging information</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;preprocess&#39;</span><span class="p">],</span> <span class="s1">&#39;apply preprocess method&#39;</span>
+
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Features Selection&#39;</span><span class="p">)</span>
+
+        <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">l_select_var</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_local</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">]</span>
+
+        <span class="c1"># df_local = select_features(df=df_local, target=self.target, method=method, verbose=verbose)</span>
+
+        <span class="n">features_selector</span> <span class="o">=</span> <span class="n">FeatSelector</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+        <span class="n">features_selector</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">l_var</span><span class="o">=</span><span class="n">l_select_var</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">features_selector</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">df_local</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">features_selector</span> <span class="o">=</span> <span class="n">features_selector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_selector</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;features_selection&#39;</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        --------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AML.select_features_apply"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.select_features_apply">[docs]</a>    <span class="k">def</span> <span class="nf">select_features_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply features selection.</span>
+
+<span class="sd">         Requires Select_Features method to have been applied</span>
+
+<span class="sd">         Parameters</span>
+<span class="sd">         ----------</span>
+<span class="sd">         df : DataFrame</span>
+<span class="sd">             dataset to apply selection on</span>
+<span class="sd">         verbose : boolean (Default False)</span>
+<span class="sd">             Get logging information</span>
+
+<span class="sd">         Returns</span>
+<span class="sd">         -------</span>
+<span class="sd">         DataFrame : reduced dataset</span>
+<span class="sd">         &quot;&quot;&quot;</span>
+        <span class="c1"># check pipe step and is_fitted</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_selector</span><span class="p">,</span> <span class="s2">&quot;fit first (please)&quot;</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Apply select_features&#39;</span><span class="p">)</span>
+
+        <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_selector</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df_local</span></div>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        --------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="nd">@timer</span>
-    <span class="k">def</span> <span class="nf">train_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;train_model hyper-optimisation with random search.</span>
+    <span class="k">def</span> <span class="nf">model_train_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                         <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;train and test models with random search</span>
 
-<span class="sd">        - Creates random hyper-parameters combinations from HP grid</span>
-<span class="sd">        - train and test a train_model for each combination</span>
-<span class="sd">        - get the best train_model in respect of a selected metric among valid train_model</span>
+<span class="sd">        - Create models with random hyper-parameters combinations from HP grid</span>
+<span class="sd">        - split (random 80/20) train/test sets to fit/apply models</span>
+<span class="sd">        - identify valid models |(auc(train)-auc(test)|&lt;0.03</span>
+<span class="sd">        - get the best model in respect of a selected metric among valid model</span>
 
-<span class="sd">        Available classifiers : Random Forest, XGBOOST (and bagging)</span>
-<span class="sd">        </span>
+
+<span class="sd">        Notes :</span>
+
+<span class="sd">        - Available classifiers : Random Forest, XGBOOST</span>
+<span class="sd">        - can enable bagggin algo with top_bagging parameter</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        clf : string (Default : &#39;XGBOOST&#39;)</span>
 <span class="sd">            classifier used for modelisation</span>
 <span class="sd">        metric : string (Default : &#39;F1&#39;)</span>
 <span class="sd">            objective metric</span>
+<span class="sd">        top_bagging : boolean (Default : False)</span>
+<span class="sd">            enable Bagging</span>
 <span class="sd">        n_comb : int (Default : 10)</span>
 <span class="sd">            HP combination number</span>
-<span class="sd">        comb_seed = int (Default : None)</span>
+<span class="sd">        comb_seed : int (Default : None)</span>
 <span class="sd">            random combination seed</span>
 <span class="sd">        verbose : boolean (Default False)</span>
 <span class="sd">            Get logging information</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        dict</span>
-<span class="sd">            {model_index : {&#39;HP&#39;, &#39;probas&#39;, &#39;train_model&#39;, &#39;features_importance&#39;, &#39;train_metrics&#39;, &#39;metrics&#39;, &#39;output&#39;}</span>
+<span class="sd">            {model_index : {&#39;HP&#39;, &#39;probas&#39;, &#39;model&#39;, &#39;features_importance&#39;, &#39;train_metrics&#39;, &#39;metrics&#39;, &#39;output&#39;}</span>
 <span class="sd">        list</span>
-<span class="sd">            valid train_model indexes</span>
+<span class="sd">            valid model indexes</span>
 <span class="sd">        int</span>
-<span class="sd">            best train_model index</span>
+<span class="sd">            best model index</span>
 <span class="sd">        DataFrame</span>
-<span class="sd">            Models info and metrics stored in DataFrame</span>
+<span class="sd">            models information and metrics stored in DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;preprocess&#39;</span><span class="p">,</span> <span class="s1">&#39;features_selection&#39;</span><span class="p">],</span> <span class="s1">&#39;apply preprocess method&#39;</span>
+
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
             <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Train predict&#39;</span><span class="p">)</span>
 
         <span class="c1"># Train/Test split</span>
-        <span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">df_train</span><span class="p">,</span> <span class="n">df_test</span> <span class="o">=</span> <span class="n">train_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
 
         <span class="c1"># Create Hyperopt object</span>
-        <span class="n">hyperopt</span> <span class="o">=</span> <span class="n">Hyperopt</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="n">clf</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="n">default_XGB_grid_param</span><span class="p">,</span> <span class="n">n_param_comb</span><span class="o">=</span><span class="n">n_comb</span><span class="p">,</span>
-                            <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="n">comb_seed</span><span class="p">)</span>
+        <span class="n">hyperopt</span> <span class="o">=</span> <span class="n">HyperOpt</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="n">clf</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="n">grid_param</span><span class="p">,</span> <span class="n">n_param_comb</span><span class="o">=</span><span class="n">n_comb</span><span class="p">,</span>
+                            <span class="n">bagging</span><span class="o">=</span><span class="n">top_bagging</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="n">comb_seed</span><span class="p">)</span>
 
-        <span class="c1"># Entrainement des modèles</span>
+        <span class="c1"># fit model on train set</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;training models&#39;</span><span class="p">)</span>
+
         <span class="n">hyperopt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># Apply model on test set</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">applying models&#39;</span><span class="p">)</span>
+
+        <span class="n">d_fitted_models</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># model selection</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">best model selection&#39;</span><span class="p">)</span>
+        <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">l_valid_models</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">get_best_model</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">delta_auc_th</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span>
+                                                                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">df_model_res</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">model_res_to_df</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">sort_metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">best_model_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;best model : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">best_model_idx</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">metric</span> <span class="o">+</span> <span class="s1">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AUC : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="s1">&#39;Roc_auc&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;C&#39;était pas qu&#39;un physique finalement hein ?&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span> <span class="o">=</span> <span class="n">hyperopt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_model</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">l_valid_models</span><span class="p">,</span> <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">df_model_res</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ------------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@timer</span>
+    <span class="k">def</span> <span class="nf">model_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;train models with random search</span>
+
+<span class="sd">        - Create models with random hyper-parameters combinations from HP grid</span>
+<span class="sd">        - fit models on self</span>
+<span class="sd">        - identify valid models |(auc(train)-auc(test)|&lt;0.03</span>
+<span class="sd">        - get the best model in respect of a selected metric among valid model</span>
+
+
+<span class="sd">        Notes :</span>
+
+<span class="sd">        - Available classifiers : Random Forest, XGBOOST (and bagging)</span>
+<span class="sd">        - can enable bagggin algo with top_bagging parameter</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        clf : string (Default : &#39;XGBOOST&#39;)</span>
+<span class="sd">            classifier used for modelisation</span>
+<span class="sd">        top_bagging : boolean (Default : False)</span>
+<span class="sd">            enable Bagging</span>
+<span class="sd">        n_comb : int (Default : 10)</span>
+<span class="sd">            HP combination number</span>
+<span class="sd">        comb_seed : int (Default : None)</span>
+<span class="sd">            random combination seed</span>
+<span class="sd">        verbose : boolean (Default False)</span>
+<span class="sd">            Get logging information</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;preprocess&#39;</span><span class="p">,</span> <span class="s1">&#39;features_selection&#39;</span><span class="p">],</span> <span class="s1">&#39;apply preprocess method&#39;</span>
+
+        <span class="n">df_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Train Models&#39;</span><span class="p">)</span>
+
+        <span class="c1"># instantiate Hyperopt object</span>
+        <span class="n">hyperopt</span> <span class="o">=</span> <span class="n">HyperOpt</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="n">clf</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="n">grid_param</span><span class="p">,</span> <span class="n">n_param_comb</span><span class="o">=</span><span class="n">n_comb</span><span class="p">,</span>
+                            <span class="n">bagging</span><span class="o">=</span><span class="n">top_bagging</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="n">comb_seed</span><span class="p">)</span>
+
+        <span class="c1"># fit model on train set</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;training models&#39;</span><span class="p">)</span>
+
+        <span class="c1"># fit hyperopt on self</span>
+        <span class="n">hyperopt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span> <span class="o">=</span> <span class="n">hyperopt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_model</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    ------------------------------------------------------------------------------------------------------------------------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@timer</span>
+    <span class="k">def</span> <span class="nf">model_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;apply fitted models on a dataset</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metric : string (Default : &#39;F1&#39;)</span>
+<span class="sd">            objective metric</span>
+<span class="sd">        verbose : boolean (Default False)</span>
+<span class="sd">            Get logging information</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            {model_index : {&#39;HP&#39;, &#39;probas&#39;, &#39;model&#39;, &#39;features_importance&#39;, &#39;train_metrics&#39;, &#39;metrics&#39;, &#39;output&#39;}</span>
+<span class="sd">        list</span>
+<span class="sd">            valid model indexes</span>
+<span class="sd">        int</span>
+<span class="sd">            best model index</span>
+<span class="sd">        DataFrame</span>
+<span class="sd">            Models information and metrics stored in DataFrame</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_model</span><span class="p">,</span> <span class="s2">&quot;model is not fitted yet, apply model_train_predict or model_train methods&quot;</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">applying models&#39;</span><span class="p">)</span>
-        <span class="c1"># Application des modèles sur X_test :</span>
-        <span class="n">dict_res_model</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
-        <span class="c1"># selection best train_model</span>
+        <span class="c1"># apply models on dataset</span>
+        <span class="n">d_fitted_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># model selection</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">best train_model selection&#39;</span><span class="p">)</span>
-        <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">l_valid_models</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">get_best_model</span><span class="p">(</span><span class="n">dict_res_model</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">delta_auc_th</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">best model selection&#39;</span><span class="p">)</span>
+        <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">l_valid_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span><span class="o">.</span><span class="n">get_best_model</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
+                                                                        <span class="n">delta_auc_th</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span>
+                                                                        <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># store model results</span>
+        <span class="n">df_model_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span><span class="o">.</span><span class="n">model_res_to_df</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">sort_metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;best train_model : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">best_model_idx</span><span class="p">))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">metric</span> <span class="o">+</span> <span class="s1">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">dict_res_model</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AUC : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">dict_res_model</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="s1">&#39;Roc_auc&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">best_model_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;best model : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">best_model_idx</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">metric</span> <span class="o">+</span> <span class="s1">&#39; : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AUC : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="s1">&#39;Roc_auc&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+                <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;C&#39;était pas qu&#39;un physique finalement hein ?&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
 
-        <span class="n">df_model_res</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">model_res_to_df</span><span class="p">(</span><span class="n">dict_res_model</span><span class="p">,</span> <span class="n">sort_metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">dict_res_model</span><span class="p">,</span> <span class="n">l_valid_models</span><span class="p">,</span> <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">df_model_res</span></div>
+        <span class="k">return</span> <span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">l_valid_models</span><span class="p">,</span> <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">df_model_res</span></div>
 </pre></div>
 
            </div>
