@@ -79,15 +79,20 @@ class CategoricalEncoder(object):
             self.l_var2encode = [col for col in l_var if col in l_cat]
 
         df_local = df.copy()
-        for col in self.l_var2encode:
-            if df_local[col].dtype != 'object':
-                df_local[col] = df_local[col].astype('str')
 
         # store target
         self.target = target
 
-        if len(self.l_var2encode) > 0:
+        if verbose:
+            print(" **method : " + self.method)
+            if (self.method == 'deep_encoder') and (len(self.l_var2encode) > 20):
+                color_print('  might take a little while, make coffee', 32)
+            print("  >", len(self.l_var2encode), "features to encode")
+            if len(self.l_var2encode) > 0:
+                print(" ", self.l_var2encode)
 
+
+        if len(self.l_var2encode) > 0:
             # deep learning embedded representation method
             if self.method == 'deep_encoder':
                 self.d_int_encoders, self.d_embeddings, self.d_metrics = \
@@ -99,10 +104,6 @@ class CategoricalEncoder(object):
 
         # verbose
         if verbose:
-            print(" **method : " + self.method)
-            print("  >", len(self.l_var2encode), "features to encode")
-            if len(self.l_var2encode) > 0:
-                print(" ", self.l_var2encode)
             if (self.method == "deep_encoder") and len(self.l_var2encode) > 0:
                 print("  NN Loss:", round(self.d_metrics['loss'], 4), "/ Accuracy:",
                       round(self.d_metrics['accuracy'], 4))
@@ -146,9 +147,7 @@ class CategoricalEncoder(object):
 
                 # transform data with int encoder
                 for col in self.l_var2encode:
-                    if df_local[col].dtype != 'object':
-                        df_local[col] = df_local[col].astype('str')
-                    df_local[col] = self.d_int_encoders[col].fit_transform(df_local[col])
+                    df_local[col] = self.d_int_encoders[col].fit_transform(df_local[col].astype('str'))
 
                 # get embedding
                 if verbose:
@@ -299,7 +298,7 @@ def get_embedded_cat(df, var_list, target, batchsize, n_epochs, lr, verbose=Fals
     d_int_encoders = {}
     for cat_col in var_list:
         d_int_encoders[cat_col] = LabelEncoder()
-        df_local[cat_col] = d_int_encoders[cat_col].fit_transform(df_local[cat_col])
+        df_local[cat_col] = d_int_encoders[cat_col].fit_transform(df_local[cat_col].astype('str'))
 
     ###################
     # Get layer sizes #

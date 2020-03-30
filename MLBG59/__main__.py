@@ -90,8 +90,6 @@ class AML(pd.DataFrame):
             - boolean: boolean features
             - categorical: categorical features
             - numerical: numerical features
-            - categorical: categorical features
-            - date: date features
             - NA: features which contains NA values
             - low_variance: list of the features with low variance and unique values
 
@@ -144,6 +142,12 @@ class AML(pd.DataFrame):
             - process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)
             - replace outliers (optional)
 
+            create self.d_preprocess : dict {step : transformation}
+                - remove: list of the features to remove
+                - date: fitted DateEncoder object
+                - NA: fitted NAEncoder object
+                - categorical: fitted CategoricalEncoder object
+                - outlier: fitted OutlierEncoder object
 
         Parameters
         ----------
@@ -157,16 +161,6 @@ class AML(pd.DataFrame):
         verbose : boolean (Default False)
             Get logging information
 
-
-        Returns
-        -------
-
-        create self.d_preprocess : dict {step : transformation}
-            - remove: list of the features to remove
-            - date: fitted DateEncoder object
-            - NA: fitted NAEncoder object
-            - categorical: fitted CategoricalEncoder object
-            - outlier: fitted OutlierEncoder object
         """
         # check pipe step
         assert self.step in ['explore'], 'apply explore method first'
@@ -269,7 +263,8 @@ class AML(pd.DataFrame):
 
     def preprocess_apply(self, df, verbose=False):
         """Apply preprocessing.
-        Requires preprocess method to have been applied (so that all encoder are fitted)
+
+        Requires preprocess method to have been applied (so that all encoder are fitted).
 
         Parameters
         ----------
@@ -412,7 +407,7 @@ class AML(pd.DataFrame):
 
     def model_train_test(self, clf='XGBOOST', grid_param=None, metric='F1', top_bagging=False, n_comb=10,
                          comb_seed=None,
-                         verbose=True):
+                         verbose=False):
         """train and test models with random search
 
         - creates models with random hyper-parameters combinations from HP grid
@@ -424,12 +419,14 @@ class AML(pd.DataFrame):
         Notes :
 
         - Available classifiers : Random Forest, XGBOOST
-        - can enable bagggin algo with top_bagging parameter
+        - can enable bagging algo with top_bagging parameter
 
         Parameters
         ----------
         clf : string (Default : 'XGBOOST')
             classifier used for modelisation
+        grid_param : dict
+            random search grid {Hyperparameter name : values list}
         metric : string (Default : 'F1')
             objective metric
         top_bagging : boolean (Default : False)
@@ -446,11 +443,11 @@ class AML(pd.DataFrame):
         dict
             {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
         list
-            valid model indexes
+            valid models indexes
         int
             best model index
         DataFrame
-            models information and metrics stored in DataFrame
+            models summary
         """
         assert self.step in ['preprocess', 'features_selection'], 'apply preprocess method'
 
@@ -502,24 +499,23 @@ class AML(pd.DataFrame):
     ------------------------------------------------------------------------------------------------------------------------
     """
 
-    def model_train(self, clf='XGBOOST', grid_param=None, top_bagging=False, n_comb=10, comb_seed=None, verbose=True):
+    def model_train(self, clf='XGBOOST', grid_param=None, top_bagging=False, n_comb=10, comb_seed=None, verbose=False):
         """train models with random search
 
         - creates models with random hyper-parameters combinations from HP grid
         - fits models on self
-        - identifies valid models |(auc(train)-auc(test)|<0.03
-        - gets the best model in respect of a selected metric among valid model
-
 
         Notes :
 
-        - Available classifiers : Random Forest, XGBOOST (and bagging)
-        - can enable bagggin algo with top_bagging parameter
+        - Available classifiers : Random Forest, XGBOOST
+        - can enable bagging algo with top_bagging parameter
 
         Parameters
         ----------
         clf : string (Default : 'XGBOOST')
             classifier used for modelisation
+        grid_param : dict
+            random search grid {Hyperparameter name : values list}
         top_bagging : boolean (Default : False)
             enable Bagging
         n_comb : int (Default : 10)
@@ -559,8 +555,11 @@ class AML(pd.DataFrame):
     ------------------------------------------------------------------------------------------------------------------------
     """
 
-    def model_predict(self, df, metric='F1', verbose=True):
+    def model_predict(self, df, metric='F1', verbose=False):
         """apply fitted models on a dataset
+
+        - identifies valid models |(auc(train)-auc(test)|<0.03
+        - gets the best model in respect of a selected metric among valid model
 
         Parameters
         ----------
@@ -574,12 +573,11 @@ class AML(pd.DataFrame):
         dict
             {model_index : {'HP', 'probas', 'model', 'features_importance', 'train_metrics', 'metrics', 'output'}
         list
-            valid model indexes
+            valid models indexes
         int
             best model index
         DataFrame
-            Models information and metrics stored in DataFrame
-
+            models summary
         """
         assert self.is_fitted_model, "model is not fitted yet, apply model_train_predict or model_train methods"
 
