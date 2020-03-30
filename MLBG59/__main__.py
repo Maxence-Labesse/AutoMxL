@@ -13,14 +13,12 @@ from MLBG59.Select_Features.Select_Features import FeatSelector
 class AML(pd.DataFrame, ABC):
     """Covers the complete pipeline of a classification project from a raw dataset to a deployable model.
 
-    AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to a
-    method that can be called with default or filled parameters.
+    AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to method that can be called with default or filled parameters.
 
     - epxlore: explore dataset and identify features types
     - preprocess: clean and prepare data (optional : outliers processing).
     - select_features: features selection (optional)
-    - model_train_predict : split AML in train/test sets to fits/apply models with random search. Then gives you the
-    list of the valid models (without overfitting) and the best one.
+    - model_train_predict : split AML in train/test sets to fits/apply models with random search. Returns the list of the valid models (without overfitting) and the best one.
     - Deployment methods:
         - preprocess_apply : apply fitted preprocessing transformation to a new dataset
         - select_features_apply : idem
@@ -78,29 +76,24 @@ class AML(pd.DataFrame, ABC):
     @timer
     def explore(self, verbose=False):
         """data exploration and features type identification
-
         Note :  if you disagree with automated identification, you can directly modify d_features attribute
+
+        Create self.d_features : dict {x : list of variables names}
+            - date: date features
+            - identifier: identifier features
+            - verbatim: verbatim features
+            - boolean: boolean features
+            - categorical: categorical features
+            - numerical: numerical features
+            - categorical: categorical features
+            - date: date features
+            - NA: features which contains NA values
+            - low_variance: list of the features with low variance and unique values
 
         Parameters
         ----------
         verbose : boolean (Default False)
             Get logging information
-
-        Returns
-        -------
-
-        create self.d_features : dict {x : list of variables names}
-
-        - date: date features
-        - identifier: identifier features
-        - verbatim: verbatim features
-        - boolean: boolean features
-        - categorical: categorical features
-        - numerical: numerical features
-        - categorical: categorical features
-        - date: date features
-        - NA: features which contains NA values
-        - low_variance: list of the features with low variance and unique values
         """
         if verbose:
             print_title1('Explore')
