@@ -207,8 +207,6 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 <li>boolean: boolean features</li>
 <li>categorical: categorical features</li>
 <li>numerical: numerical features</li>
-<li>categorical: categorical features</li>
-<li>date: date features</li>
 <li>NA: features which contains NA values</li>
 <li>low_variance: list of the features with low variance and unique values</li>
 </ul>
@@ -226,8 +224,12 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 
 <dl class="method">
 <dt id="MLBG59.__main__.AML.model_predict">
-<code class="descname">model_predict</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AML.model_predict" title="Permalink to this definition">¶</a></dt>
+<code class="descname">model_predict</code><span class="sig-paren">(</span><em>df</em>, <em>metric='F1'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.model_predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.model_predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>apply fitted models on a dataset</p>
+<ul class="simple">
+<li>identifies valid models <a href="#id1"><span class="problematic" id="id2">|</span></a>(auc(train)-auc(test)|&lt;0.03</li>
+<li>gets the best model in respect of a selected metric among valid model</li>
+</ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -240,9 +242,9 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
 <li><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
-<li><em>list</em> – valid model indexes</li>
+<li><em>list</em> – valid models indexes</li>
 <li><em>int</em> – best model index</li>
-<li><em>DataFrame</em> – Models information and metrics stored in DataFrame</li>
+<li><em>DataFrame</em> – models summary</li>
 </ul>
 </p>
 </td>
@@ -253,18 +255,16 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 
 <dl class="method">
 <dt id="MLBG59.__main__.AML.model_train">
-<code class="descname">model_train</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AML.model_train" title="Permalink to this definition">¶</a></dt>
+<code class="descname">model_train</code><span class="sig-paren">(</span><em>clf='XGBOOST'</em>, <em>grid_param=None</em>, <em>top_bagging=False</em>, <em>n_comb=10</em>, <em>comb_seed=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.model_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.model_train" title="Permalink to this definition">¶</a></dt>
 <dd><p>train models with random search</p>
 <ul class="simple">
-<li>Create models with random hyper-parameters combinations from HP grid</li>
-<li>fit models on self</li>
-<li>identify valid models <a href="#id1"><span class="problematic" id="id2">|</span></a>(auc(train)-auc(test)|&lt;0.03</li>
-<li>get the best model in respect of a selected metric among valid model</li>
+<li>creates models with random hyper-parameters combinations from HP grid</li>
+<li>fits models on self</li>
 </ul>
 <p>Notes :</p>
 <ul class="simple">
-<li>Available classifiers : Random Forest, XGBOOST (and bagging)</li>
-<li>can enable bagggin algo with top_bagging parameter</li>
+<li>Available classifiers : Random Forest, XGBOOST</li>
+<li>can enable bagging algo with top_bagging parameter</li>
 </ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -272,6 +272,7 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>clf</strong> (<em>string</em><em> (</em><em>Default : 'XGBOOST'</em><em>)</em>) – classifier used for modelisation</li>
+<li><strong>grid_param</strong> (<em>dict</em>) – random search grid {Hyperparameter name : values list}</li>
 <li><strong>top_bagging</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – enable Bagging</li>
 <li><strong>n_comb</strong> (<em>int</em><em> (</em><em>Default : 10</em><em>)</em>) – HP combination number</li>
 <li><strong>comb_seed</strong> (<em>int</em><em> (</em><em>Default : None</em><em>)</em>) – random combination seed</li>
@@ -285,18 +286,18 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 
 <dl class="method">
 <dt id="MLBG59.__main__.AML.model_train_test">
-<code class="descname">model_train_test</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AML.model_train_test" title="Permalink to this definition">¶</a></dt>
+<code class="descname">model_train_test</code><span class="sig-paren">(</span><em>clf='XGBOOST'</em>, <em>grid_param=None</em>, <em>metric='F1'</em>, <em>top_bagging=False</em>, <em>n_comb=10</em>, <em>comb_seed=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.model_train_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.model_train_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>train and test models with random search</p>
 <ul class="simple">
-<li>Create models with random hyper-parameters combinations from HP grid</li>
-<li>split (random 80/20) train/test sets to fit/apply models</li>
-<li>identify valid models <a href="#id3"><span class="problematic" id="id4">|</span></a>(auc(train)-auc(test)|&lt;0.03</li>
-<li>get the best model in respect of a selected metric among valid model</li>
+<li>creates models with random hyper-parameters combinations from HP grid</li>
+<li>splits (random 80/20) train/test sets to fit/apply models</li>
+<li>identifies valid models <a href="#id3"><span class="problematic" id="id4">|</span></a>(auc(train)-auc(test)|&lt;0.03</li>
+<li>gets the best model in respect of a selected metric among valid model</li>
 </ul>
 <p>Notes :</p>
 <ul class="simple">
 <li>Available classifiers : Random Forest, XGBOOST</li>
-<li>can enable bagggin algo with top_bagging parameter</li>
+<li>can enable bagging algo with top_bagging parameter</li>
 </ul>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -304,6 +305,7 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>clf</strong> (<em>string</em><em> (</em><em>Default : 'XGBOOST'</em><em>)</em>) – classifier used for modelisation</li>
+<li><strong>grid_param</strong> (<em>dict</em>) – random search grid {Hyperparameter name : values list}</li>
 <li><strong>metric</strong> (<em>string</em><em> (</em><em>Default : 'F1'</em><em>)</em>) – objective metric</li>
 <li><strong>top_bagging</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – enable Bagging</li>
 <li><strong>n_comb</strong> (<em>int</em><em> (</em><em>Default : 10</em><em>)</em>) – HP combination number</li>
@@ -314,9 +316,9 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
 <li><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
-<li><em>list</em> – valid model indexes</li>
+<li><em>list</em> – valid models indexes</li>
 <li><em>int</em> – best model index</li>
-<li><em>DataFrame</em> – models information and metrics stored in DataFrame</li>
+<li><em>DataFrame</em> – models summary</li>
 </ul>
 </p>
 </td>
@@ -327,7 +329,7 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 
 <dl class="method">
 <dt id="MLBG59.__main__.AML.preprocess">
-<code class="descname">preprocess</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#MLBG59.__main__.AML.preprocess" title="Permalink to this definition">¶</a></dt>
+<code class="descname">preprocess</code><span class="sig-paren">(</span><em>date_ref=None</em>, <em>process_outliers=False</em>, <em>cat_method='deep_encoder'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.preprocess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prepare the data before feeding it to the model :</p>
 <blockquote>
 <div><ul class="simple">
@@ -338,32 +340,29 @@ Returns the list of the valid models (without overfitting) and the best one.</li
 <li>process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)</li>
 <li>replace outliers (optional)</li>
 </ul>
-</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>date_ref</strong> (<em>string '%d/%m/%y'</em><em> (</em><em>Default : None</em><em>)</em>) – ref date to compute date features timedelta.
-If None, today date</li>
-<li><strong>process_outliers</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – Enable outliers replacement</li>
-<li><strong>cat_method</strong> (<em>string</em><em> (</em><em>Default : 'deep_encoder'</em><em>)</em>) – Categorical features encoding method</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>create self.d_preprocess</strong> –</p>
-<ul class="simple">
+<dl class="docutils">
+<dt>create self.d_preprocess <span class="classifier-delimiter">:</span> <span class="classifier">dict {step</span> <span class="classifier-delimiter">:</span> <span class="classifier">transformation}</span></dt>
+<dd><ul class="first last simple">
 <li>remove: list of the features to remove</li>
 <li>date: fitted DateEncoder object</li>
 <li>NA: fitted NAEncoder object</li>
 <li>categorical: fitted CategoricalEncoder object</li>
 <li>outlier: fitted OutlierEncoder object</li>
 </ul>
-</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict {step : transformation}</p>
+</dd>
+</dl>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>date_ref</strong> (<em>string '%d/%m/%y'</em><em> (</em><em>Default : None</em><em>)</em>) – ref date to compute date features timedelta.
+If None, today date</li>
+<li><strong>process_outliers</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – Enable outliers replacement</li>
+<li><strong>cat_method</strong> (<em>string</em><em> (</em><em>Default : 'deep_encoder'</em><em>)</em>) – Categorical features encoding method</li>
+<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+</ul>
 </td>
 </tr>
 </tbody>
@@ -373,8 +372,8 @@ If None, today date</li>
 <dl class="method">
 <dt id="MLBG59.__main__.AML.preprocess_apply">
 <code class="descname">preprocess_apply</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.preprocess_apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.preprocess_apply" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply preprocessing.
-Requires preprocess method to have been applied (so that all encoder are fitted)</p>
+<dd><p>Apply preprocessing.</p>
+<p>Requires preprocess method to have been applied (so that all encoder are fitted).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />

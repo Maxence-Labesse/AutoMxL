@@ -243,8 +243,6 @@
 <span class="sd">            - boolean: boolean features</span>
 <span class="sd">            - categorical: categorical features</span>
 <span class="sd">            - numerical: numerical features</span>
-<span class="sd">            - categorical: categorical features</span>
-<span class="sd">            - date: date features</span>
 <span class="sd">            - NA: features which contains NA values</span>
 <span class="sd">            - low_variance: list of the features with low variance and unique values</span>
 
@@ -279,14 +277,14 @@
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; numerical&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; date&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; NA&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; low_variance&quot;</span><span class="p">)</span></div>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  -&gt; low_variance&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;explore execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span></div>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@timer</span>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="AML.preprocess"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                    <span class="n">cat_method</span><span class="o">=</span><span class="s1">&#39;deep_encoder&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Prepare the data before feeding it to the model :</span>
 
@@ -297,6 +295,12 @@
 <span class="sd">            - process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)</span>
 <span class="sd">            - replace outliers (optional)</span>
 
+<span class="sd">            create self.d_preprocess : dict {step : transformation}</span>
+<span class="sd">                - remove: list of the features to remove</span>
+<span class="sd">                - date: fitted DateEncoder object</span>
+<span class="sd">                - NA: fitted NAEncoder object</span>
+<span class="sd">                - categorical: fitted CategoricalEncoder object</span>
+<span class="sd">                - outlier: fitted OutlierEncoder object</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -310,16 +314,6 @@
 <span class="sd">        verbose : boolean (Default False)</span>
 <span class="sd">            Get logging information</span>
 
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
-<span class="sd">        create self.d_preprocess : dict {step : transformation}</span>
-<span class="sd">            - remove: list of the features to remove</span>
-<span class="sd">            - date: fitted DateEncoder object</span>
-<span class="sd">            - NA: fitted NAEncoder object</span>
-<span class="sd">            - categorical: fitted CategoricalEncoder object</span>
-<span class="sd">            - outlier: fitted OutlierEncoder object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># check pipe step</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;explore&#39;</span><span class="p">],</span> <span class="s1">&#39;apply explore method first&#39;</span>
@@ -329,6 +323,7 @@
         <span class="c1"># Fit and apply preprocessing #</span>
         <span class="c1">###############################</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
             <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Fit and apply preprocessing&#39;</span><span class="p">)</span>
 
         <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
@@ -413,6 +408,7 @@
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;New DataFrame size &quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  &gt; row number : &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &gt; col number : &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;proprocess execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span></div>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
@@ -420,7 +416,8 @@
 
 <div class="viewcode-block" id="AML.preprocess_apply"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.preprocess_apply">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply preprocessing.</span>
-<span class="sd">        Requires preprocess method to have been applied (so that all encoder are fitted)</span>
+
+<span class="sd">        Requires preprocess method to have been applied (so that all encoder are fitted).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -434,6 +431,7 @@
 <span class="sd">        DataFrame : Preprocessed dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
             <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Apply Preprocessing&#39;</span><span class="p">)</span>
 
         <span class="c1"># check pipe step and is_fitted</span>
@@ -473,6 +471,7 @@
         <span class="c1"># categorical processing</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;Encode categorical and boolean&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;preprocess_apply execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span>
         <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_preprocess</span><span class="p">[</span><span class="s1">&#39;categorical&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">df_local</span></div>
@@ -492,13 +491,12 @@
 <span class="sd">            Get logging information</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;preprocess&#39;</span><span class="p">],</span> <span class="s1">&#39;apply preprocess method&#39;</span>
 
         <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
             <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Features Selection&#39;</span><span class="p">)</span>
 
         <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -515,7 +513,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">features_selector</span> <span class="o">=</span> <span class="n">features_selector</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_selector</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;features_selection&#39;</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;features_selection&#39;</span>
+
+        <span class="k">if</span> <span class="n">verbose</span> <span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;select_features execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span></div>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        --------------------------------------------------------------------------------------------------------------------</span>
@@ -541,11 +542,15 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_selector</span><span class="p">,</span> <span class="s2">&quot;fit first (please)&quot;</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
             <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Apply select_features&#39;</span><span class="p">)</span>
 
         <span class="n">df_local</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="n">df_local</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features_selector</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df_local</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;select_features_apply execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">df_local</span></div>
 
@@ -553,27 +558,28 @@
 <span class="sd">        --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@timer</span>
-    <span class="k">def</span> <span class="nf">model_train_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<div class="viewcode-block" id="AML.model_train_test"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.model_train_test">[docs]</a>    <span class="k">def</span> <span class="nf">model_train_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
                          <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                         <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;train and test models with random search</span>
 
-<span class="sd">        - Create models with random hyper-parameters combinations from HP grid</span>
-<span class="sd">        - split (random 80/20) train/test sets to fit/apply models</span>
-<span class="sd">        - identify valid models |(auc(train)-auc(test)|&lt;0.03</span>
-<span class="sd">        - get the best model in respect of a selected metric among valid model</span>
+<span class="sd">        - creates models with random hyper-parameters combinations from HP grid</span>
+<span class="sd">        - splits (random 80/20) train/test sets to fit/apply models</span>
+<span class="sd">        - identifies valid models |(auc(train)-auc(test)|&lt;0.03</span>
+<span class="sd">        - gets the best model in respect of a selected metric among valid model</span>
 
 
 <span class="sd">        Notes :</span>
 
 <span class="sd">        - Available classifiers : Random Forest, XGBOOST</span>
-<span class="sd">        - can enable bagggin algo with top_bagging parameter</span>
+<span class="sd">        - can enable bagging algo with top_bagging parameter</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        clf : string (Default : &#39;XGBOOST&#39;)</span>
 <span class="sd">            classifier used for modelisation</span>
+<span class="sd">        grid_param : dict</span>
+<span class="sd">            random search grid {Hyperparameter name : values list}</span>
 <span class="sd">        metric : string (Default : &#39;F1&#39;)</span>
 <span class="sd">            objective metric</span>
 <span class="sd">        top_bagging : boolean (Default : False)</span>
@@ -590,16 +596,16 @@
 <span class="sd">        dict</span>
 <span class="sd">            {model_index : {&#39;HP&#39;, &#39;probas&#39;, &#39;model&#39;, &#39;features_importance&#39;, &#39;train_metrics&#39;, &#39;metrics&#39;, &#39;output&#39;}</span>
 <span class="sd">        list</span>
-<span class="sd">            valid model indexes</span>
+<span class="sd">            valid models indexes</span>
 <span class="sd">        int</span>
 <span class="sd">            best model index</span>
 <span class="sd">        DataFrame</span>
-<span class="sd">            models information and metrics stored in DataFrame</span>
+<span class="sd">            models summary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;preprocess&#39;</span><span class="p">,</span> <span class="s1">&#39;features_selection&#39;</span><span class="p">],</span> <span class="s1">&#39;apply preprocess method&#39;</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
             <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Train predict&#39;</span><span class="p">)</span>
 
         <span class="c1"># Train/Test split</span>
@@ -635,35 +641,34 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AUC : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="s1">&#39;Roc_auc&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
             <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
                 <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;C&#39;était pas qu&#39;un physique finalement hein ?&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;model_train_test execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span> <span class="o">=</span> <span class="n">hyperopt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_model</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">return</span> <span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">l_valid_models</span><span class="p">,</span> <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">df_model_res</span>
+        <span class="k">return</span> <span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">l_valid_models</span><span class="p">,</span> <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">df_model_res</span></div>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ------------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@timer</span>
-    <span class="k">def</span> <span class="nf">model_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="AML.model_train"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.model_train">[docs]</a>    <span class="k">def</span> <span class="nf">model_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;train models with random search</span>
 
-<span class="sd">        - Create models with random hyper-parameters combinations from HP grid</span>
-<span class="sd">        - fit models on self</span>
-<span class="sd">        - identify valid models |(auc(train)-auc(test)|&lt;0.03</span>
-<span class="sd">        - get the best model in respect of a selected metric among valid model</span>
-
+<span class="sd">        - creates models with random hyper-parameters combinations from HP grid</span>
+<span class="sd">        - fits models on self</span>
 
 <span class="sd">        Notes :</span>
 
-<span class="sd">        - Available classifiers : Random Forest, XGBOOST (and bagging)</span>
-<span class="sd">        - can enable bagggin algo with top_bagging parameter</span>
+<span class="sd">        - Available classifiers : Random Forest, XGBOOST</span>
+<span class="sd">        - can enable bagging algo with top_bagging parameter</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        clf : string (Default : &#39;XGBOOST&#39;)</span>
 <span class="sd">            classifier used for modelisation</span>
+<span class="sd">        grid_param : dict</span>
+<span class="sd">            random search grid {Hyperparameter name : values list}</span>
 <span class="sd">        top_bagging : boolean (Default : False)</span>
 <span class="sd">            enable Bagging</span>
 <span class="sd">        n_comb : int (Default : 10)</span>
@@ -679,6 +684,7 @@
         <span class="n">df_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
             <span class="n">print_title1</span><span class="p">(</span><span class="s1">&#39;Train Models&#39;</span><span class="p">)</span>
 
         <span class="c1"># instantiate Hyperopt object</span>
@@ -695,13 +701,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span> <span class="o">=</span> <span class="n">hyperopt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_model</span> <span class="o">=</span> <span class="kc">True</span>
 
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;model_train execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span></div>
+
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ------------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@timer</span>
-    <span class="k">def</span> <span class="nf">model_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="AML.model_predict"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.model_predict">[docs]</a>    <span class="k">def</span> <span class="nf">model_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;apply fitted models on a dataset</span>
+
+<span class="sd">        - identifies valid models |(auc(train)-auc(test)|&lt;0.03</span>
+<span class="sd">        - gets the best model in respect of a selected metric among valid model</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -715,16 +726,16 @@
 <span class="sd">        dict</span>
 <span class="sd">            {model_index : {&#39;HP&#39;, &#39;probas&#39;, &#39;model&#39;, &#39;features_importance&#39;, &#39;train_metrics&#39;, &#39;metrics&#39;, &#39;output&#39;}</span>
 <span class="sd">        list</span>
-<span class="sd">            valid model indexes</span>
+<span class="sd">            valid models indexes</span>
 <span class="sd">        int</span>
 <span class="sd">            best model index</span>
 <span class="sd">        DataFrame</span>
-<span class="sd">            Models information and metrics stored in DataFrame</span>
-
+<span class="sd">            models summary</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_model</span><span class="p">,</span> <span class="s2">&quot;model is not fitted yet, apply model_train_predict or model_train methods&quot;</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
             <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">applying models&#39;</span><span class="p">)</span>
 
         <span class="c1"># apply models on dataset</span>
@@ -745,8 +756,9 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;AUC : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="s1">&#39;Roc_auc&#39;</span><span class="p">],</span> <span class="mi">4</span><span class="p">)))</span>
             <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">[</span><span class="n">best_model_idx</span><span class="p">][</span><span class="s1">&#39;metrics&#39;</span><span class="p">][</span><span class="n">metric</span><span class="p">],</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
                 <span class="n">color_print</span><span class="p">(</span><span class="s2">&quot;C&#39;était pas qu&#39;un physique finalement hein ?&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;model_predict execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">l_valid_models</span><span class="p">,</span> <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">df_model_res</span></div>
+        <span class="k">return</span> <span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">l_valid_models</span><span class="p">,</span> <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">df_model_res</span></div></div>
 </pre></div>
 
            </div>

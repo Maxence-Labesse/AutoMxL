@@ -12,14 +12,14 @@ Encode_Target
 
 Explore
 =======
-Get_Info
-------------------
-.. automodule:: MLBG59.Explore.Get_Info
+Explore
+--------
+.. automodule:: MLBG59.Explore.Explore
     :members:
 
-Get Outliers
--------------
-.. automodule:: MLBG59.Explore.Get_Outliers
+Features_Type
+------------------
+.. automodule:: MLBG59.Explore.Features_Type
     :members:
 
 
@@ -32,17 +32,22 @@ Missing_Values
 
 Categorical Data
 ----------------
-.. automodule:: MLBG59.Preprocessing.Categorical_Data
+.. automodule:: MLBG59.Preprocessing.Categorical
     :members:
 
 Date Data
 --------------------------------------
-.. automodule:: MLBG59.Preprocessing.Date_Data
+.. automodule:: MLBG59.Preprocessing.Date
     :members:
 
 Process Outliers
 -----------------
-.. automodule:: MLBG59.Preprocessing.Process_Outliers
+.. automodule:: MLBG59.Preprocessing.Outliers
+    :members:
+
+Features Selection
+==================
+.. automodule:: MLBG59.Select_Features.Select_Features
     :members:
 
 
