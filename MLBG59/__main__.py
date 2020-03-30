@@ -451,7 +451,7 @@ class AML(pd.DataFrame, ABC):
             print_title1('Train predict')
 
         # Train/Test split
-        df_train, df_test = train_test(self, 0.3)
+        df_train, df_test = train_test(self, 0.2)
 
         # Create Hyperopt object
         hyperopt = HyperOpt(classifier=clf, grid_param=grid_param, n_param_comb=n_comb,

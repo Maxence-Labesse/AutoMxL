@@ -10,7 +10,7 @@ The main purpose of this package is to provide a Python AutoML class named AML t
 from a raw dataset to a deployable model.
 It can be used as well as a functions/classes catalogue to ease and speed-up Data Scientists repetitive dev tasks.
 
-You can fin the whole code documentation on [MLBG59 Readthedoc documentation](https://mlbg59.readthedocs.io/en/latest/)
+You can find the whole code documentation on [MLBG59 Readthedoc documentation](https://mlbg59.readthedocs.io/en/latest/)
 
 # Getting Started
 ### Prerequisites
@@ -43,16 +43,16 @@ df_raw = import_data('data/bank-additional-full.csv', verbose=False)
 
 # set "yes" category from variable "y" as the classification target.
 # => get modified dataset and new target name
-new_df, new_target = category_to_target(df_raw, var='y' , cat='yes')
+df, target = category_to_target(df_raw, var='y' , cat='yes')
 
 # instantiate AML object with dataset and target name
-auto_df = AML(new_df.copy(), target=new_target)
+auto_df = AML(df, target=target)
 ```
 
 ### Explore
 
 <span style="color: orange">explore</span> method gives you global information about the dataset and automatically
-identify features types (booleans, dates, verbatims, categorical, numerical). This information is stored in "d_features" attribute.
+identify features types (booleans, dates, verbatims, categoricals, numericals). This information is stored in "d_features" attribute.
 
 ```python
 auto_df.explore(verbose=False)
@@ -65,7 +65,7 @@ print(auto_df.d_features.keys())
 <span style="color: orange">preprocess</span> method prepares the data before feeding it to the model :
 
 - removes features with low variance and features identified as verbatims and identifiers
-- transforms date features to numeric data (timedelta, week of the year, ...)
+- transforms date features to numeric data (timedelta, ...)
 - fills missing values
 - processes categorical data (using one hot encoding or Pytorch §NN embedding encoder)
 - processes outliers (optional)
@@ -104,7 +104,7 @@ output :
 - df_model_res: models information and metrics stored in DataFrame
 
 \
-Note : if you prefere to train and test your model separately, you can also use the following modelisation methods:
+Note : if you prefer to train and test your model separately, you can also use the following modelisation methods:
 ```python
 auto_df.model_train(verbose=False)
 d_fitted_models, l_valid_models, best_model_idx, df_model_res = auto_df.model_apply(df_sel, verbose=False)
