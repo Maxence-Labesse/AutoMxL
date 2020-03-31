@@ -67,7 +67,7 @@ for i in range(n_iter):
         # encode target
         new_df, target = category_to_target(df_raw, var=d_files[file]['var'], cat=d_files[file]['cat'])
 
-        # instantiate AutoML object
+        # instantiate AML object
         auto_df = AML(new_df.copy(), target=target)
 
         # explore
