@@ -24,18 +24,20 @@ def category_to_target(df, var, cat):
     DataFrame : modified dataset
     string : new target name (var+'_'+cat)
     """
+    df_local = df.copy()
+
     # transform variable to string if numerical
     if var in df._get_numeric_data().columns:
-        df[var] = df[var].apply(str)
+        df_local[var] = df_local[var].apply(str)
         cat = str(cat)
 
     # one hot encoding
-    target_dummies = pd.get_dummies(df[var])
+    target_dummies = pd.get_dummies(df_local[var])
     # select cat feature
     target_dummies[var + '_' + cat] = target_dummies[cat]
 
     # add encoded cat feature to dataset
-    df_local = pd.concat((df, target_dummies[var + '_' + cat]), axis=1)
+    df_local = pd.concat((df_local, target_dummies[var + '_' + cat]), axis=1)
 
     # remove var
     del df_local[var]

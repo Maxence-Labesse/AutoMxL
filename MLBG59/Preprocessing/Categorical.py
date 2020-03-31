@@ -1,17 +1,16 @@
-from MLBG59.Explore.Features_Type import is_categorical, is_boolean
-
 """ Categorical features processing
 
  - CategoricalEncoder (class) : Encode categorical features
  - dummy_all_var (func) : get one hot encoded vector for each category of a categorical features list
  - get_embedded_cat (func) : get embedding representation with NN
- - mca (func) : TODO
+ - mca (func) : to do
 
 """
 import pandas as pd
 from MLBG59.Preprocessing.Deep_Encoder import *
 from sklearn.preprocessing import LabelEncoder
 from MLBG59.param_config import batch_size, n_epoch, learning_rate
+from MLBG59.Explore.Features_Type import is_categorical, is_boolean
 
 
 class CategoricalEncoder(object):
@@ -20,7 +19,8 @@ class CategoricalEncoder(object):
     Available encoding methods :
 
     - one hot encoding
-    - deep_encoder : Build and train a Neural Network for the creation of embeddings for categorical variables. (https://www.fast.ai/2018/04/29/categorical-embeddings/)
+    - deep_encoder : Build and train a Neural Network for the creation of embeddings for categorical variables.
+    (https://www.fast.ai/2018/04/29/categorical-embeddings/)
 
     Default NN model parameters are stored in param_config.py file
 
@@ -90,7 +90,6 @@ class CategoricalEncoder(object):
             print("  >", len(self.l_var2encode), "features to encode")
             if len(self.l_var2encode) > 0:
                 print(" ", self.l_var2encode)
-
 
         if len(self.l_var2encode) > 0:
             # deep learning embedded representation method

@@ -32,7 +32,7 @@ d_all_param['clf'] = ['RF', 'XGBOOST']
 # features selection
 d_all_param['select_method'] = ['pca', None]
 # categorical encoding method
-d_all_param['cat_method'] = ['deep_encoder']
+d_all_param['cat_method'] = ['deep_encoder', 'one_hot']
 # bagging use for modelisation
 d_all_param['bagging'] = [True, False]
 
@@ -43,7 +43,7 @@ start_meta = time()
 
 # Create new storing file meta.csv
 df_meta = pd.DataFrame(
-    columns=['file_name', 'date', 'exec_time', 'nrow', 'ncol', 'nnum', 'ncat', 'ndate', 'cat_method', 'cat_method',
+    columns=['file_name', 'date', 'exec_time', 'nrow', 'ncol', 'nnum', 'ncat', 'ndate', 'cat_method',
              'n_epoch', 'learning_rate', 'batch_size', 'crit', 'optim', 'process_outliers', 'select_method', 'bagging',
              'clf', 'bagging', 'n_model', 'n_valid_models', 'AUC', 'delta_auc', 'precision', 'recall', 'F1'])
 
@@ -55,7 +55,6 @@ for i in range(n_iter):
 
         # import
         df_raw = import_data(file, verbose=False)
-        df_raw = df_raw.sample(min(df_raw.shape[0], 20000))
 
         # print
         print_title1(file + "  / niter : " + str(i))
