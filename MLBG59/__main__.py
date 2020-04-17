@@ -405,7 +405,7 @@ class AML(pd.DataFrame):
         --------------------------------------------------------------------------------------------------------------------
     """
 
-    def model_train_test(self, clf='XGBOOST', grid_param=None, metric='F1', top_bagging=False, n_comb=10,
+    def model_train_test(self, clf='XGBOOST', grid_param=None, metric='F1', delta_auc=0.03, top_bagging=False, n_comb=10,
                          comb_seed=None,
                          verbose=False):
         """train and test models with random search
@@ -472,7 +472,7 @@ class AML(pd.DataFrame):
         if verbose:
             color_print('\napplying models')
 
-        d_fitted_models = hyperopt.predict(df_test, self.target, delta_auc=0.03, verbose=verbose)
+        d_fitted_models = hyperopt.predict(df_test, self.target, delta_auc=delta_auc, verbose=verbose)
 
         # model selection
         if verbose:
@@ -555,7 +555,7 @@ class AML(pd.DataFrame):
     ------------------------------------------------------------------------------------------------------------------------
     """
 
-    def model_predict(self, df, metric='F1', verbose=False):
+    def model_predict(self, df, metric='F1', delta_auc=0.03, verbose=False):
         """apply fitted models on a dataset
 
         - identifies valid models |(auc(train)-auc(test)|<0.03
@@ -586,7 +586,7 @@ class AML(pd.DataFrame):
             color_print('\napplying models')
 
         # apply models on dataset
-        d_fitted_models = self.d_hyperopt.predict(df, self.target, delta_auc=0.03, verbose=verbose)
+        d_fitted_models = self.d_hyperopt.predict(df, self.target, delta_auc=delta_auc, verbose=verbose)
 
         # model selection
         if verbose:

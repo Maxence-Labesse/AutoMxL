@@ -67,7 +67,7 @@ class FeatSelector(object):
                     df_local = scaler.fit_transform(df[self.l_select_var])
                     self.scaler = scaler
                 else:
-                    df_local = df['l_select_var'].copy()
+                    df_local = df[self.l_select_var].copy()
 
             # init pca object
             pca = PCA()

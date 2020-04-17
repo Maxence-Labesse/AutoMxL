@@ -34,7 +34,11 @@ default_bagging_param = {'n_sample': 5,
 default_RF_grid_param = {
     'n_estimators': np.random.uniform(low=20, high=500, size=20).astype(int),
     'max_features': ['auto', 'log2'],
-    'max_depth': np.random.uniform(low=2, high=15, size=20).astype(int),
+    'min_child_weight': [1, 5, 10],
+    'gamma': [0.5, 1, 1.5, 2, 5],
+    'subsample': [0.6, 0.8, 1.0],
+    'colsample_bytree': [0.6, 0.8, 1.0],
+    'max_depth': [3, 4, 5, 6, 7, 8],
     'min_samples_split': [5, 10, 15, 20]}
 
 # Defaults HP grid for XGBOOST

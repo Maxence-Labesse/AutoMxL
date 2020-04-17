@@ -244,7 +244,7 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=False
             pref = prefix_list[var_list.index(col)]
 
         # dummify
-        df_cat = pd.get_dummies(df_local[col], prefix=pref)
+        df_cat = pd.get_dummies(df_local[col], prefix=pref, drop_first=True)
         # concat source DataFrame and new features
         df_local = pd.concat((df_local, df_cat), axis=1)
 
