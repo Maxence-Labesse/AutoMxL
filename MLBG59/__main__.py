@@ -477,7 +477,7 @@ class AML(pd.DataFrame):
         # model selection
         if verbose:
             color_print('\nbest model selection')
-        best_model_idx, l_valid_models = hyperopt.get_best_model(d_fitted_models, metric=metric, delta_auc_th=0.03,
+        best_model_idx, l_valid_models = hyperopt.get_best_model(d_fitted_models, metric=metric, delta_auc_th=delta_auc,
                                                                  verbose=False)
 
         df_model_res = hyperopt.model_res_to_df(d_fitted_models, sort_metric=metric)
@@ -529,6 +529,8 @@ class AML(pd.DataFrame):
         assert self.step in ['preprocess', 'features_selection'], 'apply preprocess method'
 
         df_train = self.copy()
+        target = self.target
+
 
         if verbose:
             start_time = time()
@@ -547,6 +549,8 @@ class AML(pd.DataFrame):
 
         self.d_hyperopt = hyperopt
         self.is_fitted_model = True
+        self.target = target
+        self.step = 'train_model'
 
         if verbose:
             print('\n\t\t>>>', 'model_train execution time:', round(time() - start_time, 4), 'secs. <<<')
@@ -592,7 +596,7 @@ class AML(pd.DataFrame):
         if verbose:
             color_print('\nbest model selection')
         best_model_idx, l_valid_models = self.d_hyperopt.get_best_model(d_fitted_models, metric=metric,
-                                                                        delta_auc_th=0.03,
+                                                                        delta_auc_th=delta_auc,
                                                                         verbose=False)
         # store model results
         df_model_res = self.d_hyperopt.model_res_to_df(d_fitted_models, sort_metric=metric)

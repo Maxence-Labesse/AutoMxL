@@ -121,7 +121,7 @@ class FeatSelector(object):
                 columns=dict(zip(df_local.columns.tolist(), ['Dim' + str(v) for v in df_local.columns.tolist()])))
 
         # find argmin to get 90% of variance
-        n_dim = np.argwhere(np.cumsum(pca.explained_variance_ratio_) > 0.90)[0][0]
+        n_dim = np.argwhere(np.cumsum(pca.explained_variance_ratio_) > 0.95)[0][0]
 
         # concat with other dataset features
         if len(l_var_other) > 0:
@@ -218,7 +218,7 @@ def select_features(df, target, method='pca', verbose=False):
             columns=dict(zip(X_transform.columns.tolist(), ['Dim' + str(v) for v in X_transform.columns.tolist()])))
 
         # find argmin to get 90% of variance
-        n_dim = np.argwhere(np.cumsum(pca.explained_variance_ratio_) > 0.90)[0][0]
+        n_dim = np.argwhere(np.cumsum(pca.explained_variance_ratio_) > 0.95)[0][0]
 
     # concat with other dataset features
     if len(l_other) > 0:
