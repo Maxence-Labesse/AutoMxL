@@ -8,7 +8,7 @@ This package contains following sections :
 - Modelisation
 
 It can be use aswell as a catalog of functions to ease and speed up repetitive 
-Data Scientists tasks
+Data_handling Scientists tasks
 
 """
 from __future__ import absolute_import

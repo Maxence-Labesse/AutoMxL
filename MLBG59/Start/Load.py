@@ -1,4 +1,4 @@
-"""Data import functions :
+"""Data_handling import functions :
 
 - get_delimiter : identify delimiter for a .csv/.txt file
 - load_data : import dataset file into dataframe
