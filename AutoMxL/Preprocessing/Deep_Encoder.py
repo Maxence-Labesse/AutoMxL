@@ -12,11 +12,11 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
 from matplotlib import pyplot as plt
-from MLBG59.Utils.Display import color_print
+from AutoMxL.Utils.Display import color_print
 
 
 # parameters config
-# from MLBG59.config import n_epoch, learning_rate, batch_size, crit, optim
+# from AutoMxL.config import n_epoch, learning_rate, batch_size, crit, optim
 
 
 class Torch_Dataset(Dataset):

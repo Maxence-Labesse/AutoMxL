@@ -1,10 +1,10 @@
-from MLBG59.__main__ import AML
+from AutoMxL.__main__ import AML
 import unittest
 import pandas as pd
-from MLBG59.Preprocessing.Categorical import CategoricalEncoder
-from MLBG59.Preprocessing.Date import DateEncoder
-from MLBG59.Preprocessing.Missing_Values import NAEncoder
-from MLBG59.Select_Features.Select_Features import FeatSelector
+from AutoMxL.Preprocessing.Categorical import CategoricalEncoder
+from AutoMxL.Preprocessing.Date import DateEncoder
+from AutoMxL.Preprocessing.Missing_Values import NAEncoder
+from AutoMxL.Select_Features.Select_Features import FeatSelector
 import numpy as np
 
 # import numpy as np

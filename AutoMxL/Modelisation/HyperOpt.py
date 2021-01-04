@@ -8,11 +8,11 @@ import xgboost
 import random
 import itertools as it
 # import datetime
-from MLBG59.Modelisation.Bagging import *
-from MLBG59.Modelisation.Utils import *
-from MLBG59.Utils.Display import color_print
+from AutoMxL.Modelisation.Bagging import *
+from AutoMxL.Modelisation.Utils import *
+from AutoMxL.Utils.Display import color_print
 from datetime import datetime
-from MLBG59.param_config import default_bagging_param, default_RF_grid_param, default_XGB_grid_param
+from AutoMxL.param_config import default_bagging_param, default_RF_grid_param, default_XGB_grid_param
 
 
 class HyperOpt(object):

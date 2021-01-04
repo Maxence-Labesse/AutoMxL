@@ -22,7 +22,7 @@ You can find the whole code documentation on [MLBG59 Readthedoc documentation](h
 ### Installation
 Since this package is uploaded to PyPI, it can be installed with pip using the terminal :
 ```
-$ pip install MLBG59
+$ pip install AutoMxL
 ```
 
 # AML class tutorial
@@ -36,7 +36,7 @@ For each method, verbose parameter allows you to get logging informations.
 If needed, you can find in <span style="color: orange"> Start </span> sub-package functions that facilitate data loading and target encoding.
 ```python
 # import package
-from MLBG59 import *
+from AutoMxL import *
 
 # import data into DataFrame with delimiter auto-detection for csv and txt files
 df_raw = import_data('data/bank-additional-full.csv', verbose=False)
@@ -137,7 +137,7 @@ Distributed under the MIT license. See License.txt for more information
 #### Author
 Maxence Labesse - maxence.labesse@yahoo.fr
 
-https://github.com/Maxence-Labesse/MLBG59
+https://github.com/Maxence-Labesse/AutoMxL
 
 #### Contributors
 

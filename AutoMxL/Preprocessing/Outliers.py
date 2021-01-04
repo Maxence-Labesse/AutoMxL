@@ -8,7 +8,7 @@
 """
 import pandas as pd
 import numpy as np
-from MLBG59.Utils.Display import *
+from AutoMxL.Utils.Display import *
 
 
 class OutliersEncoder(object):

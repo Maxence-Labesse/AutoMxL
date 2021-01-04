@@ -6,7 +6,7 @@
 """
 import pandas as pd
 from datetime import datetime
-from MLBG59.Explore.Features_Type import features_from_type
+from AutoMxL.Explore.Features_Type import features_from_type
 
 
 class DateEncoder(object):

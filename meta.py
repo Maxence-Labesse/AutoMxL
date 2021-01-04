@@ -1,12 +1,12 @@
 # Import
 from time import time
 from datetime import date
-from MLBG59 import *
+from AutoMxL import *
 import pandas as pd
-from MLBG59.Utils.Display import print_title1, print_dict
-from MLBG59.Utils.Utils import random_from_dict
+from AutoMxL.Utils.Display import print_title1, print_dict
+from AutoMxL.Utils.Utils import random_from_dict
 from data.data_config import d_files
-from MLBG59.param_config import n_epoch, learning_rate, batch_size, crit, optim
+from AutoMxL.param_config import n_epoch, learning_rate, batch_size, crit, optim
 
 """
 AutoML test meta algo :

@@ -9,7 +9,7 @@
 """
 import pandas as pd
 from time import time
-from MLBG59.Utils.Decorators import timer
+from AutoMxL.Utils.Decorators import timer
 
 
 def features_from_type(df, typ, l_var=None, th=0.95):

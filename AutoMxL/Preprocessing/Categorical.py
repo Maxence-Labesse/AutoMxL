@@ -7,10 +7,10 @@
 
 """
 import pandas as pd
-from MLBG59.Preprocessing.Deep_Encoder import *
+from AutoMxL.Preprocessing.Deep_Encoder import *
 from sklearn.preprocessing import LabelEncoder
-from MLBG59.param_config import batch_size, n_epoch, learning_rate
-from MLBG59.Explore.Features_Type import is_categorical, is_boolean
+from AutoMxL.param_config import batch_size, n_epoch, learning_rate
+from AutoMxL.Explore.Features_Type import is_categorical, is_boolean
 
 
 class CategoricalEncoder(object):

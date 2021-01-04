@@ -1,12 +1,12 @@
-from MLBG59.Utils.Display import print_title1
-from MLBG59.Utils.Decorators import timer
-from MLBG59.Explore.Explore import explore
-from MLBG59.Preprocessing.Date import DateEncoder
-from MLBG59.Preprocessing.Missing_Values import NAEncoder
-from MLBG59.Preprocessing.Outliers import OutliersEncoder
-from MLBG59.Preprocessing.Categorical import CategoricalEncoder
-from MLBG59.Modelisation.HyperOpt import *
-from MLBG59.Select_Features.Select_Features import FeatSelector
+from AutoMxL.Utils.Display import print_title1
+from AutoMxL.Utils.Decorators import timer
+from AutoMxL.Explore.Explore import explore
+from AutoMxL.Preprocessing.Date import DateEncoder
+from AutoMxL.Preprocessing.Missing_Values import NAEncoder
+from AutoMxL.Preprocessing.Outliers import OutliersEncoder
+from AutoMxL.Preprocessing.Categorical import CategoricalEncoder
+from AutoMxL.Modelisation.HyperOpt import *
+from AutoMxL.Select_Features.Select_Features import FeatSelector
 from time import time
 
 
@@ -63,7 +63,7 @@ class AML(pd.DataFrame):
     """
 
     def __repr__(self):
-        return 'MLBG59 instance'
+        return 'AutoMxL instance'
 
     """
     --------------------------------------------------------------------------------------------------------------------

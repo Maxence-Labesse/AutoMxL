@@ -1,5 +1,5 @@
-from MLBG59.Modelisation.Bagging import *
-from MLBG59.Modelisation.HyperOpt import HyperOpt
+from AutoMxL.Modelisation.Bagging import *
+from AutoMxL.Modelisation.HyperOpt import HyperOpt
 import unittest
 import pandas as pd
 import sklearn

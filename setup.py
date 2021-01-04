@@ -8,7 +8,7 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(
-    name='MLBG59',
+    name='AutoMxL',
     version='1.0.0',
     description="Classification Automated Machine Learning (AutoML)",
     long_description=README,
@@ -22,6 +22,6 @@ setup(
         "Programming Language :: Python 3",
         "Programming Language :: Python 3.7"
     ],
-    packages=["MLBG59"],
+    packages=["AutoMxL"],
     include_package_data=True, install_requires=['pandas', 'scikit-learn', 'xgboost', 'numpy', 'torch', 'matplotlib']
 )

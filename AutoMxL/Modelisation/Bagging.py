@@ -5,7 +5,7 @@
 
 """
 from sklearn.ensemble import RandomForestClassifier
-from MLBG59.Modelisation.Utils import *
+from AutoMxL.Modelisation.Utils import *
 import pandas as pd
 
 """

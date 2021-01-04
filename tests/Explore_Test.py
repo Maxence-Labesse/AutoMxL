@@ -1,4 +1,4 @@
-from MLBG59.Explore.Explore import *
+from AutoMxL.Explore.Explore import *
 import unittest
 import pandas as pd
 

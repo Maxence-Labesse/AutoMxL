@@ -1,7 +1,7 @@
 import unittest
 import pandas as pd
-from MLBG59.Start.Load import get_delimiter, import_data
-from MLBG59.Start.Encode_Target import category_to_target, range_to_target
+from AutoMxL.Start.Load import get_delimiter, import_data
+from AutoMxL.Start.Encode_Target import category_to_target, range_to_target
 
 # test config
 file = 'tests/df_test.csv'

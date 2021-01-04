@@ -2,11 +2,11 @@
 
  - explore (func): Identify variables types and gives global information about the dataset (NA, low variance features)
  - low variance features (func): identify features with low variance
- - - get_features_type (func): get all features per type
+ - get_features_type (func): get all features per type
 """
 from sklearn.preprocessing import MinMaxScaler
-from MLBG59.Explore.Features_Type import *
-from MLBG59.Utils.Display import *
+from AutoMxL.Explore.Features_Type import *
+from AutoMxL.Utils.Display import *
 
 
 def explore(df, verbose=False):
@@ -50,7 +50,7 @@ def explore(df, verbose=False):
     # dataset dimensions
     if verbose:
         color_print("Dimensions :")
-        print("  > row number :", df.shape[0], "\n  > col number : ", df.shape[1])
+        print("  > row number :", df.shape[0], "\n  > col number :", df.shape[1])
 
     #########################
     # Low variance features

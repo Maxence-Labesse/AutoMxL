@@ -1,7 +1,7 @@
-from MLBG59.Preprocessing.Categorical import *
-from MLBG59.Preprocessing.Date import *
-from MLBG59.Preprocessing.Outliers import *
-from MLBG59.Preprocessing.Missing_Values import *
+from AutoMxL.Preprocessing.Categorical import *
+from AutoMxL.Preprocessing.Date import *
+from AutoMxL.Preprocessing.Outliers import *
+from AutoMxL.Preprocessing.Missing_Values import *
 import unittest
 import pandas as pd
 import math

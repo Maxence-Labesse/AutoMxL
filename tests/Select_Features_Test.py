@@ -1,6 +1,6 @@
 import unittest
 import pandas as pd
-from MLBG59.Select_Features.Select_Features import FeatSelector
+from AutoMxL.Select_Features.Select_Features import FeatSelector
 
 df = pd.read_csv('tests/df_test.csv')
 df['age'] = df['age'].fillna(df['age'].median())

@@ -29,7 +29,7 @@ sys.path.insert(0, project_root)
 
 # -- Project information -----------------------------------------------------
 
-project = 'MLBG59'
+project = 'AutoMxL'
 copyright = '2020, Maxence LABESSE'
 author = 'Maxence LABESSE'
 
@@ -135,7 +135,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'MLBG59.tex', 'MLBG59 Documentation',
+    (master_doc, 'AutoMxL.tex', 'AutoMxL Documentation',
      'Maxence LABESSE', 'manual'),
 ]
 
@@ -144,7 +144,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'mlbg59', 'MLBG59 Documentation',
+    (master_doc, 'mlbg59', 'AutoMxL Documentation',
      [author], 1)
 ]
 
@@ -154,8 +154,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'MLBG59', 'MLBG59 Documentation',
-     author, 'MLBG59', 'One line description of project.',
+    (master_doc, 'AutoMxL', 'AutoMxL Documentation',
+     author, 'AutoMxL', 'One line description of project.',
      'Miscellaneous'),
 ]
 

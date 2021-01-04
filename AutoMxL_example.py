@@ -1,6 +1,6 @@
-from MLBG59 import *
-from MLBG59.Utils.Display import print_dict, color_print, print_title1
-from MLBG59.Modelisation.Utils import classifier_evaluate
+from AutoMxL import *
+from AutoMxL.Utils.Display import print_dict, color_print, print_title1
+from AutoMxL.Modelisation.Utils import classifier_evaluate
 
 # Import data
 df_raw = import_data('data/bank-additional-full.csv', verbose=False)
