@@ -23,5 +23,5 @@ setup(
         "Programming Language :: Python 3.7"
     ],
     packages=["AutoMxL"],
-    include_package_data=True, install_requires=['pandas', 'scikit-learn', 'xgboost', 'numpy', 'torch', 'matplotlib']
+    include_package_data=True, install_requires=['pandas', 'numpy', 'scikit-learn', 'xgboost', 'numpy', 'torch', 'matplotlib']
 )

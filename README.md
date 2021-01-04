@@ -1,14 +1,15 @@
 
+<!--- 
 <p align="center">
   <img width="400" height="250" src="docs/image.jpg">
 </p>
-
+--->
 
 # Presentation 
 
 The main purpose of this package is to provide a Python AutoML class named AML that covers the complete pipeline of a binary classification project 
 from a raw dataset to a deployable model.
-It can be used as well as a functions/classes catalogue to ease and speed-up Data Scientists repetitive dev tasks.
+It can be used as a functions/classes catalogue to ease and speed-up Data Scientists repetitive dev tasks aswell.
 
 You can find the whole code documentation on [MLBG59 Readthedoc documentation](https://mlbg59.readthedocs.io/en/latest/)
 
