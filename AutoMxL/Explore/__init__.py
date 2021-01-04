@@ -9,5 +9,4 @@ Modules :
 
 
 __all__ = ['Explore',
-           'Get_Outliers',
            'Features_Type']

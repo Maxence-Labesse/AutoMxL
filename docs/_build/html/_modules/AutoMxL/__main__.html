@@ -1,37 +1,39 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MLBG59.__main__ &mdash; MLBG59 1.0.0 documentation</title>
+  <title>AutoMxL.__main__ &mdash; AutoMxL 1.0.0 documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
 </head>
@@ -47,7 +49,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> MLBG59
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> AutoMxL
           
 
           
@@ -70,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -86,13 +89,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../features.html#explore">Explore</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../features.html#preprocessing">Preprocessing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../features.html#module-MLBG59.Select_Features.Select_Features">Features Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../features.html#module-AutoMxL.Select_Features.Select_Features">Features Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../features.html#modelisation">Modelisation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -102,7 +106,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">MLBG59</a>
+          <a href="../../index.html">AutoMxL</a>
         
       </nav>
 
@@ -131,11 +135,11 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>MLBG59.__main__</li>
+      <li>AutoMxL.__main__</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -150,20 +154,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for MLBG59.__main__</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">MLBG59.Utils.Display</span> <span class="k">import</span> <span class="n">print_title1</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Utils.Decorators</span> <span class="k">import</span> <span class="n">timer</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Explore.Explore</span> <span class="k">import</span> <span class="n">explore</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Date</span> <span class="k">import</span> <span class="n">DateEncoder</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Missing_Values</span> <span class="k">import</span> <span class="n">NAEncoder</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Outliers</span> <span class="k">import</span> <span class="n">OutliersEncoder</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Preprocessing.Categorical</span> <span class="k">import</span> <span class="n">CategoricalEncoder</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Modelisation.HyperOpt</span> <span class="k">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">MLBG59.Select_Features.Select_Features</span> <span class="k">import</span> <span class="n">FeatSelector</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="k">import</span> <span class="n">time</span>
+  <h1>Source code for AutoMxL.__main__</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">AutoMxL.Utils.Display</span> <span class="kn">import</span> <span class="n">print_title1</span>
+<span class="kn">from</span> <span class="nn">AutoMxL.Utils.Decorators</span> <span class="kn">import</span> <span class="n">timer</span>
+<span class="kn">from</span> <span class="nn">AutoMxL.Explore.Explore</span> <span class="kn">import</span> <span class="n">explore</span>
+<span class="kn">from</span> <span class="nn">AutoMxL.Preprocessing.Date</span> <span class="kn">import</span> <span class="n">DateEncoder</span>
+<span class="kn">from</span> <span class="nn">AutoMxL.Preprocessing.Missing_Values</span> <span class="kn">import</span> <span class="n">NAEncoder</span>
+<span class="kn">from</span> <span class="nn">AutoMxL.Preprocessing.Outliers</span> <span class="kn">import</span> <span class="n">OutliersEncoder</span>
+<span class="kn">from</span> <span class="nn">AutoMxL.Preprocessing.Categorical</span> <span class="kn">import</span> <span class="n">CategoricalEncoder</span>
+<span class="kn">from</span> <span class="nn">AutoMxL.Modelisation.HyperOpt</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">AutoMxL.Select_Features.Select_Features</span> <span class="kn">import</span> <span class="n">FeatSelector</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 
 
-<div class="viewcode-block" id="AML"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML">[docs]</a><span class="k">class</span> <span class="nc">AML</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+<div class="viewcode-block" id="AML"><a class="viewcode-back" href="../../autoML.html#AutoMxL.__main__.AML">[docs]</a><span class="k">class</span> <span class="nc">AML</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Covers the complete pipeline of a classification project from a raw dataset to a deployable model.</span>
 
 <span class="sd">    AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to method that</span>
@@ -196,7 +200,7 @@
 <span class="sd">        target name</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AML</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">target</span> <span class="o">!=</span> <span class="s1">&#39;target&#39;</span><span class="p">,</span> <span class="s1">&#39;target name cannot be &quot;target&quot;&#39;</span>
         <span class="c1"># parameters</span>
@@ -215,8 +219,8 @@
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;MLBG59 instance&#39;</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;AutoMxL instance&#39;</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
@@ -231,7 +235,7 @@
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AML.explore"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.explore">[docs]</a>    <span class="k">def</span> <span class="nf">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AML.explore"><a class="viewcode-back" href="../../autoML.html#AutoMxL.__main__.AML.explore">[docs]</a>    <span class="k">def</span> <span class="nf">explore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;data exploration and features type identification</span>
 
 <span class="sd">        Note :  if you disagree with automated identification, you can directly modify d_features attribute</span>
@@ -284,7 +288,7 @@
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AML.preprocess"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="AML.preprocess"><a class="viewcode-back" href="../../autoML.html#AutoMxL.__main__.AML.preprocess">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_outliers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                    <span class="n">cat_method</span><span class="o">=</span><span class="s1">&#39;deep_encoder&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Prepare the data before feeding it to the model :</span>
 
@@ -414,7 +418,7 @@
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AML.preprocess_apply"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.preprocess_apply">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AML.preprocess_apply"><a class="viewcode-back" href="../../autoML.html#AutoMxL.__main__.AML.preprocess_apply">[docs]</a>    <span class="k">def</span> <span class="nf">preprocess_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply preprocessing.</span>
 
 <span class="sd">        Requires preprocess method to have been applied (so that all encoder are fitted).</span>
@@ -480,7 +484,7 @@
 <span class="sd">    --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AML.select_features"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.select_features">[docs]</a>    <span class="k">def</span> <span class="nf">select_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AML.select_features"><a class="viewcode-back" href="../../autoML.html#AutoMxL.__main__.AML.select_features">[docs]</a>    <span class="k">def</span> <span class="nf">select_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; fit and apply features selection (optional)</span>
 
 <span class="sd">        Parameters</span>
@@ -522,7 +526,7 @@
 <span class="sd">        --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AML.select_features_apply"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.select_features_apply">[docs]</a>    <span class="k">def</span> <span class="nf">select_features_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AML.select_features_apply"><a class="viewcode-back" href="../../autoML.html#AutoMxL.__main__.AML.select_features_apply">[docs]</a>    <span class="k">def</span> <span class="nf">select_features_apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Apply features selection.</span>
 
 <span class="sd">         Requires Select_Features method to have been applied</span>
@@ -558,14 +562,14 @@
 <span class="sd">        --------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AML.model_train_test"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.model_train_test">[docs]</a>    <span class="k">def</span> <span class="nf">model_train_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<div class="viewcode-block" id="AML.model_train_test"><a class="viewcode-back" href="../../autoML.html#AutoMxL.__main__.AML.model_train_test">[docs]</a>    <span class="k">def</span> <span class="nf">model_train_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
                          <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                          <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;train and test models with random search</span>
 
 <span class="sd">        - creates models with random hyper-parameters combinations from HP grid</span>
 <span class="sd">        - splits (random 80/20) train/test sets to fit/apply models</span>
-<span class="sd">        - identifies valid models |(auc(train)-auc(test)|&lt;0.03</span>
+<span class="sd">        - identifies valid models (auc(train)-auc(test)&lt;0.03</span>
 <span class="sd">        - gets the best model in respect of a selected metric among valid model</span>
 
 
@@ -625,12 +629,12 @@
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">applying models&#39;</span><span class="p">)</span>
 
-        <span class="n">d_fitted_models</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">d_fitted_models</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="n">delta_auc</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
         <span class="c1"># model selection</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">best model selection&#39;</span><span class="p">)</span>
-        <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">l_valid_models</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">get_best_model</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">delta_auc_th</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span>
+        <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">l_valid_models</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">get_best_model</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">delta_auc_th</span><span class="o">=</span><span class="n">delta_auc</span><span class="p">,</span>
                                                                  <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="n">df_model_res</span> <span class="o">=</span> <span class="n">hyperopt</span><span class="o">.</span><span class="n">model_res_to_df</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">sort_metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
@@ -652,7 +656,7 @@
 <span class="sd">    ------------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AML.model_train"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.model_train">[docs]</a>    <span class="k">def</span> <span class="nf">model_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AML.model_train"><a class="viewcode-back" href="../../autoML.html#AutoMxL.__main__.AML.model_train">[docs]</a>    <span class="k">def</span> <span class="nf">model_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clf</span><span class="o">=</span><span class="s1">&#39;XGBOOST&#39;</span><span class="p">,</span> <span class="n">grid_param</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_bagging</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_comb</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">comb_seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;train models with random search</span>
 
 <span class="sd">        - creates models with random hyper-parameters combinations from HP grid</span>
@@ -682,6 +686,8 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;preprocess&#39;</span><span class="p">,</span> <span class="s1">&#39;features_selection&#39;</span><span class="p">],</span> <span class="s1">&#39;apply preprocess method&#39;</span>
 
         <span class="n">df_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span>
+
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
@@ -700,6 +706,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span> <span class="o">=</span> <span class="n">hyperopt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted_model</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="s1">&#39;train_model&#39;</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\t\t</span><span class="s1">&gt;&gt;&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;model_train execution time:&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="s1">&#39;secs. &lt;&lt;&lt;&#39;</span><span class="p">)</span></div>
@@ -708,10 +716,10 @@
 <span class="sd">    ------------------------------------------------------------------------------------------------------------------------</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AML.model_predict"><a class="viewcode-back" href="../../autoML.html#MLBG59.__main__.AML.model_predict">[docs]</a>    <span class="k">def</span> <span class="nf">model_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="AML.model_predict"><a class="viewcode-back" href="../../autoML.html#AutoMxL.__main__.AML.model_predict">[docs]</a>    <span class="k">def</span> <span class="nf">model_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;F1&#39;</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;apply fitted models on a dataset</span>
 
-<span class="sd">        - identifies valid models |(auc(train)-auc(test)|&lt;0.03</span>
+<span class="sd">        - identifies valid models (auc(train)-auc(test)&lt;0.03</span>
 <span class="sd">        - gets the best model in respect of a selected metric among valid model</span>
 
 <span class="sd">        Parameters</span>
@@ -739,13 +747,13 @@
             <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">applying models&#39;</span><span class="p">)</span>
 
         <span class="c1"># apply models on dataset</span>
-        <span class="n">d_fitted_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">d_fitted_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">delta_auc</span><span class="o">=</span><span class="n">delta_auc</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
 
         <span class="c1"># model selection</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
             <span class="n">color_print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">best model selection&#39;</span><span class="p">)</span>
         <span class="n">best_model_idx</span><span class="p">,</span> <span class="n">l_valid_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span><span class="o">.</span><span class="n">get_best_model</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span>
-                                                                        <span class="n">delta_auc_th</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span>
+                                                                        <span class="n">delta_auc_th</span><span class="o">=</span><span class="n">delta_auc</span><span class="p">,</span>
                                                                         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="c1"># store model results</span>
         <span class="n">df_model_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_hyperopt</span><span class="o">.</span><span class="n">model_res_to_df</span><span class="p">(</span><span class="n">d_fitted_models</span><span class="p">,</span> <span class="n">sort_metric</span><span class="o">=</span><span class="n">metric</span><span class="p">)</span>
@@ -771,11 +779,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Maxence LABESSE
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -786,7 +802,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -1,41 +1,43 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>AML class &mdash; MLBG59 1.0.0 documentation</title>
+  <title>AML class &mdash; AutoMxL 1.0.0 documentation</title>
   
-
-  
-  
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Start" href="features.html" />
-    <link rel="prev" title="Welcome to MLBG59’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Welcome to AutoMxL’s documentation!" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> MLBG59
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> AutoMxL
           
 
           
@@ -72,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -88,13 +91,14 @@
 <li class="toctree-l1"><a class="reference internal" href="features.html">Start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html#explore">Explore</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html#preprocessing">Preprocessing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="features.html#module-MLBG59.Select_Features.Select_Features">Features Selection</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html#module-AutoMxL.Select_Features.Select_Features">Features Selection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html#modelisation">Modelisation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -104,7 +108,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">MLBG59</a>
+          <a href="index.html">AutoMxL</a>
         
       </nav>
 
@@ -133,7 +137,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>AML class</li>
     
@@ -156,285 +160,248 @@
             
   <div class="section" id="aml-class">
 <h1>AML class<a class="headerlink" href="#aml-class" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="MLBG59.__main__.AML">
-<em class="property">class </em><code class="descclassname">MLBG59.__main__.</code><code class="descname">AML</code><span class="sig-paren">(</span><em>*args</em>, <em>target=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="AutoMxL.__main__.AML">
+<em class="property">class </em><code class="sig-prename descclassname">AutoMxL.__main__.</code><code class="sig-name descname">AML</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AutoMxL/__main__.html#AML"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AutoMxL.__main__.AML" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covers the complete pipeline of a classification project from a raw dataset to a deployable model.</p>
 <p>AML is built as a class inherited from pandas DataFrame. Each Machine Learning step corresponds to method that
 can be called with default or filled parameters.</p>
 <ul class="simple">
-<li>explore: explore dataset and identify features types</li>
-<li>preprocess: clean and prepare data (optional : outliers processing).</li>
-<li>select_features: features selection (optional)</li>
-<li>model_train_predict : split AML in train/test sets to fits/apply models with random search.
-Returns the list of the valid models (without overfitting) and the best one.</li>
+<li><p>explore: explore dataset and identify features types</p></li>
+<li><p>preprocess: clean and prepare data (optional : outliers processing).</p></li>
+<li><p>select_features: features selection (optional)</p></li>
+<li><p>model_train_predict : split AML in train/test sets to fits/apply models with random search.
+Returns the list of the valid models (without overfitting) and the best one.</p></li>
 </ul>
 <p>deployment methods:</p>
 <ul class="simple">
-<li>preprocess_apply : apply fitted preprocessing transformation to a new dataset</li>
-<li>select_features_apply : idem</li>
-<li>model_apply : apply fitted models to a new dataset</li>
+<li><p>preprocess_apply : apply fitted preprocessing transformation to a new dataset</p></li>
+<li><p>select_features_apply : idem</p></li>
+<li><p>model_apply : apply fitted models to a new dataset</p></li>
 </ul>
 <p>Notes :</p>
 <ul class="simple">
-<li>A method requires that the former one has been applied (actuel step is given by “step” attribute)</li>
-<li>Target has to be binary and encoded as int (1/0) (see MLGB59.Start.Encode_Target module if you need help)</li>
-<li>don’t call your target “target” please :&gt;</li>
+<li><p>A method requires that the former one has been applied (actuel step is given by “step” attribute)</p></li>
+<li><p>Target has to be binary and encoded as int (1/0) (see MLGB59.Start.Encode_Target module if you need help)</p></li>
+<li><p>don’t call your target “target” please :&gt;</p></li>
 </ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>_obj</strong> (<em>DataFrame</em>) – Source Dataset</li>
-<li><strong>target</strong> (<em>string</em>) – target name</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="MLBG59.__main__.AML.explore">
-<code class="descname">explore</code><span class="sig-paren">(</span><em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.explore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.explore" title="Permalink to this definition">¶</a></dt>
-<dd><p>data exploration and features type identification</p>
-<p>Note :  if you disagree with automated identification, you can directly modify d_features attribute</p>
-<dl class="docutils">
-<dt>Create self.d_features <span class="classifier-delimiter">:</span> <span class="classifier">dict {x</span> <span class="classifier-delimiter">:</span> <span class="classifier">list of variables names}</span></dt>
-<dd><ul class="first last simple">
-<li>date: date features</li>
-<li>identifier: identifier features</li>
-<li>verbatim: verbatim features</li>
-<li>boolean: boolean features</li>
-<li>categorical: categorical features</li>
-<li>numerical: numerical features</li>
-<li>NA: features which contains NA values</li>
-<li>low_variance: list of the features with low variance and unique values</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_obj</strong> (<em>DataFrame</em>) – Source Dataset</p></li>
+<li><p><strong>target</strong> (<em>string</em>) – target name</p></li>
 </ul>
 </dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</td>
-</tr>
-</tbody>
-</table>
+<dl class="py method">
+<dt id="AutoMxL.__main__.AML.explore">
+<code class="sig-name descname">explore</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AutoMxL/__main__.html#AML.explore"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AutoMxL.__main__.AML.explore" title="Permalink to this definition">¶</a></dt>
+<dd><p>data exploration and features type identification</p>
+<p>Note :  if you disagree with automated identification, you can directly modify d_features attribute</p>
+<dl class="simple">
+<dt>Create self.d_features<span class="classifier">dict {x</span><span class="classifier">list of variables names}</span></dt><dd><ul class="simple">
+<li><p>date: date features</p></li>
+<li><p>identifier: identifier features</p></li>
+<li><p>verbatim: verbatim features</p></li>
+<li><p>boolean: boolean features</p></li>
+<li><p>categorical: categorical features</p></li>
+<li><p>numerical: numerical features</p></li>
+<li><p>NA: features which contains NA values</p></li>
+<li><p>low_variance: list of the features with low variance and unique values</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="MLBG59.__main__.AML.model_predict">
-<code class="descname">model_predict</code><span class="sig-paren">(</span><em>df</em>, <em>metric='F1'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.model_predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.model_predict" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="AutoMxL.__main__.AML.model_predict">
+<code class="sig-name descname">model_predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">'F1'</span></em>, <em class="sig-param"><span class="n">delta_auc</span><span class="o">=</span><span class="default_value">0.03</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AutoMxL/__main__.html#AML.model_predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AutoMxL.__main__.AML.model_predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>apply fitted models on a dataset</p>
 <ul class="simple">
-<li>identifies valid models <a href="#id1"><span class="problematic" id="id2">|</span></a>(auc(train)-auc(test)|&lt;0.03</li>
-<li>gets the best model in respect of a selected metric among valid model</li>
+<li><p>identifies valid models (auc(train)-auc(test)&lt;0.03</p></li>
+<li><p>gets the best model in respect of a selected metric among valid model</p></li>
 </ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>metric</strong> (<em>string</em><em> (</em><em>Default : 'F1'</em><em>)</em>) – objective metric</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric</strong> (<em>string</em><em> (</em><em>Default : 'F1'</em><em>)</em>) – objective metric</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
-<li><em>list</em> – valid models indexes</li>
-<li><em>int</em> – best model index</li>
-<li><em>DataFrame</em> – models summary</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</p></li>
+<li><p><em>list</em> – valid models indexes</p></li>
+<li><p><em>int</em> – best model index</p></li>
+<li><p><em>DataFrame</em> – models summary</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="MLBG59.__main__.AML.model_train">
-<code class="descname">model_train</code><span class="sig-paren">(</span><em>clf='XGBOOST'</em>, <em>grid_param=None</em>, <em>top_bagging=False</em>, <em>n_comb=10</em>, <em>comb_seed=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.model_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.model_train" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="AutoMxL.__main__.AML.model_train">
+<code class="sig-name descname">model_train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clf</span><span class="o">=</span><span class="default_value">'XGBOOST'</span></em>, <em class="sig-param"><span class="n">grid_param</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">top_bagging</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">n_comb</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">comb_seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AutoMxL/__main__.html#AML.model_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AutoMxL.__main__.AML.model_train" title="Permalink to this definition">¶</a></dt>
 <dd><p>train models with random search</p>
 <ul class="simple">
-<li>creates models with random hyper-parameters combinations from HP grid</li>
-<li>fits models on self</li>
+<li><p>creates models with random hyper-parameters combinations from HP grid</p></li>
+<li><p>fits models on self</p></li>
 </ul>
 <p>Notes :</p>
 <ul class="simple">
-<li>Available classifiers : Random Forest, XGBOOST</li>
-<li>can enable bagging algo with top_bagging parameter</li>
+<li><p>Available classifiers : Random Forest, XGBOOST</p></li>
+<li><p>can enable bagging algo with top_bagging parameter</p></li>
 </ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>clf</strong> (<em>string</em><em> (</em><em>Default : 'XGBOOST'</em><em>)</em>) – classifier used for modelisation</li>
-<li><strong>grid_param</strong> (<em>dict</em>) – random search grid {Hyperparameter name : values list}</li>
-<li><strong>top_bagging</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – enable Bagging</li>
-<li><strong>n_comb</strong> (<em>int</em><em> (</em><em>Default : 10</em><em>)</em>) – HP combination number</li>
-<li><strong>comb_seed</strong> (<em>int</em><em> (</em><em>Default : None</em><em>)</em>) – random combination seed</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clf</strong> (<em>string</em><em> (</em><em>Default : 'XGBOOST'</em><em>)</em>) – classifier used for modelisation</p></li>
+<li><p><strong>grid_param</strong> (<em>dict</em>) – random search grid {Hyperparameter name : values list}</p></li>
+<li><p><strong>top_bagging</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – enable Bagging</p></li>
+<li><p><strong>n_comb</strong> (<em>int</em><em> (</em><em>Default : 10</em><em>)</em>) – HP combination number</p></li>
+<li><p><strong>comb_seed</strong> (<em>int</em><em> (</em><em>Default : None</em><em>)</em>) – random combination seed</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="MLBG59.__main__.AML.model_train_test">
-<code class="descname">model_train_test</code><span class="sig-paren">(</span><em>clf='XGBOOST'</em>, <em>grid_param=None</em>, <em>metric='F1'</em>, <em>top_bagging=False</em>, <em>n_comb=10</em>, <em>comb_seed=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.model_train_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.model_train_test" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="AutoMxL.__main__.AML.model_train_test">
+<code class="sig-name descname">model_train_test</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">clf</span><span class="o">=</span><span class="default_value">'XGBOOST'</span></em>, <em class="sig-param"><span class="n">grid_param</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metric</span><span class="o">=</span><span class="default_value">'F1'</span></em>, <em class="sig-param"><span class="n">delta_auc</span><span class="o">=</span><span class="default_value">0.03</span></em>, <em class="sig-param"><span class="n">top_bagging</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">n_comb</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">comb_seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AutoMxL/__main__.html#AML.model_train_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AutoMxL.__main__.AML.model_train_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>train and test models with random search</p>
 <ul class="simple">
-<li>creates models with random hyper-parameters combinations from HP grid</li>
-<li>splits (random 80/20) train/test sets to fit/apply models</li>
-<li>identifies valid models <a href="#id3"><span class="problematic" id="id4">|</span></a>(auc(train)-auc(test)|&lt;0.03</li>
-<li>gets the best model in respect of a selected metric among valid model</li>
+<li><p>creates models with random hyper-parameters combinations from HP grid</p></li>
+<li><p>splits (random 80/20) train/test sets to fit/apply models</p></li>
+<li><p>identifies valid models (auc(train)-auc(test)&lt;0.03</p></li>
+<li><p>gets the best model in respect of a selected metric among valid model</p></li>
 </ul>
 <p>Notes :</p>
 <ul class="simple">
-<li>Available classifiers : Random Forest, XGBOOST</li>
-<li>can enable bagging algo with top_bagging parameter</li>
+<li><p>Available classifiers : Random Forest, XGBOOST</p></li>
+<li><p>can enable bagging algo with top_bagging parameter</p></li>
 </ul>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>clf</strong> (<em>string</em><em> (</em><em>Default : 'XGBOOST'</em><em>)</em>) – classifier used for modelisation</li>
-<li><strong>grid_param</strong> (<em>dict</em>) – random search grid {Hyperparameter name : values list}</li>
-<li><strong>metric</strong> (<em>string</em><em> (</em><em>Default : 'F1'</em><em>)</em>) – objective metric</li>
-<li><strong>top_bagging</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – enable Bagging</li>
-<li><strong>n_comb</strong> (<em>int</em><em> (</em><em>Default : 10</em><em>)</em>) – HP combination number</li>
-<li><strong>comb_seed</strong> (<em>int</em><em> (</em><em>Default : None</em><em>)</em>) – random combination seed</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>clf</strong> (<em>string</em><em> (</em><em>Default : 'XGBOOST'</em><em>)</em>) – classifier used for modelisation</p></li>
+<li><p><strong>grid_param</strong> (<em>dict</em>) – random search grid {Hyperparameter name : values list}</p></li>
+<li><p><strong>metric</strong> (<em>string</em><em> (</em><em>Default : 'F1'</em><em>)</em>) – objective metric</p></li>
+<li><p><strong>top_bagging</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – enable Bagging</p></li>
+<li><p><strong>n_comb</strong> (<em>int</em><em> (</em><em>Default : 10</em><em>)</em>) – HP combination number</p></li>
+<li><p><strong>comb_seed</strong> (<em>int</em><em> (</em><em>Default : None</em><em>)</em>) – random combination seed</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
-<li><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</li>
-<li><em>list</em> – valid models indexes</li>
-<li><em>int</em> – best model index</li>
-<li><em>DataFrame</em> – models summary</li>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>dict</em> – {model_index : {‘HP’, ‘probas’, ‘model’, ‘features_importance’, ‘train_metrics’, ‘metrics’, ‘output’}</p></li>
+<li><p><em>list</em> – valid models indexes</p></li>
+<li><p><em>int</em> – best model index</p></li>
+<li><p><em>DataFrame</em> – models summary</p></li>
 </ul>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="MLBG59.__main__.AML.preprocess">
-<code class="descname">preprocess</code><span class="sig-paren">(</span><em>date_ref=None</em>, <em>process_outliers=False</em>, <em>cat_method='deep_encoder'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.preprocess" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="AutoMxL.__main__.AML.preprocess">
+<code class="sig-name descname">preprocess</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date_ref</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">process_outliers</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cat_method</span><span class="o">=</span><span class="default_value">'deep_encoder'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AutoMxL/__main__.html#AML.preprocess"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AutoMxL.__main__.AML.preprocess" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prepare the data before feeding it to the model :</p>
 <blockquote>
 <div><ul class="simple">
-<li>remove low variance features</li>
-<li>remove identifiers and verbatims features</li>
-<li>transform date features to timedelta</li>
-<li>fill missing values</li>
-<li>process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)</li>
-<li>replace outliers (optional)</li>
+<li><p>remove low variance features</p></li>
+<li><p>remove identifiers and verbatims features</p></li>
+<li><p>transform date features to timedelta</p></li>
+<li><p>fill missing values</p></li>
+<li><p>process categorical and boolean data (one-hot-encoding or Pytorch NN encoder)</p></li>
+<li><p>replace outliers (optional)</p></li>
 </ul>
-<dl class="docutils">
-<dt>create self.d_preprocess <span class="classifier-delimiter">:</span> <span class="classifier">dict {step</span> <span class="classifier-delimiter">:</span> <span class="classifier">transformation}</span></dt>
-<dd><ul class="first last simple">
-<li>remove: list of the features to remove</li>
-<li>date: fitted DateEncoder object</li>
-<li>NA: fitted NAEncoder object</li>
-<li>categorical: fitted CategoricalEncoder object</li>
-<li>outlier: fitted OutlierEncoder object</li>
+<dl class="simple">
+<dt>create self.d_preprocess<span class="classifier">dict {step</span><span class="classifier">transformation}</span></dt><dd><ul class="simple">
+<li><p>remove: list of the features to remove</p></li>
+<li><p>date: fitted DateEncoder object</p></li>
+<li><p>NA: fitted NAEncoder object</p></li>
+<li><p>categorical: fitted CategoricalEncoder object</p></li>
+<li><p>outlier: fitted OutlierEncoder object</p></li>
 </ul>
 </dd>
 </dl>
 </div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>date_ref</strong> (<em>string '%d/%m/%y'</em><em> (</em><em>Default : None</em><em>)</em>) – ref date to compute date features timedelta.
-If None, today date</li>
-<li><strong>process_outliers</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – Enable outliers replacement</li>
-<li><strong>cat_method</strong> (<em>string</em><em> (</em><em>Default : 'deep_encoder'</em><em>)</em>) – Categorical features encoding method</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date_ref</strong> (<em>string '%d/%m/%y'</em><em> (</em><em>Default : None</em><em>)</em>) – ref date to compute date features timedelta.
+If None, today date</p></li>
+<li><p><strong>process_outliers</strong> (<em>boolean</em><em> (</em><em>Default : False</em><em>)</em>) – Enable outliers replacement</p></li>
+<li><p><strong>cat_method</strong> (<em>string</em><em> (</em><em>Default : 'deep_encoder'</em><em>)</em>) – Categorical features encoding method</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="MLBG59.__main__.AML.preprocess_apply">
-<code class="descname">preprocess_apply</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.preprocess_apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.preprocess_apply" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="AutoMxL.__main__.AML.preprocess_apply">
+<code class="sig-name descname">preprocess_apply</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AutoMxL/__main__.html#AML.preprocess_apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AutoMxL.__main__.AML.preprocess_apply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply preprocessing.</p>
 <p>Requires preprocess method to have been applied (so that all encoder are fitted).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<em>DataFrame</em>) – dataset to apply preprocessing on</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – dataset to apply preprocessing on</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>DataFrame</strong></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Preprocessed dataset</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DataFrame</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Preprocessed dataset</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="MLBG59.__main__.AML.select_features">
-<code class="descname">select_features</code><span class="sig-paren">(</span><em>method='pca'</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.select_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.select_features" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="AutoMxL.__main__.AML.select_features">
+<code class="sig-name descname">select_features</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span><span class="o">=</span><span class="default_value">'pca'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AutoMxL/__main__.html#AML.select_features"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AutoMxL.__main__.AML.select_features" title="Permalink to this definition">¶</a></dt>
 <dd><p>fit and apply features selection (optional)</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>method</strong> (<em>string</em><em> (</em><em>Default pca</em><em>)</em>) – method use to select features</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<em>string</em><em> (</em><em>Default pca</em><em>)</em>) – method use to select features</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="MLBG59.__main__.AML.select_features_apply">
-<code class="descname">select_features_apply</code><span class="sig-paren">(</span><em>df</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MLBG59/__main__.html#AML.select_features_apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MLBG59.__main__.AML.select_features_apply" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="AutoMxL.__main__.AML.select_features_apply">
+<code class="sig-name descname">select_features_apply</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">df</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/AutoMxL/__main__.html#AML.select_features_apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AutoMxL.__main__.AML.select_features_apply" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply features selection.</p>
 <p>Requires Select_Features method to have been applied</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>df</strong> (<em>DataFrame</em>) – dataset to apply selection on</li>
-<li><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>DataFrame</em>) – dataset to apply selection on</p></li>
+<li><p><strong>verbose</strong> (<em>boolean</em><em> (</em><em>Default False</em><em>)</em>) – Get logging information</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>DataFrame</strong></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">reduced dataset</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>DataFrame</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>reduced dataset</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -452,7 +419,7 @@ If None, today date</li>
         <a href="features.html" class="btn btn-neutral float-right" title="Start" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to MLBG59’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to AutoMxL’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -461,11 +428,19 @@ If None, today date</li>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Maxence LABESSE
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -476,7 +451,6 @@ If None, today date</li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

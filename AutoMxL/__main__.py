@@ -412,7 +412,7 @@ class AML(pd.DataFrame):
 
         - creates models with random hyper-parameters combinations from HP grid
         - splits (random 80/20) train/test sets to fit/apply models
-        - identifies valid models |(auc(train)-auc(test)|<0.03
+        - identifies valid models (auc(train)-auc(test)<0.03
         - gets the best model in respect of a selected metric among valid model
 
 
@@ -562,7 +562,7 @@ class AML(pd.DataFrame):
     def model_predict(self, df, metric='F1', delta_auc=0.03, verbose=False):
         """apply fitted models on a dataset
 
-        - identifies valid models |(auc(train)-auc(test)|<0.03
+        - identifies valid models (auc(train)-auc(test)<0.03
         - gets the best model in respect of a selected metric among valid model
 
         Parameters

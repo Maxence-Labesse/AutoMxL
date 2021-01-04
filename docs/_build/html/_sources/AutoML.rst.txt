@@ -1,4 +1,4 @@
 AML class
 ============
-.. autoclass:: MLBG59.__main__.AML
+.. autoclass:: AutoMxL.__main__.AML
     :members:

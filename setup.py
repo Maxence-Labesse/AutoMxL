@@ -13,7 +13,7 @@ setup(
     description="Classification Automated Machine Learning (AutoML)",
     long_description=README,
     long_description_content_type="text/markdown",
-    url='https://github.com/Maxence-Labesse/MLBG59',
+    url='https://github.com/Maxence-Labesse/AutoMxL',
     author='Maxence LABESSE',
     author_email="maxence.labesse@yahoo.fr",
     license='MIT',

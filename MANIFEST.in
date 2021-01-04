@@ -1,3 +1,3 @@
 include tests/*.csv
-include MLBG59/config.txt
+include AutoMxL/config.txt
 
