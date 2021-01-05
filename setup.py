@@ -9,6 +9,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name='AutoMxL',
+    # Version à modifier également dans AutoMxL.__init__
     version='1.0.0',
     description="Classification Automated Machine Learning (AutoML)",
     long_description=README,

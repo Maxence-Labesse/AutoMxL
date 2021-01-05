@@ -1,0 +1,14 @@
+MANIFEST.in
+README.md
+setup.py
+AutoMxL/__init__.py
+AutoMxL/__main__.py
+AutoMxL/param_config.py
+AutoMxL.egg-info/PKG-INFO
+AutoMxL.egg-info/SOURCES.txt
+AutoMxL.egg-info/dependency_links.txt
+AutoMxL.egg-info/requires.txt
+AutoMxL.egg-info/top_level.txt
+tests/df_test.csv
+tests/df_test_bis.csv
+tests/iris_binary.csv
