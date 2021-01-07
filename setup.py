@@ -19,10 +19,11 @@ setup(
     author_email="maxence.labesse@yahoo.fr",
     license='MIT',
     classifiers=[
-        "License :: OSI Approved :: MIT Licence",
-        "Programming Language :: Python 3",
-        "Programming Language :: Python 3.7"
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
     ],
-    packages=["AutoMxL"],
+    packages=["AutoMxL", "AutoMxL.Explore", "AutoMxL.Modelisation", "AutoMxL.Preprocessing",
+              "AutoMxL.Select_Features", "AutoMxL.Start", "AutoMxL.Utils"],
     include_package_data=True, install_requires=['pandas', 'numpy', 'scikit-learn', 'xgboost', 'numpy', 'torch', 'matplotlib']
 )

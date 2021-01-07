@@ -152,7 +152,7 @@ Description:
         
         
 Platform: UNKNOWN
-Classifier: License :: OSI Approved :: MIT Licence
-Classifier: Programming Language :: Python 3
-Classifier: Programming Language :: Python 3.7
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
 Description-Content-Type: text/markdown
