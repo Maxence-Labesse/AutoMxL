@@ -1,6 +1,0 @@
-Test
-====
-Features_type
--------------
-.. automodule:: dev.Features_type
-    :members:
