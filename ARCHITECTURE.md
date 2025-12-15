@@ -25,41 +25,82 @@ AutoMxL/
 - Methodes principales : `explore()`, `preprocess()`, `select_features()`, `model_train_test()`
 
 ### Zone 2 : Explore
-- Role : Analyse du dataset pour detecter les types de features
+- Role : Detection automatique des types de features
 - Fichiers : `Explore.py`, `Features_Type.py`
-- Detecte : dates, identifiants, verbatims, booleens, categoriques, numeriques, NA, low_variance
+- Types detectes :
+  - `date` : dates (via parsing)
+  - `identifier` : IDs uniques (>95% uniques, meme longueur)
+  - `verbatim` : texte libre (>95% uniques, longueurs variables)
+  - `boolean` : exactement 2 valeurs
+  - `categorical` : categories (type object ou <5 valeurs si numerique)
+  - `numerical` : tout le reste
+  - `low_variance` : variance nulle apres MinMaxScaler
+  - `NA` : features avec valeurs manquantes
 
 ### Zone 3 : Preprocessing
 - Role : Nettoyage et transformation des donnees
 - Fichiers : `Date.py`, `Missing_Values.py`, `Outliers.py`, `Categorical.py`, `Deep_Encoder.py`
-- Encoders : DateEncoder, NAEncoder, OutliersEncoder, CategoricalEncoder
+- Encoders :
+  - `DateEncoder` : convertit les dates en timedelta depuis une date de reference
+  - `NAEncoder` : remplit les NA (median/mean/zero pour num, 'NR' pour cat)
+  - `OutliersEncoder` : agrege categories rares, cap les valeurs extremes (X std)
+  - `CategoricalEncoder` : `one_hot` ou `deep_encoder` (embeddings via NN PyTorch)
 
 ### Zone 4 : Select_Features
-- Role : Reduction du nombre de features
+- Role : Reduction de dimensionnalite
 - Fichiers : `Select_Features.py`
-- Methodes : PCA (a confirmer)
+- Methodes : `pca` (StandardScaler + PCA) ou `no_rescale_pca` (PCA seul)
+- Garde les dimensions expliquant >95% de la variance
 
 ### Zone 5 : Modelisation
 - Role : Entrainement, hyperparameter tuning et selection du meilleur modele
 - Fichiers : `HyperOpt.py`, `Bagging.py`, `Utils.py`
-- Classifiers supportes : XGBOOST (autres a confirmer)
+- Classifiers : `RF` (RandomForest) et `XGBOOST` (XGBClassifier)
+- Fonctionnalites :
+  - Random search sur hyperparametres
+  - Bagging optionnel
+  - Selection du best model via metrique (F1, AUC) + controle delta AUC train/test
 
 ### Zone 6 : Start
-- Role : Chargement des donnees et encodage de la target
+- Role : Utilitaires standalone pour preparer les donnees AVANT l'instanciation de AML
 - Fichiers : `Load.py`, `Encode_Target.py`
-- Statut : A clarifier (semble peu utilise dans __main__.py)
+- Fonctions :
+  - `import_data()` : charge fichiers csv/xlsx/txt en DataFrame
+  - `category_to_target()` : transforme une categorie en target binaire (0/1)
+  - `range_to_target()` : transforme une plage numerique en target binaire
 
 ### Zone 7 : Utils
-- Role : Fonctions utilitaires
+- Role : Fonctions utilitaires transverses
 - Fichiers : `Display.py`, `Decorators.py`, `Utils.py`
+- Contenu : fonctions d'affichage console (couleurs, titres), decorateur timer
+
+### Zone 8 : Configuration (`param_config.py`)
+- Role : Parametres par defaut centralises
+- Contenu :
+  - Parametres deep encoder (batch_size=124, n_epoch=20, learning_rate=0.001)
+  - Parametres bagging par defaut
+  - Grilles d'hyperparametres RF et XGBoost
 
 ## Dependances entre zones
-- Core depend de toutes les autres zones
-- Preprocessing depend de Explore (pour les listes de features par type)
-- Modelisation est independante (recoit les donnees preprocessees)
+```
+Start (standalone) --> AML (Core)
+                         |
+                         v
+                      Explore --> Preprocessing --> Select_Features --> Modelisation
+                         |              |                                    |
+                         v              v                                    v
+                       Utils         Utils                               Utils
+                                   param_config                       param_config
+```
 
 ## Points d'attention
-- A completer apres exploration
+- Vieux code (2020) : conventions et patterns potentiellement datés
+- Dossier `build/` present : artefact de build, code dupliqué
+- Deep Encoder utilise PyTorch : dépendance lourde
+- Classification binaire uniquement (target 0/1)
 
 ## Ouvertures
-- A completer apres exploration
+- Pas de support multiclass explicite
+- Pas de regression
+- Seulement 2 classifiers (RF, XGBoost)
+- Sélection features uniquement via PCA (pas de feature importance, recursive elimination, etc.)
