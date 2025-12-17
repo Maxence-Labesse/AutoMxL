@@ -4,7 +4,7 @@
 
 ### Zone 1 : Start
 - Fichiers : `Start/Load.py`, `Start/Encode_Target.py`
-- Statut : ⏳ A faire
+- Statut : ✅ Fait
 
 ### Zone 2 : Utils
 - Fichiers : `Utils/Display.py`, `Utils/Decorators.py`, `Utils/Utils.py`
@@ -35,4 +35,9 @@
 - Statut : ⏳ A faire
 
 ## Journal d'audit
-<!-- Sera rempli au fur et a mesure des zones traitees -->
+
+### 2025-12-17 — Zone Start
+- Score : 6/10
+- Documentation : README.md créé
+- Tests : 5 tests créés
+- Améliorations proposées : 3 (voir IMPROVEMENTS.md)
