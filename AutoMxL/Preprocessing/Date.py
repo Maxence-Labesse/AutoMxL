@@ -1,8 +1,21 @@
+"""
+Encodage des colonnes de type date en ancienneté numérique.
+
+Convertit les dates en nombre d'années depuis une date de référence,
+permettant leur utilisation dans les modèles de ML.
+"""
 import pandas as pd
 from datetime import datetime
 from AutoMxL.Explore.Features_Type import features_from_type
 
+
 class DateEncoder(object):
+    """
+    Encode les colonnes date en ancienneté (années depuis une date de référence).
+
+    Les colonnes sont renommées avec le préfixe 'anc_' (ex: date_creation → anc_date_creation).
+    Suit le pattern sklearn fit/transform.
+    """
 
     def __init__(self,
                  method='timedelta',
@@ -23,6 +36,14 @@ class DateEncoder(object):
     """
 
     def fit(self, df, l_var=None, verbose=False):
+        """
+        Identifie les colonnes date à encoder.
+
+        Args:
+            df: DataFrame source
+            l_var: Liste des colonnes à considérer (toutes si None)
+            verbose: Affiche les détails
+        """
         l_date_var = features_from_type(df, typ='date', l_var=None)
 
         if l_var is None:
@@ -45,6 +66,16 @@ class DateEncoder(object):
     """
 
     def transform(self, df, verbose=False):
+        """
+        Convertit les colonnes date en ancienneté.
+
+        Args:
+            df: DataFrame à transformer
+            verbose: Affiche les détails
+
+        Returns:
+            DataFrame avec les dates converties en années (préfixe 'anc_')
+        """
         assert self.is_fitted, 'fit the encoding first using .fit method'
 
         df_local = df.copy()
@@ -65,6 +96,7 @@ class DateEncoder(object):
     """
 
     def fit_transform(self, df, l_var=None, verbose=False):
+        """Fit puis transform en une seule opération."""
         df_local = df.copy()
         self.fit(df_local, l_var=l_var, verbose=verbose)
         df_local = self.transform(df_local, verbose=verbose)
@@ -76,6 +108,11 @@ class DateEncoder(object):
 """
 
 def all_to_date(df, l_var=None, verbose=False):
+    """
+    Convertit les colonnes spécifiées en datetime.
+
+    Tente la conversion via pd.to_datetime. Gère les types object et numériques.
+    """
     if l_var is None:
         l_var = df.columns.tolist()
     else:
@@ -109,6 +146,15 @@ def all_to_date(df, l_var=None, verbose=False):
 """
 
 def date_to_anc(df, l_var=None, date_ref=None, verbose=False):
+    """
+    Convertit les colonnes datetime en ancienneté (années).
+
+    Calcule (date_ref - date) / 365 pour chaque valeur.
+    Renomme les colonnes avec le préfixe 'anc_'.
+
+    Returns:
+        Tuple (DataFrame transformé, liste des nouveaux noms de colonnes)
+    """
     if date_ref is None:
         date_ref = datetime.now()
     else:

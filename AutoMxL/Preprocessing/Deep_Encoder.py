@@ -1,3 +1,9 @@
+"""
+Réseau de neurones PyTorch pour l'encodage catégoriel par embeddings.
+
+Architecture : Embedding layers → Linear → ReLU → Dropout → Sigmoid
+Entraîné pour prédire la target, les embeddings sont ensuite extraits.
+"""
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
@@ -6,7 +12,13 @@ from torch.utils.data import Dataset, DataLoader
 from matplotlib import pyplot as plt
 from AutoMxL.Utils.Display import color_print
 
+
 class Torch_Dataset(Dataset):
+    """
+    Dataset PyTorch pour les données catégorielles.
+
+    Prépare les données pour l'entraînement du réseau d'embeddings.
+    """
 
     def __init__(self, data, cat_cols=None, output_col=None):
         self.nrow = data.shape[0]
@@ -44,6 +56,14 @@ class Torch_Dataset(Dataset):
 """
 
 class Deep_Cat_Encoder(nn.Module):
+    """
+    Réseau de neurones pour générer des embeddings catégoriels.
+
+    Architecture :
+    - Embedding layers (1 par variable catégorielle)
+    - 2 couches Linear + ReLU + Dropout
+    - Output layer + Sigmoid (classification binaire)
+    """
 
     def __init__(self, l_levels, layer_sizes, output_size, layer_dropout=0.1):
         super(Deep_Cat_Encoder, self).__init__()
@@ -91,6 +111,12 @@ class Deep_Cat_Encoder(nn.Module):
 
 def train_deep_encoder(torch_dataset, model, optimizer, criterion, lr, n_epochs,
                        batchsize, verbose=False):
+    """
+    Entraîne le réseau d'embeddings catégoriels.
+
+    Returns:
+        Tuple (modèle entraîné, dernière loss, dernière accuracy)
+    """
     assert criterion == 'MSE', 'invalid criterion : select MSE'
     assert optimizer == 'Adam', "invalid optimizer : select 'Adam'"
 

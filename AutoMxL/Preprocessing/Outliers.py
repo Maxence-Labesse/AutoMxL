@@ -1,8 +1,22 @@
+"""
+Traitement des valeurs aberrantes (outliers).
+
+- Catégorielles : agrège les modalités rares (fréquence < seuil) en 'outliers'
+- Numériques : cap les valeurs au-delà de X écarts-types de la moyenne
+"""
 import pandas as pd
 import numpy as np
 from AutoMxL.Utils.Display import *
 
+
 class OutliersEncoder(object):
+    """
+    Traite les outliers catégoriels et numériques.
+
+    Options :
+    - cat_threshold : seuil de fréquence pour les catégories (défaut: 0.02)
+    - num_xstd : nombre d'écarts-types pour caper les numériques (défaut: 4)
+    """
 
     def __init__(self,
                  cat_threshold=0.02,
@@ -18,6 +32,11 @@ class OutliersEncoder(object):
         self.d_cat_outliers = {}
 
     def fit(self, df, l_var, verbose=False):
+        """
+        Identifie les outliers catégoriels et numériques.
+
+        Ne traite que les colonnes avec plus de 2 valeurs uniques.
+        """
         l_num = [col for col in df.columns.tolist() if df[col].dtype != 'object']
         l_str = [col for col in df.columns.tolist() if df[col].dtype == 'object']
 
@@ -47,6 +66,12 @@ class OutliersEncoder(object):
                 print("  - num", list(self.d_num_outliers.keys()))
 
     def transform(self, df, verbose=False):
+        """
+        Applique le traitement des outliers.
+
+        - Catégories rares → 'outliers'
+        - Valeurs numériques extrêmes → cappées aux bornes
+        """
         assert self.is_fitted, 'fit the encoding first using .fit method'
         df_local = df.copy()
 
@@ -70,6 +95,7 @@ class OutliersEncoder(object):
         return df_local
 
     def fit_transform(self, df, l_var=None, verbose=False):
+        """Fit puis transform en une seule opération."""
         df_local = df.copy()
         self.fit(df_local, l_var=l_var, verbose=False)
         df_local = self.transform(df_local, verbose=verbose)
@@ -77,6 +103,12 @@ class OutliersEncoder(object):
         return df_local
 
 def get_cat_outliers(df, l_var=None, threshold=0.05, verbose=False):
+    """
+    Identifie les modalités rares (fréquence < threshold).
+
+    Returns:
+        Dict {colonne: [liste des modalités rares]}
+    """
     l_cat = [col for col in df.columns.tolist() if df[col].dtype == 'object']
 
     if l_var is None:
@@ -100,6 +132,14 @@ def get_cat_outliers(df, l_var=None, threshold=0.05, verbose=False):
     return d_outliers
 
 def get_num_outliers(df, l_var=None, xstd=3, verbose=False):
+    """
+    Identifie les bornes pour les valeurs numériques extrêmes.
+
+    Une valeur est extrême si |x - mean| > xstd * std.
+
+    Returns:
+        Dict {colonne: [borne_inf, borne_sup]}
+    """
     l_num = df._get_numeric_data().columns.tolist()
 
     if l_var is None:
@@ -129,6 +169,7 @@ def get_num_outliers(df, l_var=None, xstd=3, verbose=False):
     return d_outliers
 
 def replace_category(df, var, categories, replace_with='outliers', verbose=False):
+    """Remplace les modalités spécifiées par une valeur commune (défaut: 'outliers')."""
     df_local = df.copy()
 
     df_local.loc[df_local[var].isin(categories), var] = replace_with
@@ -139,6 +180,7 @@ def replace_category(df, var, categories, replace_with='outliers', verbose=False
     return df_local
 
 def replace_extreme_values(df, var, lower_th=None, upper_th=None, verbose=False):
+    """Cap les valeurs numériques aux bornes spécifiées."""
     assert (lower_th is not None or upper_th is not None), 'specify at least one limit value'
     df_local = df.copy()
 

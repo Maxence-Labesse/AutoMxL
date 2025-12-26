@@ -1,7 +1,23 @@
+"""
+Gestion des valeurs manquantes (NA).
+
+Remplit les NA avec des stratégies différentes selon le type :
+- Numériques : median, mean ou zero
+- Catégorielles : 'NR' (Non Renseigné)
+"""
 import pandas as pd
 import numpy as np
 
+
 class NAEncoder(object):
+    """
+    Remplit les valeurs manquantes d'un DataFrame.
+
+    Options :
+    - replace_num_with : 'median', 'mean', 'zero'
+    - replace_cat_with : 'NR'
+    - track_num_NA : crée des colonnes top_NA_* pour tracer les imputations
+    """
 
     def __init__(self,
                  replace_num_with='median',
@@ -23,6 +39,11 @@ class NAEncoder(object):
     """
 
     def fit(self, df, l_var, verbose=False):
+        """
+        Identifie les colonnes avec des NA à remplir.
+
+        Sépare les colonnes numériques et catégorielles.
+        """
         l_num = [col for col in df.columns.tolist() if df[col].dtype != 'object']
         l_str = [col for col in df.columns.tolist() if df[col].dtype == 'object']
 
@@ -48,6 +69,12 @@ class NAEncoder(object):
     """
 
     def transform(self, df, verbose=False):
+        """
+        Remplit les NA selon les stratégies configurées.
+
+        Returns:
+            DataFrame avec les NA remplis (+ colonnes top_NA_* si track_num_NA=True)
+        """
         assert self.is_fitted, 'fit the encoding first using .fit method'
 
         df_local = df.copy()
@@ -70,6 +97,7 @@ class NAEncoder(object):
     """
 
     def fit_transform(self, df, l_var=None, verbose=False):
+        """Fit puis transform en une seule opération."""
         df_local = df.copy()
         self.fit(df_local, l_var=l_var, verbose=verbose)
         df_local = self.transform(df_local, verbose=verbose)
@@ -81,6 +109,11 @@ class NAEncoder(object):
     """
 
 def fill_numerical(df, l_var=None, method='median', track_num_NA=True, verbose=False):
+    """
+    Remplit les NA des colonnes numériques.
+
+    Si track_num_NA=True, crée une colonne top_NA_* par variable (1 si NA, 0 sinon).
+    """
     assert method in ['zero', 'median', 'mean'], method + ' invalid method : choose zero, median or mean'
 
     l_num = df._get_numeric_data().columns.tolist()
@@ -115,6 +148,7 @@ def fill_numerical(df, l_var=None, method='median', track_num_NA=True, verbose=F
 """
 
 def fill_categorical(df, l_var=None, method='NR', verbose=False):
+    """Remplit les NA des colonnes catégorielles avec 'NR' (Non Renseigné)."""
     assert method in ['NR'], method + ' invalid method : choose NR '
 
     l_cat = [col for col in df.columns.tolist() if df[col].dtype == 'object']
@@ -139,4 +173,5 @@ def fill_categorical(df, l_var=None, method='NR', verbose=False):
     return df_local
 
 def get_NA_features(df):
+    """Retourne la liste des colonnes contenant des NA."""
     return df.isna().sum()[df.isna().sum() > 0].index.tolist()

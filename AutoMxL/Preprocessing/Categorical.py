@@ -1,10 +1,25 @@
+"""
+Encodage des variables catégorielles.
+
+Deux méthodes disponibles :
+- one_hot : pd.get_dummies (simple, rapide)
+- deep_encoder : embeddings via réseau de neurones (capture les relations avec la target)
+"""
 import pandas as pd
 from AutoMxL.Preprocessing.Deep_Encoder import *
 from sklearn.preprocessing import LabelEncoder
 from AutoMxL.param_config import batch_size, n_epoch, learning_rate
 from AutoMxL.Explore.Features_Type import is_categorical, is_boolean
 
+
 class CategoricalEncoder(object):
+    """
+    Encode les variables catégorielles et booléennes.
+
+    Méthodes :
+    - 'one_hot' : crée des colonnes binaires (drop_first=True)
+    - 'deep_encoder' : génère des embeddings via NN (nécessite une target)
+    """
 
     def __init__(self,
                  method='deep_encoder'
@@ -26,6 +41,11 @@ class CategoricalEncoder(object):
     """
 
     def fit(self, df, l_var=None, target=None, verbose=False):
+        """
+        Identifie les colonnes catégorielles et entraîne l'encodeur.
+
+        Pour deep_encoder, entraîne le réseau de neurones et extrait les embeddings.
+        """
         if self.method == 'deep_encoder':
             assert target is not None, 'fill target parameter to use deep encoder'
 
@@ -68,6 +88,12 @@ class CategoricalEncoder(object):
     """
 
     def transform(self, df, verbose=False):
+        """
+        Applique l'encodage catégoriel.
+
+        Returns:
+            DataFrame avec les catégories encodées (one-hot ou embeddings)
+        """
         assert self.is_fitted, 'fit the encoding first using .fit method'
 
         df_local = df.copy()
@@ -111,6 +137,7 @@ class CategoricalEncoder(object):
     """
 
     def fit_transform(self, df, l_var=None, target=None, verbose=False):
+        """Fit puis transform en une seule opération."""
         df_local = df.copy()
         self.fit(df_local, l_var, target, verbose)
         df_local = self.transform(df_local, verbose)
@@ -122,6 +149,11 @@ class CategoricalEncoder(object):
 """
 
 def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=False):
+    """
+    Applique pd.get_dummies sur les colonnes spécifiées.
+
+    Utilise drop_first=True pour éviter la multicollinéarité.
+    """
     df_local = df.copy()
 
     for col in var_list:
@@ -145,6 +177,15 @@ def dummy_all_var(df, var_list=None, prefix_list=None, keep=False, verbose=False
 """
 
 def get_embedded_cat(df, var_list, target, batchsize, n_epochs, lr, verbose=False):
+    """
+    Entraîne un réseau de neurones et extrait les embeddings catégoriels.
+
+    Le NN apprend à prédire la target, les embeddings capturent
+    les relations entre catégories et target.
+
+    Returns:
+        Tuple (dict encodeurs, dict embeddings, dict métriques)
+    """
     df_local = df[var_list + [target]].copy()
 
     d_int_encoders = {}
