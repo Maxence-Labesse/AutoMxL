@@ -25,7 +25,7 @@
 ### Zone 5 : Preprocessing
 - Fichiers : `Preprocessing/Date.py`, `Preprocessing/Missing_Values.py`, `Preprocessing/Outliers.py`, `Preprocessing/Categorical.py`, `Preprocessing/Deep_Encoder.py`
 - Dépendances : Utils, param_config
-- Statut : ⏳ A faire
+- Statut : ✅ Fait
 
 ### Zone 6 : Select_Features
 - Fichiers : `Select_Features/Select_Features.py`
@@ -67,3 +67,9 @@
 - Documentation : README.md créé, docstrings ajoutées
 - Tests : 5 tests créés
 - Améliorations proposées : 2 (voir IMPROVEMENTS.md)
+
+### 2025-12-26 — Zone Preprocessing
+- Score : 7/10
+- Documentation : README.md créé, docstrings ajoutées aux 5 fichiers
+- Tests : 6 tests créés (CategoricalEncoder non testé - PyTorch)
+- Améliorations proposées : 4 (voir IMPROVEMENTS.md)
