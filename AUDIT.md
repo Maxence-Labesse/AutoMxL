@@ -5,7 +5,7 @@
 ### Zone 1 : Utils
 - Fichiers : `Utils/Display.py`, `Utils/Decorators.py`, `Utils/Utils.py`
 - Dépendances : aucune (utilisé par tout le monde)
-- Statut : ⏳ A faire
+- Statut : ✅ Fait
 
 ### Zone 2 : Configuration
 - Fichiers : `param_config.py`
@@ -49,3 +49,9 @@
 - Documentation : README.md créé
 - Tests : 5 tests créés
 - Améliorations proposées : 3 (voir IMPROVEMENTS.md)
+
+### 2025-12-17 — Zone Utils
+- Score : 8/10
+- Documentation : README.md créé, docstrings ajoutées
+- Tests : 3 tests créés
+- Améliorations proposées : 2 (voir IMPROVEMENTS.md)
