@@ -1,7 +1,18 @@
 from time import time
 
 def timer(func):
+    """
+    Décorateur qui mesure et affiche le temps d'exécution d'une fonction.
 
+    Utilisé pour monitorer les performances des étapes du pipeline
+    (explore, preprocess, model_train, etc.).
+
+    Args:
+        func: Fonction à décorer
+
+    Returns:
+        Fonction wrappée qui affiche le temps d'exécution après l'appel
+    """
     def f(*args, **kwargs):
         before = time()
         rv = func(*args, **kwargs)
