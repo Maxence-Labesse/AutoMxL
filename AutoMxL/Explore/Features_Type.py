@@ -3,6 +3,18 @@ from time import time
 from AutoMxL.Utils.Decorators import timer
 
 def features_from_type(df, typ, l_var=None, th=0.95):
+    """
+    Retourne les colonnes qui correspondent à un type donné.
+
+    Args:
+        df: DataFrame à analyser
+        typ: Type recherché (date, identifier, verbatim, boolean, categorical)
+        l_var: Liste des colonnes à analyser (toutes si None)
+        th: Seuil d'unicité pour identifier/verbatim
+
+    Returns:
+        Liste des colonnes correspondant au type
+    """
     assert typ in ['date', 'identifier', 'verbatim', 'boolean', 'categorical'], 'Invalid type'
 
     if l_var is None:
@@ -28,6 +40,19 @@ def features_from_type(df, typ, l_var=None, th=0.95):
 """
 
 def is_date(df, col):
+    """
+    Détecte si une colonne contient des dates.
+
+    Échantillonne 10 valeurs et tente de les parser en datetime.
+    Gère les types object et numériques.
+
+    Args:
+        df: DataFrame source
+        col: Nom de la colonne à tester
+
+    Returns:
+        True si la colonne semble contenir des dates
+    """
     sample_size = 10
     full_col = df[col].loc[~df[col].isna()]
 
@@ -52,6 +77,22 @@ def is_date(df, col):
 """
 
 def is_identifier(df, col, th=0.95):
+    """
+    Détecte si une colonne est un identifiant.
+
+    Une colonne est un identifiant si :
+    - Taux d'unicité >= seuil (th)
+    - Toutes les valeurs ont la même longueur
+    - Ce n'est pas une date
+
+    Args:
+        df: DataFrame source
+        col: Nom de la colonne à tester
+        th: Seuil d'unicité (défaut: 0.95)
+
+    Returns:
+        True si la colonne semble être un identifiant
+    """
     full_col = df[col].loc[~df[col].isna()]
 
     if full_col.nunique() / full_col.count() >= th:
@@ -80,6 +121,22 @@ def is_identifier(df, col, th=0.95):
 """
 
 def is_verbatim(df, col, th=0.95):
+    """
+    Détecte si une colonne contient du texte libre (verbatim).
+
+    Une colonne est verbatim si :
+    - Type object (texte)
+    - Taux d'unicité >= seuil (th)
+    - Longueurs des valeurs variables
+
+    Args:
+        df: DataFrame source
+        col: Nom de la colonne à tester
+        th: Seuil d'unicité (défaut: 0.95)
+
+    Returns:
+        True si la colonne semble être du texte libre
+    """
     if df[col].dtype == 'object':
         full_col = df[col].loc[~df[col].isna()]
     else:
@@ -98,6 +155,19 @@ def is_verbatim(df, col, th=0.95):
 """
 
 def is_boolean(df, col):
+    """
+    Détecte si une colonne est booléenne.
+
+    Une colonne est booléenne si elle a exactement 2 valeurs
+    uniques et plus de 2 observations.
+
+    Args:
+        df: DataFrame source
+        col: Nom de la colonne à tester
+
+    Returns:
+        True si la colonne est booléenne
+    """
     full_col = df[col].loc[~df[col].isna()]
 
     if full_col.nunique() == 2:
@@ -114,6 +184,22 @@ def is_boolean(df, col):
 """
 
 def is_categorical(df, col, th=0.95):
+    """
+    Détecte si une colonne est catégorielle.
+
+    Une colonne est catégorielle si :
+    - Plus de 2 valeurs uniques
+    - Taux d'unicité < seuil (th)
+    - Type object OU moins de 5 valeurs uniques (numérique)
+
+    Args:
+        df: DataFrame source
+        col: Nom de la colonne à tester
+        th: Seuil d'unicité (défaut: 0.95)
+
+    Returns:
+        True si la colonne est catégorielle
+    """
     full_col = df[col].loc[~df[col].isna()]
     if full_col.nunique() > 2:
         if (full_col.nunique() / full_col.count()) < th:
