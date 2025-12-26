@@ -2,36 +2,44 @@
 
 ## Plan d'audit
 
-### Zone 1 : Start
-- Fichiers : `Start/Load.py`, `Start/Encode_Target.py`
-- Statut : ✅ Fait
-
-### Zone 2 : Utils
+### Zone 1 : Utils
 - Fichiers : `Utils/Display.py`, `Utils/Decorators.py`, `Utils/Utils.py`
+- Dépendances : aucune (utilisé par tout le monde)
 - Statut : ⏳ A faire
 
-### Zone 3 : Configuration
+### Zone 2 : Configuration
 - Fichiers : `param_config.py`
+- Dépendances : aucune (utilisé par Preprocessing et Modelisation)
 - Statut : ⏳ A faire
+
+### Zone 3 : Start
+- Fichiers : `Start/Load.py`, `Start/Encode_Target.py`
+- Dépendances : standalone
+- Statut : ✅ Fait
 
 ### Zone 4 : Explore
 - Fichiers : `Explore/Explore.py`, `Explore/Features_Type.py`
+- Dépendances : Utils
 - Statut : ⏳ A faire
 
 ### Zone 5 : Preprocessing
 - Fichiers : `Preprocessing/Date.py`, `Preprocessing/Missing_Values.py`, `Preprocessing/Outliers.py`, `Preprocessing/Categorical.py`, `Preprocessing/Deep_Encoder.py`
+- Dépendances : Utils, param_config
 - Statut : ⏳ A faire
 
 ### Zone 6 : Select_Features
 - Fichiers : `Select_Features/Select_Features.py`
+- Dépendances : Preprocessing
 - Statut : ⏳ A faire
 
 ### Zone 7 : Modelisation
 - Fichiers : `Modelisation/HyperOpt.py`, `Modelisation/Bagging.py`, `Modelisation/Utils.py`
+- Dépendances : Utils, param_config
 - Statut : ⏳ A faire
 
 ### Zone 8 : Core
 - Fichiers : `__main__.py`
+- Dépendances : toutes les zones (à faire en dernier)
 - Statut : ⏳ A faire
 
 ## Journal d'audit
