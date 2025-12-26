@@ -1,3 +1,11 @@
+"""
+Configuration des paramètres par défaut pour AutoMxL.
+
+Ce module centralise les hyperparamètres par défaut utilisés par :
+- Deep Encoder (Preprocessing) : batch_size, n_epoch, learning_rate
+- Bagging (Modelisation) : n_sample, pos_sample_size, replace
+- Random Search (Modelisation) : grilles d'hyperparamètres RF et XGBoost
+"""
 import numpy as np
 
 batch_size = 124
