@@ -20,7 +20,7 @@
 ### Zone 4 : Explore
 - Fichiers : `Explore/Explore.py`, `Explore/Features_Type.py`
 - Dépendances : Utils
-- Statut : ⏳ A faire
+- Statut : ✅ Fait
 
 ### Zone 5 : Preprocessing
 - Fichiers : `Preprocessing/Date.py`, `Preprocessing/Missing_Values.py`, `Preprocessing/Outliers.py`, `Preprocessing/Categorical.py`, `Preprocessing/Deep_Encoder.py`
@@ -61,3 +61,9 @@
 - Documentation : module docstring ajoutée
 - Tests : N/A (pas de logique à tester)
 - Améliorations proposées : 2 (voir IMPROVEMENTS_param_config.md)
+
+### 2025-12-26 — Zone Explore
+- Score : 7/10
+- Documentation : README.md créé, docstrings ajoutées
+- Tests : 5 tests créés
+- Améliorations proposées : 2 (voir IMPROVEMENTS.md)
