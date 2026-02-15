@@ -1,20 +1,6 @@
 from time import time
 
-
-# Timer
 def timer(func):
-    """Function decorator to get the execution time
-
-    Parameters
-    ----------
-    func : function
-        input function
-
-    Returns
-    -------
-    function
-        wrapped function
-    """
 
     def f(*args, **kwargs):
         before = time()

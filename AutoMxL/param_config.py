@@ -1,43 +1,21 @@
-"""
-Default values for
-"""
 import numpy as np
-###########
-# Explore #
-###########
 
-
-#################
-# Preprocessing #
-#################
-# categorical encoder
 batch_size = 124
 n_epoch = 20
 learning_rate = 0.001
 crit = 'MSE'
 optim = 'Adam'
 
-######################
-# Features Selection #
-######################
-
-
-################
-# Modelisation #
-################
-# Default params for Bagging
 default_bagging_param = {'n_sample': 5,
                          'pos_sample_size': 1.0,
                          'replace': False}
 
-# Defaults HP grid for RF
 default_RF_grid_param = {
     'n_estimators': np.random.uniform(low=20, high=500, size=40).astype(int),
     'max_features': ['auto', 'log2'],
     'max_depth': [3, 4, 5, 6, 7, 8],
     'min_samples_split': [5, 10, 15, 20]}
 
-# Defaults HP grid for XGBOOST
 default_XGB_grid_param = {
     'n_estimators': np.random.uniform(low=100, high=300, size=40).astype(int),
     'max_features': ['auto', 'log2'],

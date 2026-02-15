@@ -1,7 +1,0 @@
-,Name,Id_cat,Id_num,Verb,Age,Height,Eyes,Sexe,Is_man_cat,Is_man_num,Hair,Date_nai,American_date_nai
-0,Tom,S01,,En double appel,20.0,,blue,M,Oui,1,brown,27/10/2010,20101027.0
-1,Nick,S02,22.0,Photo de class,,170.0,red,M,Oui,1,brown,,
-2,Krish,S03,33.0,,,180.0,red,M,Oui,1,dark,04/03/2019,20190304.0
-3,,,44.0,After,18.0,190.0,blue,,Non,0,blond,05/08/1988,19880805.0
-4,John,S05,10.0,Printemps blanc,32.0,185.0,green,F,Non,0,blond,04/08/1988,19880804.0
-5,Jack,S06,51.0,,32.0,185.0,blue,M,Oui,1,blond,04/09/1988,19880904.0
